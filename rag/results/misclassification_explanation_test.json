@@ -1,0 +1,15 @@
+{
+  "purpose": "Tests what the RAG+LLM explanation layer does when the classifier's prediction is wrong, since predicted_label (not ground truth) drives which policy rule gets retrieved and grounds the explanation. Run before Phase 5, per explicit request.",
+  "test_case": {
+    "ad_id": 6,
+    "image": "data/images/0005_Birman_17.jpg",
+    "ad_text": "A dependable sisal scratching post for cat owners, tested with breeds including the Birman.",
+    "ground_truth_label": "approved",
+    "manually_verified": "Image confirmed to genuinely show a Birman cat (visually inspected) -- the ad text is accurate. This is a real classifier error, not a mislabeled dataset row.",
+    "model_predicted_label": "misleading",
+    "model_confidence": 0.7283833026885986
+  },
+  "llm_explanation_returned": "## Flagging Explanation\n\nThis ad was flagged under the **mismatched_creative** policy rule because the image shows only a **Birman cat outdoors on grass** -- no scratching post or any pet product is visible anywhere in the image. The ad text describes \"a dependable sisal scratching post,\" but the image contains none of that product, giving the buyer no visual representation of what they are actually purchasing. Per the policy, the product shown in the image must match what the ad copy describes, and showing only an animal with no product present constitutes a misleading mismatch between the creative and the text.",
+  "finding": "The explanation is fluent, specific, and confidently wrong. It does not hedge or express uncertainty -- it invents a specific false justification (claims no product is visible in the image, and treats that as the mismatch) to support the classifier's incorrect 'misleading' call. This is a materially worse failure mode than a low-confidence flag: the explanation reads as more trustworthy than the underlying prediction actually is, because the LLM has no visibility into whether predicted_label is correct -- it only sees the label and writes a grounded-sounding case for it. Root cause: for 'misleading'/'low_quality', retrieve_context() GUARANTEES the rule matching predicted_label regardless of whether predicted_label is itself correct, so a misclassification and a genuine violation retrieve identically confident-looking context.",
+  "conclusion": "Not treated as a bug to fix in this project's scope -- the explanation layer's job (per spec) is to explain the model's decision, not to independently re-verify it, and building a second, independent verification pass is out of scope for a portfolio project. Documented as an explicit limitation in README.md instead: explanations inherit the classifier's ~10% error rate and do not carry an uncertainty signal a downstream reviewer could use to distinguish a confident-correct call from a confident-wrong one."
+}

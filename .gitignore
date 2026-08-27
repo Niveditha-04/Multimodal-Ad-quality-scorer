@@ -3,5 +3,6 @@ __pycache__/
 *.pyc
 db/ads.db
 data/raw/
+rag/chroma_db/
 .DS_Store
 .env
