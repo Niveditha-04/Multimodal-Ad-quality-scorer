@@ -53,6 +53,19 @@ pipeline's tendency toward fluent, confident fabrication, an agentic
 summary layered on top of the same pipeline needed the same scrutiny, not
 less.
 
+**`ad_id` means two different things depending on which file you are
+reading, and this is not called out anywhere else.** In `agent/batch.json`
+and `eval/golden_set.json`, `ad_id` is a 1-indexed row number into
+`data/dataset.csv`, the fixed 480-row source table. But every actual tool
+call made through `mcp_server.server.call_tool()` inserts a new row into
+the live `ads` database table and returns that row's own auto-increment
+database id instead, which is a different number. For example, batch
+`ad_id: 6` comes back from the tool with database `ad_id: 515`. The code
+already handles this correctly: `agent/verify_conflation.py` keys off the
+tool-call log, not the batch's row number, so results are not affected.
+But anyone extending this batch or writing a new script against these
+files should not assume `ad_id` means the same thing in both places.
+
 ## Verifying the agent is actually agentic, not a scripted loop
 
 We checked this structurally. We did not assume it. The loop in

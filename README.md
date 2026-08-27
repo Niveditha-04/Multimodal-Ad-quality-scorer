@@ -23,10 +23,14 @@ checked-in results file. None are estimated.
 
 This README, and everything above the "v2 extension" section described
 here, covers the original 6-phase build. That build lives on the `main`
-branch, across 3 commits: `f51dfe9`, `c714e7c`, and `c0990be`. It covers
-the dataset, the CLIP classifier with ablations, the FastAPI service, the
-RAG plus LLM explanations, the rule-based baseline with a simulated A/B
-test, and the optional MCP tool wrapper.
+branch. Its finished state is tagged `v1.0-core`, at commit `c0990be`
+(the original build itself was 3 commits: `f51dfe9`, `c714e7c`, and
+`c0990be`). `main` has since received a small number of additional
+commits, such as documentation fixes and a real bug fix to `/stats`
+found during a later audit, none of which change what the 6 phases
+themselves cover: the dataset, the CLIP classifier with ablations, the
+FastAPI service, the RAG plus LLM explanations, the rule-based baseline
+with a simulated A/B test, and the optional MCP tool wrapper.
 
 Everything below in this section, and the `agent/`, `eval/`, and
 `guardrails/` directories, is a separate extension. It was built on the
