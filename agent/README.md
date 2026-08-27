@@ -81,36 +81,89 @@ silently pass as complete again. Re-ran the full audit; the current
 `agent/results/audit_run.json` has `stop_reason: "end_turn"`, confirmed
 directly, not assumed.
 
-## The actual summary, and how accurate it actually is
+## The actual summaries, and how accurate they actually are
 
-Full text: see `agent/results/audit_run.json`'s `final_summary` field
-(reproduced in this phase's commit message and available in full there).
-Section 1's counts and Section 3's confidence figures were cross-checked
-programmatically against the raw tool outputs in `tool_call_log` --
-**all 18 predicted labels and all 14 confidence values in the priority
-table match the underlying data exactly, to three decimal places. Zero
-numeric fabrication.**
+Full text of all three runs: `agent/results/audit_run.json` (run 1, the
+originally analyzed run), `audit_run_2.json`, `audit_run_3.json` (2
+additional runs on the identical 18-ad batch, added specifically to check
+whether an initially-observed cross-ad error was a one-off or a real
+pattern -- see Finding 1 below; run per explicit instruction not to lock a
+single-instance observation into this README as a confirmed pattern).
 
-### Finding 1: the agent inherits Phase 8's known hallucination without correcting for it
+**Important correction to how this section originally read**: the first
+version of this README, written after only run 1, said "all 18 predicted
+labels and all 14 confidence values in the priority table match the
+underlying data exactly... zero numeric fabrication." That sentence was
+true, checked, and not fabricated -- but it turned out not to be
+representative. Runs 2 and 3 show real numeric and categorical fabrication
+in the structured tables, which run 1 simply didn't happen to produce. This
+is exactly why the reproducibility check below was worth doing before
+treating one clean run as the pipeline's normal behavior.
+
+### Finding 1 (the standout finding of this phase): the agent's own synthesis introduces cross-ad conflation errors, and it's reproducible
+
+This is a different, higher-level failure mode than anything in Phase 8:
+Phase 8 found hallucinations *inside* individual explanations (one LLM call
+inventing a rule or misreading one ad's content). This is the agent's own
+cross-ad synthesis step mixing up facts *between* two entirely separate,
+individually-correct tool outputs -- an error introduced at the
+orchestration layer even when every underlying tool call was accurate.
+
+**How this was checked**: re-ran the identical 18-ad batch two more times
+(`agent/results/audit_run_2.json`, `audit_run_3.json`), then verified each
+run's summary against its own raw `tool_call_log` programmatically
+(`agent/verify_conflation.py` -- parses actual markdown table rows rather
+than proximity-guessing, after a first, cruder version of the script
+produced false positives from numbers appearing near an ad_id in unrelated
+sentences; results saved to `agent/results/conflation_check.json`).
+
+**Result: conflation occurred in 3 of 3 runs, with sharply varying
+severity:**
+
+| Run | Section-1 category-table errors | Section-3 confidence-table errors | Narrative-only errors |
+|---|---|---|---|
+| 1 | 0 | 0 | 1 (Ad 146 described as advertising a "cat carrier" -- that's ad 161's product; 146's real product is cat food) |
+| 2 | 2 (ads 161, 243 swapped between categories) | 3 (ads 161, 178, 243's confidence values cross-wired with each other -- even a visible self-correction mid-table substituted one wrong borrowed number for another) | 0 |
+| 3 | 2 (ads 367, 243 swapped between categories) | 7 (ads 105, 161, 178, 243, 359, 367, 388 -- over half the 14-row table -- show confidence values borrowed from a different ad in the same batch) | 0 |
+
+Run 1's error was a single mistaken word in one sentence. Run 3's errors
+corrupted more than half of the priority table's confidence column, several
+via what look like chained misattributions (e.g. ad 367's real confidence
+value appears in ad 388's row, while ad 367's own row shows ad 359's real
+value). **The classifier itself is fully deterministic across all three
+runs** -- every raw `tool_call_log` entry for a given ad_id has the
+identical `predicted_label` and `confidence` in all three runs, confirmed
+directly, which rules out model non-determinism as the explanation. The
+variation is entirely in the agent's own synthesis of already-correct,
+already-stable data.
+
+**Correct claim, and the one to actually use**: this is a reproducible
+failure mode of the batch-synthesis step (occurred in 3/3 runs), not a
+sampling fluke -- but its *severity* is not stable or predictable run to
+run, ranging from a single misattributed word to corrupting most of a
+results table. Anyone relying on this agent's output to actually drive a
+review queue would need independent verification of the structured
+data, not just trust in the narrative. That's the real, honest conclusion,
+and a stronger and more defensible one than "observed once."
+
+### Finding 2: the agent inherits Phase 8's known hallucination without correcting for it
 
 Three of the four misclassified ads in this batch (97, 105, 146) reproduced
 the same "product must be visible in the image" fabrication documented in
 `eval/root_cause_analysis.md` -- expected, since it's the same underlying
 `rag/explain.py` call. The agent's Section 2 groups these together with the
-*genuine* mismatches (243, 300, 359) as one undifferentiated 7-ad pattern
-("Species/Product Mismatch"), presenting fabricated and real violations
-with equal confidence. The agent has no way to know 3 of its 7 "mismatch"
-examples are actually compliant ads the classifier got wrong -- it takes
-tool output as ground truth, which is the correct behavior *given its
-information*, but means an agent layered on top of an imperfect pipeline
-does not self-correct that pipeline's errors. It faithfully reports them
-as a confident cross-ad "pattern."
+*genuine* mismatches (243, 300, 359) as one undifferentiated pattern,
+presenting fabricated and real violations with equal confidence. The agent
+has no way to know some of its "mismatch" examples are actually compliant
+ads the classifier got wrong -- it takes tool output as ground truth, which
+is correct behavior *given its information*, but means an agent layered on
+top of an imperfect pipeline does not self-correct that pipeline's errors.
 
-### Finding 2 (new, not seen in Phase 8): a different hallucination *type*
+### Finding 3: a different hallucination *type* than anything in Phase 8
 
-Ad 6's explanation, generated fresh during this phase's first run (a new
-API call, not reused from Phase 8), didn't reproduce the "product must be
-visible" pattern -- it fabricated something new: a confident, specific
+Ad 6's explanation, generated fresh during run 1 (a new API call, not
+reused from Phase 8), didn't reproduce the "product must be visible"
+pattern -- it fabricated something new: a confident, specific
 misidentification of the pictured cat's breed (asserting "Ragdoll cat...
 identifiable by its blue eyes, colorpoint coat, and long, fluffy fur" when
 ground truth, and a direct re-inspection of the image specifically for
@@ -120,58 +173,48 @@ has the white-gloved paws that are Birman's signature trait, while the
 actually distinguish between them). This shows the underlying error
 (fabricating *some* specific justification to support a wrong verdict) is
 reproducible across independent LLM calls even when the *specific*
-fabricated content varies by sampling -- a stronger, more general version
-of the Phase 8 finding than "this one phrase recurs."
-
-### Finding 3 (new to this phase): the agent's own synthesis introduces a cross-ad conflation error
-
-This is the most interesting finding of Phase 10, because it's not
-inherited from any tool call -- it originates in the agent's own writing.
-Section 2 states "Ad 146 similarly shows only a cat while advertising a
-**cat carrier**." Ad 146's actual product is cat food (confirmed both from
-`agent/batch.json`'s ground truth and directly from ad 146's own tool
-output, which correctly says "cat food" and "food product" throughout).
-The cat-carrier product belongs to **ad 161** -- a different ad in the same
-batch, also cat-related and also policy_violation-flagged, whose own tool
-output correctly and separately describes a cat carrier. The agent
-conflated details between two distinct, correctly-reported tool outputs
-while writing its own cross-ad summary. This is a distinct risk from
-Finding 1: even if every individual tool call were perfectly accurate, the
-synthesis layer itself can introduce new errors by mixing up similar
-entries across a batch -- a known failure mode in long-context
-summarization, now demonstrated concretely in this pipeline.
+fabricated content varies by sampling.
 
 ### Finding 4: prioritization logic is sound in principle, inconsistent in practice across runs
 
-The confidence-based reasoning is genuinely useful: on the first (truncated
-but otherwise complete) run, ranking primarily by low confidence correctly
-surfaced 2 of this batch's 4 real misclassifications (ads 146 and 105) in
-the top 3 review-priority slots. But the two runs used different strategies
-to combine the instruction's two stated factors (severity and confidence):
-the first run ranked primarily by confidence (surfacing the actually-wrong
-ad 146 at #1 overall); this run ranked primarily by category severity, with
-confidence only as a tiebreaker *within* a severity tier -- which pushed ad
-146 (genuinely wrong, but categorized as the less-severe "misleading" tier)
-down to #5, behind three `policy_violation` ads the model was already very
-confident about (and which are, per ground truth, actually correct). Both
-orderings are defensible readings of "prioritize by a combination of low
-confidence and severity," but they produce materially different practical
-priority lists from run to run -- worth knowing if this were ever used to
-actually drive a review queue, not just demonstrated once.
+The confidence-based reasoning is genuinely useful in isolation: on run 1,
+ranking primarily by low confidence correctly surfaced 2 of this batch's 4
+real misclassifications (ads 146 and 105) in the top 3 review-priority
+slots. But the three runs used different strategies to combine the
+instruction's two stated factors (severity and confidence): run 1 ranked
+primarily by confidence (surfacing the actually-wrong ad 146 at #1
+overall); run 2 ranked primarily by category severity, with confidence
+only a tiebreaker within a tier -- which pushed the genuinely-wrong ad 146
+down to #5, behind several `policy_violation` ads the model was already
+correctly and confidently right about. All are defensible readings of
+"combine confidence and severity," but they produce materially different
+practical priority lists from run to run -- worth knowing if this were
+ever used to actually drive a review queue, not just demonstrated once.
+Given Finding 1, this instability is now a secondary concern next to
+whether the table's *numbers* can be trusted at all in a given run.
 
 ## Reproducing this
 
 ```bash
 python -m agent.build_batch          # writes agent/batch.json
-python -m agent.campaign_auditor     # runs the full audit, writes agent/results/audit_run.json
+python -m agent.campaign_auditor [output_path]   # runs the full audit; defaults to agent/results/audit_run.json
+python -m agent.verify_conflation    # checks a run's summary against its own raw tool_call_log for cross-ad conflation
 ```
+
+`campaign_auditor.py` accepts an optional output path argument, used here
+to run the same batch multiple times without overwriting prior evidence
+(`audit_run.json`, `audit_run_2.json`, `audit_run_3.json` are all real,
+independently generated runs on the identical batch, not variations of one
+run edited afterward).
 
 ## Limitations
 
-- Single batch, single run analyzed in depth (plus the earlier truncated
-  run, kept as evidence of the token-limit bug). Run-to-run prompt strategy
-  variability (Finding 4) was observed from two runs, not systematically
-  characterized across many.
+- Three runs is enough to call the cross-ad conflation in Finding 1 a real,
+  reproducible failure mode rather than a single sampling fluke -- it isn't
+  enough to characterize its severity distribution precisely (does it
+  average out to "usually minor," or does run 3's extensive corruption
+  represent a real, non-trivial share of runs?). A rigorous answer would
+  need many more runs, which wasn't done here.
 - The agent's tool-use pattern here (one parallel burst of calls, then one
   synthesis turn) is the natural shape for this specific task size (18
   independent, order-independent lookups). A batch requiring genuinely
@@ -183,3 +226,13 @@ python -m agent.campaign_auditor     # runs the full audit, writes agent/results
   Phase 8's rubric-scored golden set) -- accuracy claims here come from
   direct cross-referencing against ground truth and raw tool output, not a
   formal per-claim rubric.
+- `verify_conflation.py`'s table parser is specific to the markdown table
+  shapes actually produced across these 3 runs -- it isn't a general
+  markdown-table parser, and a summary formatted differently (a future run,
+  or a different model) could produce table rows it fails to parse
+  correctly. Its counts were cross-checked against an independent manual
+  read of all three summaries before being trusted (a first, cruder version
+  of this same script produced false positives from proximity-matching
+  rather than actually parsing table structure -- caught before relying on
+  its output, the same discipline applied to the output-validator check in
+  Phase 9).

@@ -1,0 +1,123 @@
+[
+  {
+    "path": "agent/results/audit_run.json",
+    "category_table_errors": [],
+    "priority_table_errors": []
+  },
+  {
+    "path": "agent/results/audit_run_2.json",
+    "category_table_errors": [
+      {
+        "ad_id": 161,
+        "real_label": "policy_violation",
+        "claimed_label": "misleading"
+      },
+      {
+        "ad_id": 243,
+        "real_label": "misleading",
+        "claimed_label": "policy_violation"
+      }
+    ],
+    "priority_table_errors": [
+      {
+        "ad_id": 178,
+        "real_confidence": 0.904,
+        "claimed_confidence": 0.976,
+        "matches_other_ad": [
+          161
+        ]
+      },
+      {
+        "ad_id": 243,
+        "real_confidence": 0.777,
+        "claimed_confidence": 0.904,
+        "matches_other_ad": [
+          178
+        ]
+      },
+      {
+        "ad_id": 161,
+        "real_confidence": 0.976,
+        "claimed_confidence": 0.423,
+        "matches_other_ad": [
+          146
+        ]
+      }
+    ]
+  },
+  {
+    "path": "agent/results/audit_run_3.json",
+    "category_table_errors": [
+      {
+        "ad_id": 367,
+        "real_label": "low_quality",
+        "claimed_label": "misleading"
+      },
+      {
+        "ad_id": 243,
+        "real_label": "misleading",
+        "claimed_label": "low_quality"
+      }
+    ],
+    "priority_table_errors": [
+      {
+        "ad_id": 105,
+        "real_confidence": 0.507,
+        "claimed_confidence": 0.422,
+        "matches_other_ad": [
+          146
+        ]
+      },
+      {
+        "ad_id": 429,
+        "real_confidence": 0.998,
+        "claimed_confidence": 0.717,
+        "matches_other_ad": [
+          388
+        ]
+      },
+      {
+        "ad_id": 161,
+        "real_confidence": 0.976,
+        "claimed_confidence": 0.904,
+        "matches_other_ad": [
+          178
+        ]
+      },
+      {
+        "ad_id": 178,
+        "real_confidence": 0.904,
+        "claimed_confidence": 0.976,
+        "matches_other_ad": [
+          161
+        ]
+      },
+      {
+        "ad_id": 367,
+        "real_confidence": 0.994,
+        "claimed_confidence": 0.962,
+        "matches_other_ad": [
+          359
+        ]
+      },
+      {
+        "ad_id": 359,
+        "real_confidence": 0.962,
+        "claimed_confidence": 0.776,
+        "matches_other_ad": [
+          243
+        ]
+      },
+      {
+        "ad_id": 388,
+        "real_confidence": 0.717,
+        "claimed_confidence": 0.994,
+        "matches_other_ad": [
+          211,
+          367,
+          429
+        ]
+      }
+    ]
+  }
+]

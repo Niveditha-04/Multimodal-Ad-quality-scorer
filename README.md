@@ -51,10 +51,14 @@ its own detailed README; this section is a pointer, not a duplicate.
 - **Phase 10 -- agentic orchestration** (`agent/README.md`): an agent that
   autonomously calls the Phase 6 MCP tool across an 18-ad batch and
   synthesizes a review. Verified genuinely agentic (not a scripted loop) by
-  inspecting the actual tool-use transcript; found the agent's own
-  cross-batch synthesis can introduce errors (a product-detail mix-up
-  between two different ads) distinct from anything the underlying tool
-  itself got wrong.
+  inspecting the actual tool-use transcript. Standout finding: re-ran the
+  identical batch 3 times and found the agent's own cross-ad synthesis
+  introduces conflation errors -- mixing up facts between two separate,
+  individually-correct tool outputs -- in all 3 runs, with severity ranging
+  from one misattributed word to corrupting over half a results table's
+  confidence values. A distinct, higher-level failure mode from Phase 8's
+  per-explanation hallucinations: errors introduced at the orchestration
+  layer even when every underlying tool call was accurate.
 
 ## Architecture
 
