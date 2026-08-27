@@ -273,18 +273,59 @@ was out of scope for this project but is the natural next step.
 
 ## Database
 
-Three tables (`ads`, `scores`, `policy_categories`) via SQLAlchemy, portable
-to Postgres by changing `DATABASE_URL`. `scores` accumulates rows from
-multiple sources across this project -- every query must filter by
-`model_version`, and this bit once (see [`db/README.md`](db/README.md) for
-the full story, including a bug where an unfiltered query silently blended
-two different model arms into a meaningless composite number). Both the
-joint classifier and the rule-based baseline use a `model_version` string
-tied to a content hash of the file that actually determines their behavior
-(`model/model_version.py`, `ab_test/baseline_version.py`), so a future
-retrain/retune can't silently collide with the current one.
+Three tables (`ads`, `scores`, `policy_categories`) via SQLAlchemy. `scores`
+accumulates rows from multiple sources across this project -- every query
+must filter by `model_version`, and this bit once (see [`db/README.md`](db/README.md)
+for the full story, including a bug where an unfiltered query silently
+blended two different model arms into a meaningless composite number). Both
+the joint classifier and the rule-based baseline use a `model_version`
+string tied to a content hash of the file that actually determines their
+behavior (`model/model_version.py`, `ab_test/baseline_version.py`), so a
+future retrain/retune can't silently collide with the current one.
 
 5 reference queries with real, verified output: [`db/queries.sql`](db/queries.sql).
+
+### Postgres (v2 extension) vs. SQLite (v1 default)
+
+The app defaults to SQLite (`db/ads.db`) with no setup required -- this is
+still the easiest path and remains fully supported; nothing about the v1
+setup instructions changed. Setting `DATABASE_URL` switches to Postgres:
+`db/session.py`'s models are pure SQLAlchemy with no SQLite-specific types
+(verified: the identical `db/models.py`, unmodified, produces a correct
+Postgres schema), so this is a config change, not a code migration.
+
+```bash
+brew install postgresql@16          # or Docker: docker run -e POSTGRES_DB=ad_quality_scorer -p 5432:5432 postgres:16
+LC_ALL="en_US.UTF-8" $(brew --prefix postgresql@16)/bin/pg_ctl -D $(brew --prefix)/var/postgresql@16 -l logfile start
+createdb ad_quality_scorer
+# in .env: DATABASE_URL=postgresql://your-user@localhost:5432/ad_quality_scorer
+
+python -c "from db.session import init_db; init_db()"   # creates the schema
+python -m db.migrate_to_postgres                         # copies existing SQLite rows over, if any
+```
+
+Used a local Homebrew install here rather than Docker (neither was present
+on this machine) -- Docker Desktop would mean installing a large GUI app and
+its daemon, whereas Homebrew gives a lightweight CLI-only local service.
+Either works; `db/migrate_to_postgres.py` only needs `DATABASE_URL` pointed
+at a running Postgres, it doesn't care how that Postgres got there.
+
+**Verified, not assumed**: after migrating, ran all 5 `db/queries.sql`
+queries against both databases and diffed the output directly. All 15
+result rows across the 5 queries are numerically identical. The raw diff
+shows two cosmetic differences, both understood and harmless: (1) tied rows
+in queries with no secondary `ORDER BY` key can print in either order
+depending on the engine's internal storage order, and (2) SQLite's `ROUND()`
+returns a float that drops trailing zeros in text output (`0.962`) while
+Postgres's `NUMERIC` preserves fixed decimal places (`0.9620`) -- same value,
+different formatting. One real portability bug was caught and fixed along
+the way: Postgres has no `round(double precision, integer)` overload (SQLite
+accepts it via loose typing; Postgres doesn't), so query 2 needed an
+explicit `CAST(... AS NUMERIC)` -- see the comment directly above that query
+in `db/queries.sql`. Row counts and values matched exactly after migration
+too (490 ads, 202 scores, 7 policy categories on both sides; spot-checked
+individual rows including the misclassification-test and MCP-test ads
+byte-for-byte).
 
 ## Limitations
 

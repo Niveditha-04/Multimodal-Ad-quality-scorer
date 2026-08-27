@@ -1,9 +1,9 @@
 -- Real queries against the ads/scores/policy_categories schema.
--- scores now holds 201 rows across TWO model_versions -- see db/README.md
+-- scores now holds 202 rows across TWO model_versions -- see db/README.md
 -- for the full convention. As of this file, that's:
---   joint_v2_postfix_97565ac7  (105 rows: 96 held-out eval predictions from
---     db/populate_eval_scores.py, plus 9 live /score API calls made during
---     Phase 3/4/5 testing)
+--   joint_v2_postfix_97565ac7  (106 rows: 96 held-out eval predictions from
+--     db/populate_eval_scores.py, plus 10 live /score and MCP-tool calls made
+--     during Phase 3/4/5/6 testing)
 --   rule_baseline_v1_7ba4a019  (96 rows: the Phase 5 rule-based baseline's
 --     predictions on the same 96 test ads, from ab_test/run_comparison.py --
 --     the hash suffix is sha256(ab_test/rule_based_baseline.py)[:8], see
@@ -21,8 +21,19 @@
 -- against ab_test/results/comparison.json, per db/README.md's own note to
 -- re-verify rather than assume. Fixed by adding the filter everywhere below.
 --
--- Run against db/ads.db as of 2026-08-27. Actual output pasted below each
--- query, not simulated.
+-- Verified to run identically on both SQLite (db/ads.db) and Postgres
+-- (Phase 7 of the v2 extension, db/migrate_to_postgres.py) -- output is
+-- numerically identical on both engines; the only observed differences are
+-- two cosmetic formatting artifacts, not data or logic discrepancies: (1)
+-- tied rows in queries with no secondary ORDER BY key can come out in either
+-- order depending on the engine's internal storage order, and (2) SQLite's
+-- ROUND() returns a float that drops trailing zeros in text output (0.962),
+-- while Postgres's ROUND(CAST(... AS NUMERIC)) preserves fixed decimal
+-- places (0.9620) -- same numeric value both ways.
+--
+-- Actual output below is from db/ads.db (SQLite) as of 2026-08-27, not
+-- simulated -- values are identical on Postgres modulo the two cosmetic
+-- differences just described.
 
 -- 1. Violation rate by predicted category, for the joint classifier
 --    specifically: of everything it scored, what share of predictions fall
@@ -40,23 +51,31 @@ ORDER BY n_predictions DESC;
 
 -- actual output:
 -- predicted_label    n_predictions  pct_of_arm_scores
--- approved            29            27.62
--- misleading          27            25.71
--- low_quality         25            23.81
--- policy_violation    24            22.86
--- (105 total rows for this arm: 96 eval + 9 live test calls, spread
--- roughly as expected across categories)
+-- approved            29            27.36
+-- misleading          27            25.47
+-- policy_violation    25            23.58
+-- low_quality         25            23.58
+-- (106 total rows for this arm: 96 eval + 10 live/MCP test calls, spread
+-- roughly as expected across categories; policy_violation/low_quality are
+-- tied at 25 -- see the tie-break note above)
 
 -- 2. Average confidence by predicted label, joint classifier only --
 --    sanity check on calibration. Mixing in rule_baseline_v1 here would be
 --    especially misleading since that arm's "confidence" isn't a real
 --    probability at all (see db/README.md / ab_test/rule_based_baseline.py)
 --    -- it's a hardcoded 1.0 for every rule-fired prediction.
+-- ROUND()'s 2-argument form needs an explicit CAST to NUMERIC for Postgres
+-- (Postgres has no round(double precision, integer) overload -- SQLite's
+-- loose typing accepts it directly, Postgres doesn't). CAST(... AS NUMERIC)
+-- is standard SQL, not Postgres-specific ::numeric shorthand, so it works
+-- identically on both engines -- found this the hard way, running this
+-- query against Postgres for the first time errored with "function
+-- round(double precision, integer) does not exist" until this cast was added.
 SELECT
     predicted_label,
-    ROUND(AVG(confidence), 4) AS avg_confidence,
-    ROUND(MIN(confidence), 4) AS min_confidence,
-    ROUND(MAX(confidence), 4) AS max_confidence,
+    ROUND(CAST(AVG(confidence) AS NUMERIC), 4) AS avg_confidence,
+    ROUND(CAST(MIN(confidence) AS NUMERIC), 4) AS min_confidence,
+    ROUND(CAST(MAX(confidence) AS NUMERIC), 4) AS max_confidence,
     COUNT(*) AS n
 FROM scores
 WHERE model_version = 'joint_v2_postfix_97565ac7'
@@ -66,7 +85,7 @@ ORDER BY avg_confidence DESC;
 -- actual output:
 -- predicted_label    avg_confidence  min_confidence  max_confidence  n
 -- low_quality         0.9464          0.6459          0.9975          25
--- policy_violation    0.9307          0.6175          0.9929          24
+-- policy_violation    0.9292          0.6175          0.9929          25
 -- approved            0.7266          0.4231          0.9709          29
 -- misleading          0.6822          0.4225          0.9620          27
 -- same pattern as before Phase 5: approved and misleading are the two

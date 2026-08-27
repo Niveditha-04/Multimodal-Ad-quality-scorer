@@ -15,3 +15,4 @@ chromadb==1.5.9
 scipy==1.17.1
 pydantic==2.13.4
 mcp==2.1.1
+psycopg2-binary==2.9.12
