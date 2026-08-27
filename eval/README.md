@@ -74,17 +74,22 @@ Full numbers: `eval/results.json`. Per-axis:
 | Rule accuracy | 1.656 | 9.4% (3/32) |
 | **Hallucination** | 1.438 | **25.0% (8/32)** |
 
-**Headline finding: 1 in 4 generated explanations contains a major
+**Headline finding: 8 of 32 (25.0%) generated explanations contain a major
 hallucination** -- a specific, checkable claim, central to the stated
-reasoning, that is fabricated. This is reported plainly because it is the
-actual finding, not minimized: this evaluation exists specifically to
-surface this number, and a non-trivial hallucination rate was expected
-going in, per the misclassification-explanation limitation already
-documented in the v1 README.
+reasoning, that is fabricated. Reported plainly because it is the actual
+finding, not minimized: this evaluation exists specifically to surface this
+number, and a non-trivial hallucination rate was expected going in, per the
+misclassification-explanation limitation already documented in the v1
+README. 32 examples is a small sample -- the 95% CI on this rate is
+[13.3%, 42.1%] (see below) -- so **25.0% is a point estimate from a small
+golden set, not a precise, decimal-stable rate**; the CI is the number to
+carry forward, not the headline percentage alone.
 
 ### The hallucination pattern isn't confined to misclassified ads
 
-Broken out by whether the classifier's prediction was itself correct:
+Broken out by whether the classifier's prediction was itself correct (both
+subgroups are small -- 4 and 28 -- so treat these splits as directional,
+not as independently precise rates):
 
 | | n | Hallucination mean | Hallucination failure rate |
 |---|---|---|---|
@@ -98,23 +103,43 @@ the wrong verdict. All 3 of the misclassified-and-hallucinated cases (ad
 6, 97, 105 -- the genuinely-compliant ads wrongly flagged `misleading`)
 independently invented the **same** fabricated requirement: that the
 literal product must be visibly depicted in the photo for the ad to be
-compliant. This isn't in any of the 7 actual policy rules
-(`db/policy_categories.py`) -- `mismatched_creative` is about the pictured
-*animal* matching the ad copy, not about product photography. See
-`eval/golden_set_findings.md` for the cross-check against the full Phase 2
+compliant.
+
+**Traced this to a specific, identifiable cause, not generic model
+unreliability** -- see `eval/root_cause_analysis.md`. The `mismatched_creative`
+rule's own text (`db/policy_categories.py`) reads "**the product or animal**
+shown in the image must match... mismatches between the **pictured
+animal/product**..." -- pairing "product" with "animal" as things that
+should both appear in the image. Re-running the actual retrieval call for
+every hallucinating example confirmed this exact rule text was present in
+7 of the 8 major-hallucination prompts (the 4 `misleading` cases via
+guaranteed retrieval, plus -- newly confirmed, not previously known --
+4 `policy_violation` cases where it surfaced via pure semantic search, not
+a guarantee). The one exception (ad 412, `low_quality`) retrieved no rule
+mentioning image content at all and is reported as a separate, less-understood
+failure mode rather than folded into the same explanation. This makes the
+finding sharper than "the LLM hallucinates": 7 of 8 major hallucinations
+mis-generalize from one identifiable, ambiguous sentence in this project's
+own retrieval corpus -- a fixable defect, not a vague reliability concern.
+See `eval/golden_set_findings.md` for the cross-check against the full Phase 2
 confusion matrix confirming this is a systematic pattern (all 4 of this
 test set's misclassifications land as false `misleading` predictions, none
 as false `policy_violation` or `low_quality`), not 4 independent flukes.
 
 The more surprising finding is the second row: **even when the classifier's
-prediction is correct**, the same fabricated product-visibility reasoning
-shows up in 5 of 28 true-positive explanations (144, 157, 185, 211, 412) --
-tacked on as an additional, incorrectly-asserted violation alongside an
-otherwise correct one. In 4 of those 5 cases it's framed as a co-equal
-independent violation ("flagged... on two counts"), not a hedge -- and in
-one case (185) it compounds into a second fabrication, misidentifying a
-genuine American Pit Bull Terrier (visually confirmed) as "not identifiable"
-as that breed to manufacture a species-mismatch claim that doesn't exist.
+prediction is correct**, a fabricated violation still shows up in 5 of 28
+true-positive explanations (144, 157, 185, 211, 412) -- tacked on as an
+additional, incorrectly-asserted violation alongside an otherwise correct
+one. Four of these (144, 157, 185, 211) are the *same* traced
+`mismatched_creative` product-visibility fabrication described above, each
+framed as a co-equal independent violation ("flagged... on two counts"),
+not a hedge -- and one (185) compounds into a second fabrication,
+misidentifying a genuine American Pit Bull Terrier (visually confirmed) as
+"not identifiable" as that breed to manufacture a species-mismatch claim
+that doesn't exist. The fifth (412) is the one case that does **not** trace
+to this cause -- its retrieved rules contained no image-content language,
+so it's reported as a separate, unexplained fabrication rather than
+grouped with the other four for a cleaner-looking (but less accurate) story.
 
 ### Rule accuracy: mostly clean, with one genuine ambiguity worth naming
 
