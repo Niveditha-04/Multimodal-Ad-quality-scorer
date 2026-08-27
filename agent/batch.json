@@ -1,0 +1,200 @@
+[
+  {
+    "ad_id": 6,
+    "image_path": "data/images/0005_Birman_17.jpg",
+    "ad_text": "A dependable sisal scratching post for cat owners, tested with breeds including the Birman.",
+    "ground_truth_label": "approved",
+    "model_predicted_label": "misleading",
+    "is_misclassification": true,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Birman",
+    "ground_truth_genuine_policy_rule": "none"
+  },
+  {
+    "ad_id": 8,
+    "image_path": "data/images/0007_german_shorthaired_182.jpg",
+    "ad_text": "Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for german shorthaireds at any age.",
+    "ground_truth_label": "approved",
+    "model_predicted_label": "approved",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "dog",
+    "ground_truth_breed_shown": "german shorthaired",
+    "ground_truth_genuine_policy_rule": "none"
+  },
+  {
+    "ad_id": 16,
+    "image_path": "data/images/0015_Bengal_120.jpg",
+    "ad_text": "A dependable self-grooming slicker brush for cat owners, tested with breeds including the Bengal.",
+    "ground_truth_label": "approved",
+    "model_predicted_label": "approved",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Bengal",
+    "ground_truth_genuine_policy_rule": "none"
+  },
+  {
+    "ad_id": 25,
+    "image_path": "data/images/0024_chihuahua_191.jpg",
+    "ad_text": "Made for chihuahuas and other dogs, this grain-free training treat mix is a favorite with owners who want a reliable everyday option.",
+    "ground_truth_label": "approved",
+    "model_predicted_label": "approved",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "dog",
+    "ground_truth_breed_shown": "chihuahua",
+    "ground_truth_genuine_policy_rule": "none"
+  },
+  {
+    "ad_id": 34,
+    "image_path": "data/images/0033_Siamese_43.jpg",
+    "ad_text": "Made for Siameses and other cats, this ceramic cat feeding bowl is a favorite with owners who want a reliable everyday option.",
+    "ground_truth_label": "approved",
+    "model_predicted_label": "approved",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Siamese",
+    "ground_truth_genuine_policy_rule": "none"
+  },
+  {
+    "ad_id": 97,
+    "image_path": "data/images/0096_keeshond_17.jpg",
+    "ad_text": "A dependable grain-free dog food for dog owners, tested with breeds including the keeshond.",
+    "ground_truth_label": "approved",
+    "model_predicted_label": "misleading",
+    "is_misclassification": true,
+    "ground_truth_species_shown": "dog",
+    "ground_truth_breed_shown": "keeshond",
+    "ground_truth_genuine_policy_rule": "none"
+  },
+  {
+    "ad_id": 105,
+    "image_path": "data/images/0104_Ragdoll_191.jpg",
+    "ad_text": "This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Ragdoll.",
+    "ground_truth_label": "approved",
+    "model_predicted_label": "misleading",
+    "is_misclassification": true,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Ragdoll",
+    "ground_truth_genuine_policy_rule": "none"
+  },
+  {
+    "ad_id": 140,
+    "image_path": "data/images/0139_newfoundland_55.jpg",
+    "ad_text": "Rated the best joint & mobility support chew in the world by every major review site, hands down.",
+    "ground_truth_label": "policy_violation",
+    "model_predicted_label": "policy_violation",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "dog",
+    "ground_truth_breed_shown": "newfoundland",
+    "ground_truth_genuine_policy_rule": "absolute_superlative_claims"
+  },
+  {
+    "ad_id": 146,
+    "image_path": "data/images/0145_Siamese_231.jpg",
+    "ad_text": "Vets agree: this grain-free cat food guarantees your Siamese will live 5 years longer. No other grain-free cat food comes close.",
+    "ground_truth_label": "policy_violation",
+    "model_predicted_label": "misleading",
+    "is_misclassification": true,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Siamese",
+    "ground_truth_genuine_policy_rule": "unsubstantiated_health_claims"
+  },
+  {
+    "ad_id": 161,
+    "image_path": "data/images/0160_Abyssinian_123.jpg",
+    "ad_text": "This soft-sided cat carrier CURES joint pain in cats within days -- guaranteed or your money back.",
+    "ground_truth_label": "policy_violation",
+    "model_predicted_label": "policy_violation",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Abyssinian",
+    "ground_truth_genuine_policy_rule": "unsubstantiated_health_claims"
+  },
+  {
+    "ad_id": 178,
+    "image_path": "data/images/0177_newfoundland_70.jpg",
+    "ad_text": "This durable rubber chew toy CURES joint pain in dogs within days -- guaranteed or your money back.",
+    "ground_truth_label": "policy_violation",
+    "model_predicted_label": "policy_violation",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "dog",
+    "ground_truth_breed_shown": "newfoundland",
+    "ground_truth_genuine_policy_rule": "unsubstantiated_health_claims"
+  },
+  {
+    "ad_id": 211,
+    "image_path": "data/images/0210_boxer_11.jpg",
+    "ad_text": "The #1 vet-recommended orthopedic dog bed in America -- nothing else on the market even compares.",
+    "ground_truth_label": "policy_violation",
+    "model_predicted_label": "policy_violation",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "dog",
+    "ground_truth_breed_shown": "boxer",
+    "ground_truth_genuine_policy_rule": "absolute_superlative_claims"
+  },
+  {
+    "ad_id": 243,
+    "image_path": "data/images/0242_Persian_63.jpg",
+    "ad_text": "A dependable slow-feed dog bowl for dog owners, tested with breeds including the shiba inu.",
+    "ground_truth_label": "misleading",
+    "model_predicted_label": "misleading",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Persian",
+    "ground_truth_genuine_policy_rule": "mismatched_creative"
+  },
+  {
+    "ad_id": 300,
+    "image_path": "data/images/0299_Bombay_56.jpg",
+    "ad_text": "Owners of miniature pinschers reach for this no-pull dog harness because it does the basics well, day after day.",
+    "ground_truth_label": "misleading",
+    "model_predicted_label": "misleading",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Bombay",
+    "ground_truth_genuine_policy_rule": "mismatched_creative"
+  },
+  {
+    "ad_id": 359,
+    "image_path": "data/images/0358_shiba_inu_112.jpg",
+    "ad_text": "Made for Maine Coons and other cats, this grain-free cat food is a favorite with owners who want a reliable everyday option.",
+    "ground_truth_label": "misleading",
+    "model_predicted_label": "misleading",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "dog",
+    "ground_truth_breed_shown": "shiba inu",
+    "ground_truth_genuine_policy_rule": "mismatched_creative"
+  },
+  {
+    "ad_id": 367,
+    "image_path": "data/images/0366_Sphynx_182.jpg",
+    "ad_text": "This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Sphynx.",
+    "ground_truth_label": "low_quality",
+    "model_predicted_label": "low_quality",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Sphynx",
+    "ground_truth_genuine_policy_rule": "low_quality_creative"
+  },
+  {
+    "ad_id": 388,
+    "image_path": "data/images/0387_Egyptian_Mau_39.jpg",
+    "ad_text": "clumping cat litter!!!! !!! best!! cat clumping cat litter now now now discount discount",
+    "ground_truth_label": "low_quality",
+    "model_predicted_label": "low_quality",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Egyptian Mau",
+    "ground_truth_genuine_policy_rule": "low_quality_creative"
+  },
+  {
+    "ad_id": 429,
+    "image_path": "data/images/0428_Birman_19.jpg",
+    "ad_text": "A dependable self-grooming slicker brush for cat owners, tested with breeds including the Birman.",
+    "ground_truth_label": "low_quality",
+    "model_predicted_label": "low_quality",
+    "is_misclassification": false,
+    "ground_truth_species_shown": "cat",
+    "ground_truth_breed_shown": "Birman",
+    "ground_truth_genuine_policy_rule": "low_quality_creative"
+  }
+]

@@ -1,0 +1,187 @@
+{
+  "final_summary": "All 18 results are in. Here is the complete audit summary.\n\n---\n\n# \ud83d\udc3e Pet-Products Marketplace \u2014 Ad Compliance Audit Report\n**Batch size:** 18 ads | **Model version:** `joint_v2_postfix_97565ac7`\n\n---\n\n## Section 1 \u2014 Counts by Predicted Category\n\n| Category | Count | Ad IDs |\n|---|---|---|\n| \u2705 Approved | 4 | 8, 16, 25, 34 |\n| \u26a0\ufe0f Misleading | 7 | 6, 97, 105, 146, 243, 300, 359 |\n| \ud83d\udeab Policy Violation | 4 | 140, 161, 178, 211 |\n| \ud83d\udd3b Low Quality | 3 | 367, 388, 429 |\n| **Total** | **18** | |\n\n---\n\n## Section 2 \u2014 Common Violation Patterns Across the Batch\n\nThree clear recurring patterns emerged:\n\n### 1. \ud83d\udc31\ud83d\udc36 Species/Product Mismatch (\"mismatched_creative\") \u2014 *7 ads*\nThis is by far the most prevalent issue in the batch. Ads **6, 97, 105, 146, 243, 300, and 359** all violate the `mismatched_creative` rule. The pattern breaks down into two sub-types:\n- **Wrong animal for the product:** e.g., Ad 300 shows a cat in an ad for a dog harness; Ad 359 shows a dog in an ad for cat food; Ad 243 shows a Persian cat in an ad for a dog bowl.\n- **No product visible at all:** e.g., Ads 6, 97, and 105 show only a pet (cat or dog) with zero depiction of the advertised product (scratching post, grain-free dog food, hairball treats). Ad 146 similarly shows only a cat while advertising a cat carrier.\n\n### 2. \ud83e\ude7a Unsubstantiated Health/Cure Claims \u2014 *2 ads*\nAds **161** and **178** both use the phrase \"CURES joint pain\u2026 within days \u2014 guaranteed,\" which is absolute cure language explicitly prohibited under the `unsubstantiated_health_claims` rule. Neither ad cites any clinical source. Ad **146** also makes an extraordinary quantified health claim (\"live 5 years longer\") with no scientific backing.\n\n### 3. \ud83c\udfc6 Absolute Superlative Claims Without Sourcing \u2014 *3 ads*\nAds **140**, **211**, and **146** all make top-ranking or sweeping comparative claims (\"best in the world by every major review site,\" \"#1 vet-recommended in America,\" \"Vets agree / No other food comes close\") without naming a single verifiable source \u2014 a direct violation of the `absolute_superlative_claims` rule.\n\n### 4. \ud83d\udcc9 Low-Quality Creatives \u2014 *3 ads*\nAds **367, 388, and 429** were flagged for quality issues: ads 367 and 429 have severely out-of-focus, blurry images that fail the minimum resolution standard, and ad 388 has keyword-stuffed, incoherent ad copy (\"clumping cat litter!!!! !!! best!! cat clumping cat litter now now now discount discount\").\n\n---\n\n## Section 3 \u2014 Prioritized List for Human Review\n\nPriority is determined by a combination of **severity of violation** (policy violations > misleading > low quality) and **model confidence** (lower confidence = more uncertainty = higher human-review urgency within the same tier).\n\n| Priority | Ad ID | Label | Confidence | Why It's Prioritized |\n|---|---|---|---|---|\n| **1** | **161** | Policy Violation | 0.976 | Absolute medical cure claim (\"CURES joint pain within days\") \u2014 the most legally and reputationally dangerous category. High confidence means the model is very sure; a human should confirm and act quickly. |\n| **2** | **140** | Policy Violation | 0.989 | Absolute superlative + mismatched creative (double violation). Near-certain flag with high confidence; needs rapid action to prevent live display. |\n| **3** | **211** | Policy Violation | 0.993 | \"#1 vet-recommended\" superlative with no source \u2014 extremely high confidence. Another double-violation (superlative + no product in image). |\n| **4** | **178** | Policy Violation | 0.904 | Same \"CURES joint pain\" language as Ad 161, slightly lower confidence (0.904) meaning a small chance it's a borderline case \u2014 still severe and warrants urgent review. |\n| **5** | **146** | Misleading | 0.422 | **Lowest confidence in the batch (0.422).** The model is nearly uncertain whether this is misleading or approved. It carries a serious unsubstantiated health claim (\"live 5 years longer\") and superlative copy \u2014 the low confidence makes human eyes essential here. |\n| **6** | **300** | Misleading | 0.458 | Second-lowest confidence (0.458). The species mismatch (cat shown for a dog product) seems clear, but the model is uncertain enough that a reviewer should verify before action. |\n| **7** | **105** | Misleading | 0.507 | Confidence just above chance (0.507) \u2014 the model is barely leaning toward misleading. The mismatched creative (cat shown for a hairball treat) is a real concern, but the borderline score demands a human call. |\n| **8** | **97** | Misleading | 0.700 | Moderate confidence on a mismatch (puppy image for dog food ad). Lower than the cleaner mismatch cases; worth a human review to ensure context wasn't misread by the model. |\n| **9** | **6** | Misleading | 0.728 | Mismatched creative (cat shown, scratching post advertised). Moderate confidence; lower than the high-confidence mismatches so it edges ahead for manual review. |\n| **10** | **243** | Misleading | 0.777 | Persian cat shown for a dog bowl ad \u2014 clearer mismatch, higher confidence; lower urgency than Ads 6 and 97 but still needs confirmation. |\n| **11** | **359** | Misleading | 0.962 | Dog shown for cat food ad \u2014 high confidence, clear-cut mismatch. Low human-review urgency relative to others because the model is highly certain. |\n| **12** | **388** | Low Quality | 0.717 | Keyword-stuffed copy. Moderate confidence means a reviewer should verify whether it crosses the spam threshold or is just poorly written but salvageable. |\n| **13** | **367** | Low Quality | 0.994 | Blurry image, very high model confidence. Least urgent of the low-quality trio because the issue is clear-cut and easy to resolve (resubmit with a sharper image). |\n| **14** | **429** | Low Quality | 0.998 | Blurry image, highest confidence in the batch. Near-certain call; requires the advertiser to simply resubmit a higher-resolution image \u2014 minimal human adjudication needed. |\n\n> **Approved ads (8, 16, 25, 34)** require no human review action. Note that Ad 25 (confidence 0.709) and Ad 34 (confidence 0.726) carry the lowest confidence scores among the approved group and could optionally be spot-checked if reviewer capacity allows.",
+  "tool_call_log": [
+    {
+      "ad_id": 6,
+      "result": {
+        "ad_id": 515,
+        "predicted_label": "misleading",
+        "confidence": 0.728383481502533,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "## Flag Explanation\n\nThe ad is flagged under the **mismatched_creative** rule because the image shows a **cat** (specifically a Birman or similar long-haired breed), while the ad copy describes a **sisal scratching post** \u2014 no scratching post or any other product is visible anywhere in the image. Per policy, the product shown in the image must match what the ad copy describes, and showing only the cat without the advertised product misleads buyers about what they are actually purchasing. This mirrors the past flagged examples, which similarly paired scratching post claims with images that failed to depict the product itself."
+      }
+    },
+    {
+      "ad_id": 8,
+      "result": {
+        "ad_id": 516,
+        "predicted_label": "approved",
+        "confidence": 0.970892608165741,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": null
+      }
+    },
+    {
+      "ad_id": 16,
+      "result": {
+        "ad_id": 517,
+        "predicted_label": "approved",
+        "confidence": 0.8765532970428467,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": null
+      }
+    },
+    {
+      "ad_id": 25,
+      "result": {
+        "ad_id": 518,
+        "predicted_label": "approved",
+        "confidence": 0.7094116806983948,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": null
+      }
+    },
+    {
+      "ad_id": 34,
+      "result": {
+        "ad_id": 519,
+        "predicted_label": "approved",
+        "confidence": 0.7261968851089478,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": null
+      }
+    },
+    {
+      "ad_id": 97,
+      "result": {
+        "ad_id": 520,
+        "predicted_label": "misleading",
+        "confidence": 0.6997075080871582,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "The ad is flagged under the **mismatched_creative** policy rule because the image shows a live puppy sitting in autumn leaves, while the ad copy is promoting a **grain-free dog food product**. Per the policy, the product shown in the image must match what the ad copy describes \u2014 here, no dog food or food-related product is depicted at all.\n\nWhile the puppy in the image appears consistent with a Keeshond breed (as mentioned in the copy), the fundamental mismatch is that the image contains no representation of the actual product being advertised (dog food), which could mislead buyers about what they are purchasing."
+      }
+    },
+    {
+      "ad_id": 105,
+      "result": {
+        "ad_id": 521,
+        "predicted_label": "misleading",
+        "confidence": 0.5073038935661316,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "## Flag Explanation\n\nThe image shows a **live Ragdoll cat** sitting on a floor, while the ad copy describes a **hairball control treat mix** product. Per the `mismatched_creative` policy rule, the product shown in the image must match what the ad copy describes \u2014 in this case, the image contains no treat product whatsoever, only the cat itself.\n\nA buyer viewing this ad cannot see the actual product being sold, which misleads them about what they are purchasing. The ad fails the `accurate_compliant_ad` baseline because the creative does not depict the advertised product (the treat mix), making it non-compliant regardless of the breed reference in the copy."
+      }
+    },
+    {
+      "ad_id": 140,
+      "result": {
+        "ad_id": 522,
+        "predicted_label": "policy_violation",
+        "confidence": 0.9889407753944397,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged under the **absolute_superlative_claims** policy rule. The ad copy states the product is \"rated the best joint & mobility support chew in the world by every major review site, hands down,\" which is an unqualified superlative claim \u2014 no specific review sites are named, no links or sources are cited, and there is no way to verify the assertion. Per policy, claims framing a product as the top-ranked or best-in-class require a named, checkable source to be permitted.\n\nAdditionally, the claim references \"every major review site,\" which is a sweeping absolute that compounds the violation by being inherently unverifiable. The image shows only a black puppy sitting on a wooden deck, with no product visible, meaning there is no visual substantiation whatsoever for the performance claims made in the text."
+      }
+    },
+    {
+      "ad_id": 146,
+      "result": {
+        "ad_id": 523,
+        "predicted_label": "misleading",
+        "confidence": 0.42247045040130615,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged for two policy violations. First, under **absolute_superlative_claims**, the phrases \"Vets agree\" and \"No other grain-free cat food comes close\" are unqualified superlatives with no named, checkable source cited \u2014 the policy requires that such claims be substantiated with a verifiable reference. Second, the guarantee that the food will make a Siamese cat \"live 5 years longer\" is an extraordinary quantified health claim with no clinical or scientific source provided to back it up.\n\nAdditionally, while the image does show what appears to be a Siamese (or Siamese-mix) cat \u2014 consistent with the breed mentioned in the text \u2014 the ad is promoting a cat food product, yet no food product is depicted anywhere in the image, creating a minor mismatch between the described product and what is actually shown."
+      }
+    },
+    {
+      "ad_id": 161,
+      "result": {
+        "ad_id": 524,
+        "predicted_label": "policy_violation",
+        "confidence": 0.9758535623550415,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged for violating the **unsubstantiated_health_claims** policy. The ad copy states the product \"CURES joint pain in cats within days \u2014 guaranteed or your money back,\" which uses precisely the kind of absolute cure and guarantee language the policy prohibits, with no cited clinical source to substantiate the claim.\n\nAdditionally, the image shows a cat resting on what appears to be a patchwork blanket or bedding \u2014 there is no cat carrier visible at all, making the product claim entirely unsupported by the visual content. The combination of a medically absolute, unsubstantiated cure claim and the absence of the advertised product in the image makes this ad doubly problematic under platform policy."
+      }
+    },
+    {
+      "ad_id": 178,
+      "result": {
+        "ad_id": 525,
+        "predicted_label": "policy_violation",
+        "confidence": 0.9042888283729553,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged for violating the **unsubstantiated_health_claims** policy. The ad copy states the chew toy \"CURES joint pain in dogs within days \u2014 guaranteed or your money back,\" which uses exactly the kind of absolute cure/guarantee language the rule explicitly prohibits, with no cited clinical source to substantiate the claim.\n\nThe image shows a large black dog (likely a Newfoundland) sitting outdoors \u2014 there is no chew toy visible, no demonstration of joint health benefits, and nothing that could be construed as supporting the medical claim made in the text. The mismatch between a straightforward dog portrait and an aggressive, unsubstantiated cure claim further underscores the ad's reliance on misleading copy to make the product appear medically validated when it is not."
+      }
+    },
+    {
+      "ad_id": 211,
+      "result": {
+        "ad_id": 526,
+        "predicted_label": "policy_violation",
+        "confidence": 0.9928600192070007,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged for two policy violations. First, the claim \"#1 vet-recommended orthopedic dog bed in America\" violates the **absolute_superlative_claims** rule, which requires that such rankings cite a named, checkable source \u2014 none is provided here, making it unsubstantiated. Second, the **mismatched_creative** rule is triggered because the image shows only a close-up of a Boxer puppy's face, with no dog bed visible anywhere in the frame, meaning the product being advertised (an orthopedic dog bed) is entirely absent from the creative, misleading buyers about what they are purchasing."
+      }
+    },
+    {
+      "ad_id": 243,
+      "result": {
+        "ad_id": 527,
+        "predicted_label": "misleading",
+        "confidence": 0.7766191959381104,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "## Flagging Explanation\n\nThis ad was flagged under the **mismatched_creative** policy rule, which requires that the animal or product shown in the image must match what the ad copy describes. The image clearly shows a **long-haired Persian cat** lounging on a pet bed \u2014 not a dog of any breed. However, the ad copy describes a **slow-feed dog bowl tested with dog breeds including the Shiba Inu**, with no cat or cat product referenced at all. This direct mismatch between a feline subject in the image and a canine product in the text would mislead buyers about what they are actually purchasing."
+      }
+    },
+    {
+      "ad_id": 300,
+      "result": {
+        "ad_id": 528,
+        "predicted_label": "misleading",
+        "confidence": 0.45822399854660034,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged for a **mismatched creative** under the misleading category. The image clearly shows a **black cat** lying on a plaid blanket, while the ad copy describes a **no-pull dog harness** marketed specifically to owners of **miniature pinschers** (a dog breed). Per the policy rule, the animal shown in the image must match what the ad copy describes \u2014 showing a cat in an ad for a dog product directly misleads buyers about what they are purchasing or who the product is intended for."
+      }
+    },
+    {
+      "ad_id": 359,
+      "result": {
+        "ad_id": 529,
+        "predicted_label": "misleading",
+        "confidence": 0.9619834423065186,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged for a **mismatched creative** under the misleading category. The image clearly shows a dog \u2014 specifically what appears to be a Shiba Inu on a leash in a grassy field \u2014 while the ad copy describes a grain-free **cat food** product formulated for Maine Coons and other cats. Per the policy rule, the animal shown in the image must match what the ad copy describes, and showing a dog in an ad for cat food directly misleads buyers about what they are purchasing."
+      }
+    },
+    {
+      "ad_id": 367,
+      "result": {
+        "ad_id": 530,
+        "predicted_label": "low_quality",
+        "confidence": 0.9942969679832458,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged under the **low_quality** standard because the image is severely out of focus and lacks sufficient resolution to clearly show any identifiable product or animal, failing the policy requirement that images must be \"in focus and reasonably high resolution.\" What the image appears to show is a blurry, close-up view of what may be skin or fur, but no hairball control treat or cat is discernible. Since the creative cannot visually communicate what the ad copy describes \u2014 a hairball control treat mix for cats like the Sphynx \u2014 it does not meet the minimum quality threshold for marketplace display."
+      }
+    },
+    {
+      "ad_id": 388,
+      "result": {
+        "ad_id": 531,
+        "predicted_label": "low_quality",
+        "confidence": 0.7165449261665344,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "This ad was flagged under the **low_quality_creative** standard because the ad copy consists entirely of repetitive, keyword-stuffed fragments (\"clumping cat litter!!!! !!! best!! cat clumping cat litter now now now discount discount\") rather than a coherent sentence that meaningfully describes the product. Per the policy, ad copy must be a coherent sentence describing the product, not keyword-stuffed spam or a fragment with no real product information. While the underlying product (cat litter) may be legitimate and the image does show a cat that is consistent with a cat litter ad, the execution is poor enough to warrant holding for review."
+      }
+    },
+    {
+      "ad_id": 429,
+      "result": {
+        "ad_id": 532,
+        "predicted_label": "low_quality",
+        "confidence": 0.9975148439407349,
+        "model_version": "joint_v2_postfix_97565ac7",
+        "explanation": "The ad was flagged under **low_quality_creative** because the image is severely out of focus and too blurry to clearly identify the product (a self-grooming slicker brush) or even the cat breed mentioned (Birman). Per the policy rule, images must be \"in focus and reasonably high resolution,\" and this image fails that standard entirely \u2014 no product detail is discernible. While the ad copy itself is a coherent, descriptive sentence, the unusable image quality alone is sufficient to hold it for review as a low-quality creative."
+      }
+    }
+  ],
+  "n_iterations": 2,
+  "stop_reason": "end_turn"
+}
