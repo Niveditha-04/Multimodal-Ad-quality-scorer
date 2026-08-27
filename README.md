@@ -21,6 +21,7 @@ model/          CLIP embedding extraction + classifier head training/eval
 api/            FastAPI service: POST /score, GET /stats
 rag/            Chroma vector store + Claude-generated explanations
 ab_test/        Rule-based baseline + statistical comparison vs. the classifier
+mcp_server/     (optional) MCP tool wrapper around the same scoring pipeline
 ```
 
 Pipeline for one `/score` request: image + text in -> frozen CLIP encodes both
@@ -93,6 +94,9 @@ uvicorn api.main:app --reload
 
 # 7. Simulated offline A/B comparison
 python -m ab_test.run_comparison
+
+# 8. (optional) MCP server -- separate entry point, not required for anything above
+python -m mcp_server.server
 ```
 
 `sqlite3 db/ads.db < db/queries.sql` runs the 5 reference queries directly.
@@ -194,6 +198,30 @@ Two independent statistical tests agree the difference is real:
 label, confidence, model version, and (if flagged) an LLM explanation.
 `GET /stats` runs the violation-rate-by-category query against whatever has
 actually been scored. Every scored ad is persisted to `db/ads.db`.
+
+### MCP server (Phase 6, optional)
+
+`mcp_server/server.py` exposes the same scoring + explanation pipeline as an
+MCP tool (`check_ad_compliance(image_path, ad_text)`), for an MCP-capable
+agent to call directly rather than going through HTTP. It's a genuinely
+separate entry point -- doesn't import `api/main.py` -- but reuses the same
+underlying `model/clip_features.py`, `model/classifier_architecture.py`, and
+`rag/explain.py` modules, so both entry points score identically. Run with
+`python -m mcp_server.server` (stdio transport).
+
+Note: this directory is named `mcp_server/`, not `mcp/`, deliberately -- an
+earlier version used `mcp/` and it silently collided with the installed
+`mcp` PyPI package's own name (`import mcp` resolving ambiguously depending
+on `sys.path` order, made unambiguous only by accident). Caught and fixed
+before it became a real bug.
+
+Tested through the SDK's actual tool-dispatch layer (`server.call_tool(...)`,
+not just calling the underlying Python function directly) with both a real
+flagged prediction (correct label, real Claude explanation call) and both
+error paths (missing image file, empty text) -- confirmed each returns a
+clean structured error rather than a raised exception, which was verified
+empirically to produce a worse result at this layer (a wrapped
+`UnexpectedToolError` with a full traceback) than a clean JSON payload does.
 
 ## RAG + LLM explanation layer
 
