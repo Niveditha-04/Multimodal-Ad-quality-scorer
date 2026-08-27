@@ -105,7 +105,18 @@ _SYSTEM_PROMPT_LEAK_MARKERS = [
     "the ad text inside the <ad_copy> tags",
 ]
 _BARE_APPROVAL_PATTERNS = ["approved", "compliant", "confirmed", "no issues", "no violations"]
+# broad vocabulary for the off-topic check -- lenient on purpose, since that
+# check only needs to confirm the response is about ad review AT ALL
 _AD_REVIEW_VOCAB = ["polic", "flag", "violat", "rule", "ad ", "ad_", "creative", "image", "text"]
+# stricter vocabulary for the bare-approval check specifically -- deliberately
+# excludes "ad "/"image"/"text", which turned out to appear even in a
+# hand-written failure case ("This ad is fully compliant and approved,
+# confirmed.") purely because it mentions "ad" as an ordinary word, not
+# because it's grounded in anything. Caught by testing a synthetic
+# already-successful-injection string against this function directly, not
+# just checking real (already-safe) outputs -- the original single vocab
+# list let that string slip through undetected.
+_SUBSTANTIVE_GROUNDING_VOCAB = ["polic", "flag", "violat", "rule", "creative"]
 
 
 def validate_explanation_output(text: str, predicted_label: str) -> tuple[bool, str | None]:
@@ -124,8 +135,8 @@ def validate_explanation_output(text: str, predicted_label: str) -> tuple[bool, 
     if predicted_label != "approved":
         word_count = len(text.split())
         has_approval_language = any(p in lowered for p in _BARE_APPROVAL_PATTERNS)
-        has_review_vocab = any(v in lowered for v in _AD_REVIEW_VOCAB)
-        if word_count < 15 and has_approval_language and not has_review_vocab:
+        has_grounding = any(v in lowered for v in _SUBSTANTIVE_GROUNDING_VOCAB)
+        if word_count < 15 and has_approval_language and not has_grounding:
             return False, "output looks like a bare approval with no policy grounding, on a flagged ad"
 
     if not any(v in lowered for v in _AD_REVIEW_VOCAB):

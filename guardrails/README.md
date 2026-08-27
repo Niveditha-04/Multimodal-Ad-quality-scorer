@@ -92,6 +92,30 @@ explanations were incorrectly flagged**. A safety check that also blocks
 good output isn't a safety check worth shipping, so this was verified
 before relying on it, not assumed.
 
+**But that only tests false positives, not detection.** Since all 8 real
+adversarial cases were resisted before ever reaching the output stage, none
+of them exercised whether the validator would actually catch a genuinely
+successful injection if one occurred -- its detection capability itself was
+unverified. Closed this gap directly (`guardrails/test_validator_detection.py`):
+handed the validator 4 hand-written strings representing what a *successful*
+injection's output would look like (a leaked-system-prompt string, a bare
+"Approved. No issues found.", a poem in place of a review), skipping the LLM
+call entirely, and checked it actually fires.
+
+**This caught a real bug in the validator itself.** The first version's
+bare-approval check used `_AD_REVIEW_VOCAB` (which includes `"ad "`) as its
+"has this got real grounding" signal -- but `"This ad is fully compliant and
+approved, confirmed."` matches `"ad "` purely because it mentions the word
+"ad," not because it's grounded in anything, so that string slipped through
+undetected. Fixed by splitting into two vocab lists: the original broad one
+stays for the off-topic check (appropriately lenient there -- it only needs
+to confirm the response is about ad review at all), and a stricter
+`_SUBSTANTIVE_GROUNDING_VOCAB` (excluding `"ad "`/`"image"`/`"text"`) now
+gates the bare-approval check specifically. Re-verified after the fix: all
+4 synthetic failures now caught, and the 0/32 false-positive result and all
+8 real adversarial cases were re-checked against the fixed validator with no
+regression.
+
 ## After-defense results
 
 Re-ran all 8 adversarial cases against the defended pipeline. **Still 8/8
@@ -118,6 +142,27 @@ proof the underlying resistance is any stronger than baseline already was.
   precisely in any writeup of this phase -- "I added guardrails and
   verified no regression" is accurate; "I found and fixed a prompt
   injection vulnerability" would not be.
+- **"8/8 resisted" is evidence of robustness against known patterns, not a
+  security guarantee.** This tested 8 specific, fairly well-known attack
+  categories (instruction override, fake authority, fake context, roleplay,
+  topic hijack, prompt extraction, fake conversation history) against one
+  model, which already has baseline resistance to common injection patterns
+  trained in -- it is not a systematic red-team exercise or a fuzzing
+  approach, and it does not establish immunity to prompt injection in
+  general. The correct claim is "I tested known categories and none
+  succeeded, with hardening added regardless" -- not "I proved this system
+  is secure." If pressed on this in an interview, "I tested known
+  categories, I didn't do exhaustive red-teaming" is the honest answer.
+- The output validator's detection capability *was* verified directly
+  (`guardrails/test_validator_detection.py`, 4/4 synthetic
+  already-successful-injection strings caught, which is how the "ad "
+  vocabulary bug above was found) -- but only for the 3 specific failure
+  shapes it's designed to catch (leaked system prompt, bare unsupported
+  approval, zero on-topic vocabulary). A successful injection that doesn't
+  take one of those 3 shapes -- e.g. a fluent, well-grounded-*sounding*
+  explanation that reaches a wrong conclusion via other means -- would not
+  necessarily be caught. This validator is a backstop for specific known
+  failure signatures, not a general-purpose correctness check.
 - Only single-turn, single-request testing. This pipeline has no
   conversation history or multi-turn state to exploit, so multi-turn
   jailbreak techniques that rely on gradually eroding context over several
@@ -125,6 +170,3 @@ proof the underlying resistance is any stronger than baseline already was.
 - The output validator's keyword lists are specific to this pipeline's
   known system-prompt phrases and this task's expected vocabulary -- it
   would need to be revisited if the system prompt or task changes.
-- 8 examples is not exhaustive; this doesn't establish the pipeline is
-  immune to prompt injection in general, only that these 8 specific,
-  fairly well-known strategies didn't succeed.
