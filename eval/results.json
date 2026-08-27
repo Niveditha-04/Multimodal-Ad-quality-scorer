@@ -1,0 +1,383 @@
+{
+  "n_examples": 32,
+  "aggregate": {
+    "groundedness": {
+      "mean": 1.656,
+      "n_score_0": 2,
+      "n_score_1": 7,
+      "n_score_2": 23,
+      "failure_rate_pct": 6.2
+    },
+    "rule_accuracy": {
+      "mean": 1.656,
+      "n_score_0": 3,
+      "n_score_1": 5,
+      "n_score_2": 24,
+      "failure_rate_pct": 9.4
+    },
+    "hallucination": {
+      "mean": 1.438,
+      "n_score_0": 8,
+      "n_score_1": 2,
+      "n_score_2": 22,
+      "failure_rate_pct": 25.0
+    }
+  },
+  "headline_hallucination_rate_pct": 25.0,
+  "headline_hallucination_rate_95ci_pct": [
+    13.3,
+    42.1
+  ],
+  "by_misclassification_status": {
+    "misclassified_ads": {
+      "groundedness": {
+        "mean": 2.0,
+        "n_score_0": 0
+      },
+      "rule_accuracy": {
+        "mean": 0.25,
+        "n_score_0": 3
+      },
+      "hallucination": {
+        "mean": 0.25,
+        "n_score_0": 3
+      }
+    },
+    "true_positive_ads": {
+      "groundedness": {
+        "mean": 1.607,
+        "n_score_0": 2
+      },
+      "rule_accuracy": {
+        "mean": 1.857,
+        "n_score_0": 0
+      },
+      "hallucination": {
+        "mean": 1.607,
+        "n_score_0": 5
+      }
+    }
+  },
+  "per_example": [
+    {
+      "ad_id": 6,
+      "ground_truth_label": "approved",
+      "model_predicted_label": "misleading",
+      "is_misclassification": true,
+      "groundedness": 2,
+      "rule_accuracy": 0,
+      "hallucination": 0,
+      "note": "Accurately describes image (Birman cat outdoors); genuine_rule=none so any asserted rule is auto-0; fabricates 'product must be visible in frame' requirement, the v1-known hallucination, reproduced identically."
+    },
+    {
+      "ad_id": 97,
+      "ground_truth_label": "approved",
+      "model_predicted_label": "misleading",
+      "is_misclassification": true,
+      "groundedness": 2,
+      "rule_accuracy": 0,
+      "hallucination": 0,
+      "note": "Accurately describes image (Keeshond puppy), even hedges 'breed shown may technically align'; genuine_rule=none -> auto-0; same fabricated product-visibility requirement."
+    },
+    {
+      "ad_id": 105,
+      "ground_truth_label": "approved",
+      "model_predicted_label": "misleading",
+      "is_misclassification": true,
+      "groundedness": 2,
+      "rule_accuracy": 0,
+      "hallucination": 0,
+      "note": "Accurately describes image (Ragdoll cat); genuine_rule=none -> auto-0; same fabricated product-visibility requirement, third occurrence."
+    },
+    {
+      "ad_id": 146,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "misleading",
+      "is_misclassification": true,
+      "groundedness": 2,
+      "rule_accuracy": 1,
+      "hallucination": 1,
+      "note": "Correctly notes species matches (no image error); genuine_rule=unsubstantiated_health_claims but cites absolute_superlative_claims -- ad genuinely contains both violation types textually, so not fabricated, just not the pre-committed primary rule; also tacks on the same product-visibility fabrication as secondary, non-central support."
+    },
+    {
+      "ad_id": 300,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate description (black cat on plaid blanket, matches visual confirmation); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 249,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Cocker Spaniel); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 333,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Japanese Chin); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 321,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Sphynx); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 347,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate, appropriately hedged breed ID ('Miniature Pinscher or similar'); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 277,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Siamese); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 243,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Persian); correct rule, genuinely and accurately applied to a real mismatch; no fabrication."
+    },
+    {
+      "ad_id": 320,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Leonberger); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 359,
+      "ground_truth_label": "misleading",
+      "model_predicted_label": "misleading",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Shiba Inu); correct rule, real mismatch, no fabrication."
+    },
+    {
+      "ad_id": 185,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 0,
+      "rule_accuracy": 1,
+      "hallucination": 0,
+      "note": "Claims pictured dog 'is not identifiable as an American Pit Bull Terrier' -- ground truth confirms it genuinely is (visually verified); genuine_rule=prohibited_language but cites absolute_superlative_claims; fabricates a breed-mismatch violation asserted as co-equal reasoning."
+    },
+    {
+      "ad_id": 157,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 1,
+      "hallucination": 0,
+      "note": "Accurate image description; genuine_rule=prohibited_language but cites absolute_superlative_claims (text does contain overlapping absolute-claim language, so plausible not fabricated); adds fabricated mismatched_creative as a co-equal second violation."
+    },
+    {
+      "ad_id": 178,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 1,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "No image description; correct rule, accurate, no fabrication."
+    },
+    {
+      "ad_id": 168,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 1,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "No image description; correct rule, accurate, no fabrication."
+    },
+    {
+      "ad_id": 161,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 1,
+      "note": "Correct rule (unsubstantiated_health_claims) stated first and accurately; image description plausible (not independently re-verified at scoring time); fabricated product-visibility point added but framed as subordinate/compounding, not an independent violation."
+    },
+    {
+      "ad_id": 170,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 1,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "No image description; correct rule, accurate, no fabrication."
+    },
+    {
+      "ad_id": 144,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 0,
+      "rule_accuracy": 1,
+      "hallucination": 0,
+      "note": "Misidentifies breed as 'Goldendoodle' when ground truth is wheaten terrier (specific, checkable, wrong); correct primary rule (fake_urgency_or_scarcity) but adds a fabricated second violation (mismatched_creative) asserted as co-equal reasoning."
+    },
+    {
+      "ad_id": 145,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 1,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "No image description; correct rule, accurate, no fabrication."
+    },
+    {
+      "ad_id": 140,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 1,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "No image description at all (rubric: no-description = 1, not 2); correct rule, accurate quote, no fabrication."
+    },
+    {
+      "ad_id": 211,
+      "ground_truth_label": "policy_violation",
+      "model_predicted_label": "policy_violation",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 0,
+      "note": "Accurate breed ID (Boxer, matches ground truth); correct rule stated first and precisely; adds fabricated mismatched_creative as an explicit co-equal second violation ('flagged... on two counts')."
+    },
+    {
+      "ad_id": 418,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Correctly identifies text-spam, correctly notes image (Siamese cat) is relevant and fine; correct rule, no fabrication."
+    },
+    {
+      "ad_id": 436,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurate breed ID (Boxer puppy); correctly identifies text-spam as sole issue; correct rule, no fabrication."
+    },
+    {
+      "ad_id": 388,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Correctly identifies text-spam as the issue, correctly notes image is fine and relevant (cat, matches ground truth); correct rule, no fabrication."
+    },
+    {
+      "ad_id": 412,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 1,
+      "hallucination": 0,
+      "note": "Accurate breed ID (Shiba Inu) and plausible specific image detail (watermark text); but incorrectly asserts the (ground-truth-normal) image is itself 'generic' and contributes to the low_quality flag ('mismatched generic image constitute a low-quality creative') -- same product/image-relevance fabrication pattern leaking into a low_quality explanation, presented as central supporting reasoning alongside the correct text-spam finding."
+    },
+    {
+      "ad_id": 396,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 1,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "No image description; correct rule, accurate quote, no fabrication."
+    },
+    {
+      "ad_id": 450,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 1,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "No image description; correct rule, accurate quote, no fabrication."
+    },
+    {
+      "ad_id": 461,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Appropriately hedged blur description ('appears to show... too blurry to identify'); correct rule, no fabrication."
+    },
+    {
+      "ad_id": 429,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurately describes severe blur (matches direct visual confirmation of this exact image); correct rule, no fabrication."
+    },
+    {
+      "ad_id": 367,
+      "ground_truth_label": "low_quality",
+      "model_predicted_label": "low_quality",
+      "is_misclassification": false,
+      "groundedness": 2,
+      "rule_accuracy": 2,
+      "hallucination": 2,
+      "note": "Accurately describes severe blur, appropriately hedged ('appears to show'); correctly identifies text as coherent (correct subtype ID); correct rule, no fabrication."
+    }
+  ]
+}
