@@ -135,6 +135,9 @@ async def run_audit(ad_ids: list[int]) -> dict:
 
 
 def main() -> None:
+    import sys
+    out_path = sys.argv[1] if len(sys.argv) > 1 else "agent/results/audit_run.json"
+
     batch = json.loads(open("agent/batch.json").read())
     ad_ids = [b["ad_id"] for b in batch]
     print(f"auditing {len(ad_ids)} ads: {ad_ids}\n")
@@ -155,9 +158,9 @@ def main() -> None:
     print(f"{'='*60}\n")
     print(result["final_summary"])
 
-    with open("agent/results/audit_run.json", "w") as f:
+    with open(out_path, "w") as f:
         json.dump(result, f, indent=2)
-    print("\nsaved full transcript to agent/results/audit_run.json")
+    print(f"\nsaved full transcript to {out_path}")
 
 
 if __name__ == "__main__":
