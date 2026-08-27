@@ -128,7 +128,15 @@ async def score_ad(image: UploadFile = File(...), text: str = Form(...)):
 
 
 @app.get("/stats")
-def get_stats():
+def get_stats(model_version: str | None = None):
+    # scores accumulates rows from multiple model_versions (this classifier,
+    # the rule-based baseline, past retrains) -- see db/README.md. Every
+    # reference query in db/queries.sql filters by model_version for exactly
+    # this reason; this endpoint defaults to the currently-loaded model so a
+    # caller gets that model's own stats, not a blend across arms. Pass
+    # ?model_version=... to inspect a different arm (e.g. the baseline).
+    filter_version = model_version or ml_state["model_version"]
+
     session = SessionLocal()
     try:
         rows = session.execute(
@@ -136,19 +144,25 @@ def get_stats():
                 """
                 SELECT predicted_label, COUNT(*) AS n_predictions
                 FROM scores
+                WHERE model_version = :model_version
                 GROUP BY predicted_label
                 ORDER BY n_predictions DESC
                 """
-            )
+            ),
+            {"model_version": filter_version},
         ).fetchall()
-        total = session.execute(text("SELECT COUNT(*) FROM scores")).scalar()
+        total = session.execute(
+            text("SELECT COUNT(*) FROM scores WHERE model_version = :model_version"),
+            {"model_version": filter_version},
+        ).scalar()
     finally:
         session.close()
 
     if total == 0:
-        return {"total_scored": 0, "by_predicted_label": []}
+        return {"model_version": filter_version, "total_scored": 0, "by_predicted_label": []}
 
     return {
+        "model_version": filter_version,
         "total_scored": total,
         "by_predicted_label": [
             {
