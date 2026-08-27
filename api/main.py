@@ -116,7 +116,7 @@ async def score_ad(image: UploadFile = File(...), text: str = Form(...)):
     explanation = None
     if predicted_label != "approved":
         from rag.explain import generate_explanation
-        explanation = generate_explanation(ad_text=text, predicted_label=predicted_label)
+        explanation = generate_explanation(ad_text=text, predicted_label=predicted_label, image=pil_image)
 
     return ScoreResponse(
         ad_id=ad_id,

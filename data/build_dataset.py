@@ -161,6 +161,12 @@ def make_text(label: str, species: str, breed: str, cat_breeds: list[str], dog_b
 def main() -> None:
     OUT_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
+    if not RAW_IMAGES_DIR.exists():
+        # ~800MB, downloads once; torchvision handles the extraction
+        print("data/raw/oxford-iiit-pet not found, downloading (~800MB)...")
+        from torchvision.datasets import OxfordIIITPet
+        OxfordIIITPet(root="data/raw", download=True, target_types="category")
+
     all_files = sorted(RAW_IMAGES_DIR.glob("*.jpg"))
     print(f"found {len(all_files)} candidate jpg files")
 
