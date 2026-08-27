@@ -1,0 +1,26 @@
+{
+  "purpose": "Compares image-only, text-only, and joint (image+text concatenated) classifier heads on the identical train/test split, to verify the joint model is actually doing multimodal fusion rather than being dominated by one modality.",
+  "note": "An earlier version of the 'misleading' label leaked through a fixed filler breed name (\"Persian\"/\"Labrador Retriever\" hardcoded for the wrong species), which let text-only hit 100% recall on that class via keyword matching. Fixed by sampling the filler breed from the full wrong-species breed pool; results below are post-fix.",
+  "accuracy": {
+    "image_only": 0.3646,
+    "text_only": 0.6875,
+    "joint": 0.8958
+  },
+  "recall_by_class": {
+    "approved":          {"image_only": 0.208, "text_only": 0.542, "joint": 0.875},
+    "policy_violation":  {"image_only": 0.458, "text_only": 1.000, "joint": 0.917},
+    "misleading":        {"image_only": 0.292, "text_only": 0.625, "joint": 0.792},
+    "low_quality":       {"image_only": 0.500, "text_only": 0.583, "joint": 1.000}
+  },
+  "findings": [
+    "misleading (image-text mismatch): joint model (0.792 recall) clearly beats both single-modality ablations (image-only 0.292, text-only 0.625). This is the expected result -- detecting a mismatch is inherently relational and needs both modalities present at once. Neither modality alone can 'know' what the other one claims.",
+    "policy_violation (banned claim language): this is the one place the joint model does NOT beat the single-modality baseline -- text-only hits 1.000 recall, joint is 0.917. Concatenating image features that carry no information about claim language adds parameters without adding signal for this class, and appears to cost a small amount of recall at the margin. This is reported as-is rather than smoothed over: for a production system, a rule/text-only path for claim-language violations would likely outperform the joint model on this specific category.",
+    "low_quality (half image-degraded, half text-degraded): joint model hits 1.000 recall by combining both signals -- neither single modality gets above 0.583 because each one is blind to exactly the degradation type it can't see (image-only misses the text-garbled half, text-only misses the image-blurred half).",
+    "image-only accuracy (0.365) is barely above random-guess baseline (0.25) except on low_quality, confirming the image alone carries very little signal for approved/policy_violation/misleading -- those three classes use undegraded, randomly-sampled photos, so there's genuinely nothing in the image alone to distinguish them by construction."
+  ],
+  "statistical_caveats": {
+    "note": "Test set is 96 examples, 24 per class -- individual per-class recall numbers carry wide 95% Wilson confidence intervals (see model/results/confidence_intervals.json) and should be read as directional, not precise to the decimal point.",
+    "overall_ranking_is_robust": "The three modalities' overall-accuracy 95% CIs do not overlap (image [0.275, 0.464], text [0.589, 0.771], joint [0.819, 0.942]), so the headline ranking joint > text > image is statistically solid despite the small test set.",
+    "one_number_not_distinguishable_from_chance": "image-only recall on misleading is 0.292 with 95% CI [0.149, 0.492] -- this interval contains the random-guess baseline of 0.25, so at n=24 this specific point estimate cannot be statistically distinguished from chance, even though the near-floor performance is exactly what the relational-signal hypothesis predicts."
+  }
+}
