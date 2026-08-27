@@ -1,0 +1,130 @@
+[
+  {
+    "ad_id": 6,
+    "explanation": "The ad was flagged under the **mismatched_creative** policy because the image shows only a **Birman cat** sitting outdoors on grass \u2014 no scratching post or any product is visible whatsoever. The ad copy describes \"a dependable sisal scratching post,\" but the image contains no such product, meaning the buyer cannot see what they are actually being asked to purchase. Per the policy rule, the product shown in the image must match what the ad copy describes, and here the advertised product (the scratching post) is entirely absent from the creative."
+  },
+  {
+    "ad_id": 97,
+    "explanation": "The ad text claims the dog food was \"tested with breeds including the keeshond,\" but the image shows what appears to be a **Keeshond puppy** \u2014 not a dog food product. According to the **mismatched_creative** policy, the product shown in the image must match what the ad copy describes, and an ad for a food product must not mislead buyers by substituting an image of an animal for the actual product being sold.\n\nWhile the breed shown may technically align with the breed mentioned in the text, the image displays **only the dog** with no depiction of the dog food itself, creating a mismatch between the advertised product (grain-free dog food) and what the creative actually shows. This misleads buyers about what they are purchasing, as the visual gives no indication of the product's appearance, packaging, or form."
+  },
+  {
+    "ad_id": 105,
+    "explanation": "The ad text describes a **hairball control treat mix** product, but the image shows only a Ragdoll cat with no treat, product packaging, or any related item visible. According to the **mismatched_creative** policy rule, the product shown in the image must match what the ad copy describes \u2014 in this case, the ad should be displaying the actual treat mix product, not just the cat alone.\n\nWhile the cat's breed (Ragdoll) does align with the breed mentioned in the text, the core product being advertised \u2014 the hairball control treat mix \u2014 is entirely absent from the image, misleading buyers about what they are actually purchasing."
+  },
+  {
+    "ad_id": 146,
+    "explanation": "The ad was flagged primarily for **absolute_superlative_claims**: the text asserts \"Vets agree\" and that the food \"guarantees your Siamese will live 5 years longer\" and that \"no other grain-free cat food comes close\" \u2014 all bold, unqualified superlatives with no named, checkable source cited, which the policy explicitly prohibits. Additionally, while the image does show what appears to be a Siamese cat (consistent with the text on that point), the ad is promoting a cat food product, yet no food product is visible anywhere in the image, creating a disconnect between the product being sold and what is actually depicted. The combination of an unsubstantiated longevity guarantee attributed to unnamed vets and an unverifiable superiority claim makes this ad non-compliant under the absolute_superlative_claims rule."
+  },
+  {
+    "ad_id": 300,
+    "explanation": "The ad is flagged under the **mismatched_creative** policy rule, which requires that the animal or product shown in the image must match what the ad copy describes. The image clearly shows a **black cat** lying on a plaid blanket, while the ad text describes a **no-pull dog harness** intended for miniature pinschers. This is a direct mismatch between the pictured animal (a cat) and the product being advertised (a dog harness), which misleads buyers about what they are purchasing."
+  },
+  {
+    "ad_id": 249,
+    "explanation": "The ad text explicitly describes a product for **Maine Coon cats** (\"grain-free cat food\" targeted at Maine Coon owners), but the image shows a **golden/red Cocker Spaniel dog** sitting on a patio chair \u2014 no cat or cat-related product appears anywhere in the image. This directly violates the `mismatched_creative` policy rule, which states that the animal or product shown in the image must match what the ad copy describes, as mismatches mislead buyers about what they are purchasing. The disconnect between a dog in the image and cat food in the text would cause a reasonable buyer to be confused about the product being advertised."
+  },
+  {
+    "ad_id": 333,
+    "explanation": "The ad was flagged under the **mismatched_creative** policy rule, which requires that the animal shown in the image must match the animal described in the ad copy. The image clearly shows a **dog** \u2014 specifically what appears to be a Japanese Chin \u2014 running across a grassy lawn, while the ad text explicitly describes a product \"made for Egyptian Maus and other cats.\" This is a direct mismatch between the pictured animal and the described product, which misleads buyers into uncertainty about what species the product is actually intended for."
+  },
+  {
+    "ad_id": 321,
+    "explanation": "The ad was flagged for a **mismatched creative** under the `mismatched_creative` policy rule, which requires that the animal or product shown in the image must match what the ad copy describes. The image clearly shows a **Sphynx cat** (a hairless cat breed), while the ad text explicitly describes a product \"made for German Shorthaireds and other **dogs**\" \u2014 a slow-feed **dog bowl**. This is a direct mismatch between the pictured animal (a cat) and the described product and target animal (dogs), which misleads buyers about what they are purchasing."
+  },
+  {
+    "ad_id": 347,
+    "explanation": "The ad was flagged under the **mismatched_creative** policy rule, which requires that the animal shown in the image must match the animal described in the ad copy. The image clearly shows a dog (appearing to be a Miniature Pinscher or similar short-haired breed), while the ad text describes a **hairball control treat mix for cats**, specifically referencing the Russian Blue cat breed. This direct mismatch between the dog pictured and the cat product described would mislead buyers about what they are purchasing, in direct violation of the policy."
+  },
+  {
+    "ad_id": 277,
+    "explanation": "## Flag Explanation\n\nThis ad was flagged under the **mismatched_creative** policy rule, which requires that the animal or product shown in the image must match what the ad copy describes. The image clearly shows a **Siamese cat**, while the ad text describes an **orthopedic dog bed** recommended specifically for **Newfoundlands** (a large dog breed). This is a direct species-level mismatch \u2014 a cat is being shown in an advertisement for a dog product \u2014 which misleads the buyer about what they are purchasing and for which animal it is intended."
+  },
+  {
+    "ad_id": 243,
+    "explanation": "## Why This Ad Was Flagged\n\nThe ad was flagged under the **mismatched_creative** policy rule, which requires that the animal or product shown in the image must match what the ad copy describes. The image clearly shows a **long-haired Persian cat** lounging on what appears to be a decorative blanket or cat bed \u2014 yet the ad text describes a **slow-feed dog bowl tested with dog breeds including the Shiba Inu**. There is no dog, dog bowl, or any dog-related product visible in the image whatsoever. This direct mismatch between the cat shown and the dog product described would mislead buyers about what they are actually purchasing."
+  },
+  {
+    "ad_id": 320,
+    "explanation": "The ad text describes a **cat food product** tested with cat breeds like the Russian Blue, but the image clearly shows a **large-breed dog** (appearing to be a Leonberger) on a leash outdoors \u2014 not a cat or any cat-related product. Per the **mismatched_creative** policy rule, the animal or product shown in the image must match what the ad copy describes, and showing a dog in an ad explicitly marketed to cat owners directly misleads buyers about the nature of the product being advertised."
+  },
+  {
+    "ad_id": 359,
+    "explanation": "The ad was flagged because the image shows a dog (a Shiba Inu on a leash in a grassy field) while the ad copy describes a grain-free **cat food** product made for Maine Coons and other cats. This directly violates the **mismatched_creative** policy rule, which explicitly states that the animal shown in the image must match what the ad copy describes \u2014 for example, \"an ad for cat litter must not show a dog.\" A buyer viewing this ad would be misled about the product's intended animal, since nothing in the image corresponds to the cat food being advertised."
+  },
+  {
+    "ad_id": 185,
+    "explanation": "The ad is flagged for two policy violations. First, the claim that this shampoo is \"the only thing that actually works, period\" is an unqualified absolute superlative with no named, checkable source to substantiate it, which is explicitly prohibited under the absolute_superlative_claims rule.\n\nSecond, the ad copy specifically targets owners of an \"American Pit Bull Terrier,\" but the dog shown in the image appears to be a mixed-breed dog (likely a Lab/Boxer-type mix) and is not identifiable as an American Pit Bull Terrier \u2014 this constitutes a mismatched creative under the policy rule requiring that the animal shown must match what the ad copy describes, as it could mislead buyers about the intended use of the product."
+  },
+  {
+    "ad_id": 157,
+    "explanation": "## Why This Ad Was Flagged\n\nThis ad violates the **absolute_superlative_claims** policy because the phrase \"the only thing that actually works, period\" is an unqualified absolute claim \u2014 asserting that this litter is uniquely and exclusively effective \u2014 with no named, checkable source or evidence provided to substantiate it. Additionally, the ad violates the **mismatched_creative** rule: while the image shows a cat resting on a blanket/bed surface, the ad is promoting **cat litter**, and no litter product or litter box is visible anywhere in the image, creating a disconnect between the visual and the product being sold. Together, these two violations mislead the buyer both about the product's proven efficacy and about what they are actually purchasing."
+  },
+  {
+    "ad_id": 178,
+    "explanation": "The ad was flagged for violating the **unsubstantiated_health_claims** policy. The text claims the product \"CURES joint pain in dogs within days \u2014 guaranteed or your money back,\" which uses explicit cure and absolute guarantee language that the policy expressly prohibits unless substantiated by a cited clinical source \u2014 and no such source is provided here.\n\nAdditionally, a rubber chew toy is a physical play product with no demonstrated therapeutic mechanism for treating joint pain, making the medical claim inherently unsupported. The policy draws a clear line between acceptable wellness language (e.g., \"supports joint health\") and impermissible absolute cure claims like this one, and this ad clearly crosses that line."
+  },
+  {
+    "ad_id": 168,
+    "explanation": "## Why This Ad Was Flagged\n\nThe ad text claims that a slow-feed dog bowl **\"CURES joint pain in dogs within days \u2014 guaranteed or your money back,\"** which directly violates the **unsubstantiated_health_claims** policy rule. The rule explicitly prohibits absolute cure/guarantee language such as \"eliminates pain in days\" or \"guaranteed to cure\" unless supported by a cited clinical source \u2014 and no such source is provided here.\n\nAdditionally, claiming a **slow-feed bowl** (a product designed to slow eating pace) can cure joint pain is an implausible medical claim with no cited substantiation, making the violation especially clear-cut. The ad uses both forbidden language patterns identified in the policy: an absolute medical outcome (\"CURES\") combined with a guarantee (\"guaranteed or your money back\"), neither of which is backed by any referenced clinical evidence."
+  },
+  {
+    "ad_id": 161,
+    "explanation": "## Why This Ad Was Flagged\n\nThe ad text makes an absolute cure claim \u2014 \"CURES joint pain in cats within days \u2014 guaranteed or your money back\" \u2014 which directly violates the **unsubstantiated_health_claims** policy rule. The rule explicitly prohibits language such as \"eliminates pain in days\" or \"guaranteed to cure\" unless backed by a cited clinical source, and no such source is provided here.\n\nAdditionally, the image shows a cat resting on a patterned blanket/bedding surface \u2014 **there is no cat carrier visible anywhere in the image** \u2014 meaning the product being advertised isn't even depicted, compounding the problem by making the therapeutic claim entirely unverifiable from the creative itself. The combination of an absolute medical guarantee with zero clinical substantiation and no product shown makes this a clear policy violation."
+  },
+  {
+    "ad_id": 170,
+    "explanation": "This ad was flagged under the **fake_urgency_or_scarcity** policy rule because the copy employs fabricated time pressure (\"buy now before the price doubles at midnight\") and false scarcity (\"sells out every time\") without any verifiable basis for either claim. Per policy, ad copy must not use such manipulative urgency tactics regardless of whether the product itself is accurately described. These are classic manufactured-pressure phrases \u2014 identical in structure to the flagged past example \u2014 designed to coerce immediate purchases rather than inform consumers."
+  },
+  {
+    "ad_id": 144,
+    "explanation": "## Flag Explanation\n\nThis ad was flagged for **fake urgency and scarcity**, in violation of the `fake_urgency_or_scarcity` policy rule. The ad copy uses classic manipulative-pattern language \u2014 \"Only 2 left in stock!\" and \"Sale ends tonight\" \u2014 without any verifiable basis for these inventory or time constraints.\n\nAdditionally, the image shows a **live dog (a Goldendoodle) resting on grass**, while the ad text is promoting a **slow-feed dog bowl** \u2014 a product that is entirely absent from the image. This constitutes a `mismatched_creative` violation, as the policy explicitly requires that the product described in the ad copy must actually be shown in the image, and a dog alone does not represent or demonstrate the bowl being sold."
+  },
+  {
+    "ad_id": 145,
+    "explanation": "## Flag Explanation\n\nThis ad was flagged for **fake urgency/scarcity**, in violation of the `fake_urgency_or_scarcity` policy rule. The ad copy employs multiple fabricated urgency tactics simultaneously \u2014 claiming the product \"sells out every time,\" urging customers to \"buy now,\" and threatening that \"the price doubles at midnight\" \u2014 none of which are substantiated by any verifiable inventory data or documented pricing schedule.\n\nPer policy, ad copy must not use fabricated urgency or scarcity claims when no such time or inventory limit actually exists, as these constitute manipulative patterns regardless of whether the product itself is accurately described. The use of \"LAST CHANCE,\" an imminent price-doubling deadline, and a stock scarcity claim all together represent a compounded violation of this rule."
+  },
+  {
+    "ad_id": 140,
+    "explanation": "## Flag Explanation\n\nThis ad was flagged for violating the **absolute_superlative_claims** policy. The text claims the product is \"rated the best joint & mobility support chew in the world by every major review site, hands down,\" which is an unqualified superlative \u2014 no specific review sites are named, cited, or linked, making the claim completely unverifiable by a consumer or reviewer.\n\nThe policy explicitly requires that rankings like \"#1\" or \"best on the market\" be backed by a **named, checkable source**, and broad, sweeping attributions to \"every major review site\" without identifying any of them do not meet that standard. The phrase \"hands down\" further amplifies the absolute nature of the claim without any substantiation to support it."
+  },
+  {
+    "ad_id": 211,
+    "explanation": "## Why This Ad Was Flagged\n\nThis ad violates the **absolute_superlative_claims** policy on two counts: it claims to be \"#1 vet-recommended\" and asserts \"nothing else on the market even compares,\" yet provides no named, checkable source to substantiate either claim. Per the policy, unqualified superlatives like these require a verifiable citation to be permissible.\n\nAdditionally, the ad is flagged under **mismatched_creative**: the image shows only a close-up of a Boxer puppy's face, with no dog bed visible anywhere in the frame. The ad copy is promoting an orthopedic dog bed, but the creative contains no depiction of the advertised product, misleading buyers about what they are actually purchasing."
+  },
+  {
+    "ad_id": 418,
+    "explanation": "## Flag Explanation: `low_quality`\n\nThis ad was flagged for failing the creative-quality standard, which requires that ad copy be \"a coherent sentence describing the product, not keyword-stuffed spam or a fragment with no product information.\" The text \u2014 *\"clumping cat litter!!!! !!! best!! cat clumping cat litter now now now discount discount\"* \u2014 is a disjointed, repetitive string of keywords and exclamation marks with no meaningful product description, pricing, or actionable information. While the image of a Siamese cat is relevant and the underlying product (cat litter) is not inherently problematic, the ad copy itself is pure keyword spam that fails basic coherence and quality standards."
+  },
+  {
+    "ad_id": 436,
+    "explanation": "The ad was flagged for **low_quality_creative** because the ad copy fails to meet the standard of being \"a coherent sentence describing the product.\" Instead, the text is classic keyword-stuffed spam \u2014 repeating phrases like \"now now now\" and \"discount discount\" with excessive exclamation marks and no meaningful product information. While the image itself is a reasonably clear photo of a Boxer puppy wearing a pink collar, the ad copy alone disqualifies it under the creative-quality standard, which requires that copy coherently describe the product rather than read as a fragment or spam string."
+  },
+  {
+    "ad_id": 388,
+    "explanation": "This ad was flagged for **low_quality** because the ad copy is incoherent, keyword-stuffed spam rather than a coherent sentence describing the product, which directly violates the policy requirement that \"ad copy must be a coherent sentence describing the product, not keyword-stuffed spam or a fragment with no product information.\" The text consists of repetitive fragments (\"cat clumping cat litter now now now discount discount\") and excessive punctuation (\"!!!! !!!\") with no meaningful product information provided to the buyer. While the image itself is a reasonably clear photo of a cat that is at least thematically relevant to a cat litter product, the copy quality alone is sufficient grounds for holding the creative for review."
+  },
+  {
+    "ad_id": 412,
+    "explanation": "The ad was flagged for **low quality** because the ad copy fails to meet the policy requirement that text must be \"a coherent sentence describing the product\" rather than \"keyword-stuffed spam.\" The text consists of repeated phrases (\"now now now,\" \"discount discount\"), excessive punctuation (\"!!!! !!!\"), and fragmented superlatives (\"best!!\") with no meaningful product information beyond the product name itself.\n\nAdditionally, the image shows a Shiba Inu running freely in a field wearing a harness, with the watermarked phrase \"Have a Nice Day\" \u2014 it appears to be a generic stock-style photo unrelated to any joint supplement product, rather than imagery that coherently represents or demonstrates the advertised chew. Together, the incoherent copy and mismatched generic image constitute a low-quality creative that warrants review under the platform's creative-quality standards."
+  },
+  {
+    "ad_id": 396,
+    "explanation": "The ad was flagged under **low_quality** because the ad copy (\"product good buy now grain-free dog food grain-free dog food cheap price fast shipping click\") violates the policy requirement that ad copy must be a coherent sentence describing the product rather than keyword-stuffed spam. The text repeats \"grain-free dog food\" twice, strings together disconnected promotional fragments (\"cheap price fast shipping click\"), and provides no meaningful product information. This pattern of keyword stuffing and incoherent copy mirrors the past flagged examples and falls squarely under the low_quality_creative standard."
+  },
+  {
+    "ad_id": 450,
+    "explanation": "## Why This Ad Was Flagged: Low Quality Creative\n\nThe ad copy \u2014 *\"product good buy now hairball control treat mix hairball control treat mix cheap price fast shipping click\"* \u2014 is a disjointed string of repeated keywords and generic phrases rather than a coherent sentence describing the product, which directly violates the policy requirement that \"ad copy must be a coherent sentence describing the product, not keyword-stuffed spam or a fragment with no product information.\" The product name (\"hairball control treat mix\") is repeated twice with no meaningful description, and filler phrases like \"product good\" and \"click\" add no informational value. This type of keyword-stuffed copy is flagged for quality review regardless of whether the underlying product claim may be truthful."
+  },
+  {
+    "ad_id": 461,
+    "explanation": "The ad was flagged under **low_quality** because the image is severely out of focus and does not meet the policy's standard that images must be \"in focus and reasonably high resolution.\" While the image appears to show a dog being held outdoors, it is too blurry to clearly identify the subject or product being advertised. The ad copy itself is a coherent sentence describing the shampoo, so the text portion is not the issue \u2014 it is solely the poor image quality that triggered the hold for review."
+  },
+  {
+    "ad_id": 429,
+    "explanation": "The image is severely out of focus and blurry throughout, making it impossible to clearly identify the product or the animal being depicted. Per the **low_quality_creative** policy rule, images must be \"in focus and reasonably high resolution\" \u2014 this image fails that standard entirely. While the ad copy itself is coherent and descriptive, the unusable image quality alone is sufficient to hold the creative for review."
+  },
+  {
+    "ad_id": 367,
+    "explanation": "The ad was flagged under **low_quality** because the image is severely out of focus and too blurry to clearly identify any product or animal, failing the policy requirement that images must be \"in focus and reasonably high resolution.\" While the ad copy is a coherent sentence describing a hairball control treat for cats (specifically Sphynx breeds), the image does not legibly depict the product or a cat \u2014 it appears to show a blurred, close-up view of skin or a similarly indistinct subject. This combination of an unusable image and an otherwise plausible product claim is precisely the scenario the low-quality creative policy addresses, where the execution is poor even if the underlying claim may be truthful."
+  }
+]
