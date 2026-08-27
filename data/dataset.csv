@@ -1,0 +1,481 @@
+image_path,ad_text,ground_truth_label,source_species,source_breed
+data/images/0000_samoyed_64.jpg,This grain-free training treat mix was designed with dog comfort in mind and works well for breeds like the samoyed.,approved,dog,samoyed
+data/images/0001_yorkshire_terrier_21.jpg,This orthopedic dog bed was designed with dog comfort in mind and works well for breeds like the yorkshire terrier.,approved,dog,yorkshire terrier
+data/images/0002_shiba_inu_143.jpg,"A dependable orthopedic dog bed for dog owners, tested with breeds including the shiba inu.",approved,dog,shiba inu
+data/images/0003_pomeranian_86.jpg,Our durable rubber chew toy is formulated with dog nutrition in mind -- a solid pick for pomeranians at any age.,approved,dog,pomeranian
+data/images/0004_boxer_85.jpg,Our slow-feed dog bowl is formulated with dog nutrition in mind -- a solid pick for boxers at any age.,approved,dog,boxer
+data/images/0005_Birman_17.jpg,"A dependable sisal scratching post for cat owners, tested with breeds including the Birman.",approved,cat,Birman
+data/images/0006_beagle_64.jpg,"Owners of beagles reach for this orthopedic dog bed because it does the basics well, day after day.",approved,dog,beagle
+data/images/0007_german_shorthaired_182.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for german shorthaireds at any age.,approved,dog,german shorthaired
+data/images/0008_staffordshire_bull_terrier_194.jpg,Our oatmeal shampoo for sensitive skin is formulated with dog nutrition in mind -- a solid pick for staffordshire bull terriers at any age.,approved,dog,staffordshire bull terrier
+data/images/0009_Egyptian_Mau_218.jpg,"Made for Egyptian Maus and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",approved,cat,Egyptian Mau
+data/images/0010_wheaten_terrier_92.jpg,"Made for wheaten terriers and other dogs, this joint & mobility support chew is a favorite with owners who want a reliable everyday option.",approved,dog,wheaten terrier
+data/images/0011_basset_hound_115.jpg,This no-pull dog harness was designed with dog comfort in mind and works well for breeds like the basset hound.,approved,dog,basset hound
+data/images/0012_chihuahua_152.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for chihuahuas at any age.,approved,dog,chihuahua
+data/images/0013_Siamese_18.jpg,Our clumping cat litter is formulated with cat nutrition in mind -- a solid pick for Siameses at any age.,approved,cat,Siamese
+data/images/0014_beagle_196.jpg,This orthopedic dog bed was designed with dog comfort in mind and works well for breeds like the beagle.,approved,dog,beagle
+data/images/0015_Bengal_120.jpg,"A dependable self-grooming slicker brush for cat owners, tested with breeds including the Bengal.",approved,cat,Bengal
+data/images/0016_newfoundland_6.jpg,This no-pull dog harness was designed with dog comfort in mind and works well for breeds like the newfoundland.,approved,dog,newfoundland
+data/images/0017_english_cocker_spaniel_95.jpg,"A dependable orthopedic dog bed for dog owners, tested with breeds including the english cocker spaniel.",approved,dog,english cocker spaniel
+data/images/0018_Siamese_34.jpg,This ceramic cat feeding bowl was designed with cat comfort in mind and works well for breeds like the Siamese.,approved,cat,Siamese
+data/images/0019_havanese_7.jpg,Our grain-free training treat mix is formulated with dog nutrition in mind -- a solid pick for havaneses at any age.,approved,dog,havanese
+data/images/0020_samoyed_174.jpg,This no-pull dog harness was designed with dog comfort in mind and works well for breeds like the samoyed.,approved,dog,samoyed
+data/images/0021_american_bulldog_59.jpg,"A dependable grain-free dog food for dog owners, tested with breeds including the american bulldog.",approved,dog,american bulldog
+data/images/0022_english_cocker_spaniel_139.jpg,Our slow-feed dog bowl is formulated with dog nutrition in mind -- a solid pick for english cocker spaniels at any age.,approved,dog,english cocker spaniel
+data/images/0023_havanese_54.jpg,This oatmeal shampoo for sensitive skin was designed with dog comfort in mind and works well for breeds like the havanese.,approved,dog,havanese
+data/images/0024_chihuahua_191.jpg,"Made for chihuahuas and other dogs, this grain-free training treat mix is a favorite with owners who want a reliable everyday option.",approved,dog,chihuahua
+data/images/0025_saint_bernard_197.jpg,"A dependable grain-free dog food for dog owners, tested with breeds including the saint bernard.",approved,dog,saint bernard
+data/images/0026_japanese_chin_110.jpg,"Owners of japanese chins reach for this slow-feed dog bowl because it does the basics well, day after day.",approved,dog,japanese chin
+data/images/0027_pug_169.jpg,"A dependable joint & mobility support chew for dog owners, tested with breeds including the pug.",approved,dog,pug
+data/images/0028_basset_hound_22.jpg,"Made for basset hounds and other dogs, this slow-feed dog bowl is a favorite with owners who want a reliable everyday option.",approved,dog,basset hound
+data/images/0029_British_Shorthair_92.jpg,"A dependable interactive feather wand toy for cat owners, tested with breeds including the British Shorthair.",approved,cat,British Shorthair
+data/images/0030_Siamese_179.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Siamese.,approved,cat,Siamese
+data/images/0031_miniature_pinscher_24.jpg,"A dependable joint & mobility support chew for dog owners, tested with breeds including the miniature pinscher.",approved,dog,miniature pinscher
+data/images/0032_german_shorthaired_155.jpg,Our joint & mobility support chew is formulated with dog nutrition in mind -- a solid pick for german shorthaireds at any age.,approved,dog,german shorthaired
+data/images/0033_Siamese_43.jpg,"Made for Siameses and other cats, this ceramic cat feeding bowl is a favorite with owners who want a reliable everyday option.",approved,cat,Siamese
+data/images/0034_basset_hound_138.jpg,"A dependable oatmeal shampoo for sensitive skin for dog owners, tested with breeds including the basset hound.",approved,dog,basset hound
+data/images/0035_basset_hound_141.jpg,"Owners of basset hounds reach for this grain-free dog food because it does the basics well, day after day.",approved,dog,basset hound
+data/images/0036_american_bulldog_205.jpg,This grain-free dog food was designed with dog comfort in mind and works well for breeds like the american bulldog.,approved,dog,american bulldog
+data/images/0037_shiba_inu_161.jpg,"A dependable slow-feed dog bowl for dog owners, tested with breeds including the shiba inu.",approved,dog,shiba inu
+data/images/0038_newfoundland_39.jpg,"A dependable slow-feed dog bowl for dog owners, tested with breeds including the newfoundland.",approved,dog,newfoundland
+data/images/0039_scottish_terrier_122.jpg,This grain-free training treat mix was designed with dog comfort in mind and works well for breeds like the scottish terrier.,approved,dog,scottish terrier
+data/images/0040_staffordshire_bull_terrier_191.jpg,"Owners of staffordshire bull terriers reach for this grain-free training treat mix because it does the basics well, day after day.",approved,dog,staffordshire bull terrier
+data/images/0041_saint_bernard_173.jpg,Our oatmeal shampoo for sensitive skin is formulated with dog nutrition in mind -- a solid pick for saint bernards at any age.,approved,dog,saint bernard
+data/images/0042_Sphynx_232.jpg,"A dependable grain-free cat food for cat owners, tested with breeds including the Sphynx.",approved,cat,Sphynx
+data/images/0043_Siamese_120.jpg,"A dependable hairball control treat mix for cat owners, tested with breeds including the Siamese.",approved,cat,Siamese
+data/images/0044_newfoundland_97.jpg,"Made for newfoundlands and other dogs, this oatmeal shampoo for sensitive skin is a favorite with owners who want a reliable everyday option.",approved,dog,newfoundland
+data/images/0045_Ragdoll_224.jpg,"A dependable ceramic cat feeding bowl for cat owners, tested with breeds including the Ragdoll.",approved,cat,Ragdoll
+data/images/0046_Abyssinian_132.jpg,"A dependable interactive feather wand toy for cat owners, tested with breeds including the Abyssinian.",approved,cat,Abyssinian
+data/images/0047_chihuahua_174.jpg,"Owners of chihuahuas reach for this grain-free dog food because it does the basics well, day after day.",approved,dog,chihuahua
+data/images/0048_Egyptian_Mau_51.jpg,"Owners of Egyptian Maus reach for this grain-free cat food because it does the basics well, day after day.",approved,cat,Egyptian Mau
+data/images/0049_basset_hound_131.jpg,"Made for basset hounds and other dogs, this slow-feed dog bowl is a favorite with owners who want a reliable everyday option.",approved,dog,basset hound
+data/images/0050_Egyptian_Mau_134.jpg,"A dependable interactive feather wand toy for cat owners, tested with breeds including the Egyptian Mau.",approved,cat,Egyptian Mau
+data/images/0051_german_shorthaired_187.jpg,"Owners of german shorthaireds reach for this joint & mobility support chew because it does the basics well, day after day.",approved,dog,german shorthaired
+data/images/0052_great_pyrenees_61.jpg,Our oatmeal shampoo for sensitive skin is formulated with dog nutrition in mind -- a solid pick for great pyreneess at any age.,approved,dog,great pyrenees
+data/images/0053_havanese_13.jpg,"Owners of havaneses reach for this oatmeal shampoo for sensitive skin because it does the basics well, day after day.",approved,dog,havanese
+data/images/0054_Ragdoll_77.jpg,"Made for Ragdolls and other cats, this hairball control treat mix is a favorite with owners who want a reliable everyday option.",approved,cat,Ragdoll
+data/images/0055_newfoundland_121.jpg,"A dependable joint & mobility support chew for dog owners, tested with breeds including the newfoundland.",approved,dog,newfoundland
+data/images/0056_Ragdoll_160.jpg,"A dependable interactive feather wand toy for cat owners, tested with breeds including the Ragdoll.",approved,cat,Ragdoll
+data/images/0057_japanese_chin_64.jpg,This no-pull dog harness was designed with dog comfort in mind and works well for breeds like the japanese chin.,approved,dog,japanese chin
+data/images/0058_beagle_107.jpg,Our grain-free training treat mix is formulated with dog nutrition in mind -- a solid pick for beagles at any age.,approved,dog,beagle
+data/images/0059_British_Shorthair_60.jpg,Our hairball control treat mix is formulated with cat nutrition in mind -- a solid pick for British Shorthairs at any age.,approved,cat,British Shorthair
+data/images/0060_boxer_16.jpg,Our slow-feed dog bowl is formulated with dog nutrition in mind -- a solid pick for boxers at any age.,approved,dog,boxer
+data/images/0061_Birman_169.jpg,"Owners of Birmans reach for this grain-free cat food because it does the basics well, day after day.",approved,cat,Birman
+data/images/0062_english_cocker_spaniel_183.jpg,Our joint & mobility support chew is formulated with dog nutrition in mind -- a solid pick for english cocker spaniels at any age.,approved,dog,english cocker spaniel
+data/images/0063_Bengal_54.jpg,This interactive feather wand toy was designed with cat comfort in mind and works well for breeds like the Bengal.,approved,cat,Bengal
+data/images/0064_english_setter_197.jpg,This orthopedic dog bed was designed with dog comfort in mind and works well for breeds like the english setter.,approved,dog,english setter
+data/images/0065_chihuahua_78.jpg,This durable rubber chew toy was designed with dog comfort in mind and works well for breeds like the chihuahua.,approved,dog,chihuahua
+data/images/0066_Siamese_33.jpg,Our interactive feather wand toy is formulated with cat nutrition in mind -- a solid pick for Siameses at any age.,approved,cat,Siamese
+data/images/0067_scottish_terrier_99.jpg,"Made for scottish terriers and other dogs, this grain-free training treat mix is a favorite with owners who want a reliable everyday option.",approved,dog,scottish terrier
+data/images/0068_basset_hound_76.jpg,"Made for basset hounds and other dogs, this oatmeal shampoo for sensitive skin is a favorite with owners who want a reliable everyday option.",approved,dog,basset hound
+data/images/0069_Abyssinian_201.jpg,Our grain-free cat food is formulated with cat nutrition in mind -- a solid pick for Abyssinians at any age.,approved,cat,Abyssinian
+data/images/0070_Russian_Blue_119.jpg,This ceramic cat feeding bowl was designed with cat comfort in mind and works well for breeds like the Russian Blue.,approved,cat,Russian Blue
+data/images/0071_Siamese_51.jpg,"Owners of Siameses reach for this ceramic cat feeding bowl because it does the basics well, day after day.",approved,cat,Siamese
+data/images/0072_miniature_pinscher_37.jpg,"A dependable slow-feed dog bowl for dog owners, tested with breeds including the miniature pinscher.",approved,dog,miniature pinscher
+data/images/0073_scottish_terrier_97.jpg,This durable rubber chew toy was designed with dog comfort in mind and works well for breeds like the scottish terrier.,approved,dog,scottish terrier
+data/images/0074_keeshond_165.jpg,This orthopedic dog bed was designed with dog comfort in mind and works well for breeds like the keeshond.,approved,dog,keeshond
+data/images/0075_pug_20.jpg,Our oatmeal shampoo for sensitive skin is formulated with dog nutrition in mind -- a solid pick for pugs at any age.,approved,dog,pug
+data/images/0076_chihuahua_179.jpg,"Made for chihuahuas and other dogs, this orthopedic dog bed is a favorite with owners who want a reliable everyday option.",approved,dog,chihuahua
+data/images/0077_British_Shorthair_212.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the British Shorthair.,approved,cat,British Shorthair
+data/images/0078_Bombay_188.jpg,"Owners of Bombays reach for this self-grooming slicker brush because it does the basics well, day after day.",approved,cat,Bombay
+data/images/0079_wheaten_terrier_163.jpg,"Made for wheaten terriers and other dogs, this grain-free dog food is a favorite with owners who want a reliable everyday option.",approved,dog,wheaten terrier
+data/images/0080_english_setter_79.jpg,This grain-free training treat mix was designed with dog comfort in mind and works well for breeds like the english setter.,approved,dog,english setter
+data/images/0081_keeshond_91.jpg,"Owners of keeshonds reach for this oatmeal shampoo for sensitive skin because it does the basics well, day after day.",approved,dog,keeshond
+data/images/0082_american_pit_bull_terrier_192.jpg,"Owners of american pit bull terriers reach for this oatmeal shampoo for sensitive skin because it does the basics well, day after day.",approved,dog,american pit bull terrier
+data/images/0083_chihuahua_175.jpg,"Owners of chihuahuas reach for this joint & mobility support chew because it does the basics well, day after day.",approved,dog,chihuahua
+data/images/0084_beagle_31.jpg,This orthopedic dog bed was designed with dog comfort in mind and works well for breeds like the beagle.,approved,dog,beagle
+data/images/0085_Egyptian_Mau_109.jpg,"A dependable sisal scratching post for cat owners, tested with breeds including the Egyptian Mau.",approved,cat,Egyptian Mau
+data/images/0086_american_pit_bull_terrier_42.jpg,"A dependable durable rubber chew toy for dog owners, tested with breeds including the american pit bull terrier.",approved,dog,american pit bull terrier
+data/images/0087_great_pyrenees_126.jpg,Our grain-free training treat mix is formulated with dog nutrition in mind -- a solid pick for great pyreneess at any age.,approved,dog,great pyrenees
+data/images/0088_japanese_chin_122.jpg,"A dependable grain-free training treat mix for dog owners, tested with breeds including the japanese chin.",approved,dog,japanese chin
+data/images/0089_beagle_93.jpg,"Made for beagles and other dogs, this grain-free dog food is a favorite with owners who want a reliable everyday option.",approved,dog,beagle
+data/images/0090_Ragdoll_100.jpg,"Made for Ragdolls and other cats, this clumping cat litter is a favorite with owners who want a reliable everyday option.",approved,cat,Ragdoll
+data/images/0091_miniature_pinscher_78.jpg,"Made for miniature pinschers and other dogs, this orthopedic dog bed is a favorite with owners who want a reliable everyday option.",approved,dog,miniature pinscher
+data/images/0092_staffordshire_bull_terrier_105.jpg,This joint & mobility support chew was designed with dog comfort in mind and works well for breeds like the staffordshire bull terrier.,approved,dog,staffordshire bull terrier
+data/images/0093_Egyptian_Mau_173.jpg,Our soft-sided cat carrier is formulated with cat nutrition in mind -- a solid pick for Egyptian Maus at any age.,approved,cat,Egyptian Mau
+data/images/0094_scottish_terrier_174.jpg,"Owners of scottish terriers reach for this oatmeal shampoo for sensitive skin because it does the basics well, day after day.",approved,dog,scottish terrier
+data/images/0095_Siamese_130.jpg,"Made for Siameses and other cats, this sisal scratching post is a favorite with owners who want a reliable everyday option.",approved,cat,Siamese
+data/images/0096_keeshond_17.jpg,"A dependable grain-free dog food for dog owners, tested with breeds including the keeshond.",approved,dog,keeshond
+data/images/0097_Bengal_94.jpg,"Made for Bengals and other cats, this clumping cat litter is a favorite with owners who want a reliable everyday option.",approved,cat,Bengal
+data/images/0098_Bombay_34.jpg,"A dependable sisal scratching post for cat owners, tested with breeds including the Bombay.",approved,cat,Bombay
+data/images/0099_Bengal_79.jpg,"Made for Bengals and other cats, this clumping cat litter is a favorite with owners who want a reliable everyday option.",approved,cat,Bengal
+data/images/0100_boxer_54.jpg,"A dependable joint & mobility support chew for dog owners, tested with breeds including the boxer.",approved,dog,boxer
+data/images/0101_german_shorthaired_64.jpg,This no-pull dog harness was designed with dog comfort in mind and works well for breeds like the german shorthaired.,approved,dog,german shorthaired
+data/images/0102_Abyssinian_136.jpg,"Made for Abyssinians and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",approved,cat,Abyssinian
+data/images/0103_yorkshire_terrier_147.jpg,"Owners of yorkshire terriers reach for this no-pull dog harness because it does the basics well, day after day.",approved,dog,yorkshire terrier
+data/images/0104_Ragdoll_191.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Ragdoll.,approved,cat,Ragdoll
+data/images/0105_Abyssinian_51.jpg,This clumping cat litter was designed with cat comfort in mind and works well for breeds like the Abyssinian.,approved,cat,Abyssinian
+data/images/0106_german_shorthaired_163.jpg,This oatmeal shampoo for sensitive skin was designed with dog comfort in mind and works well for breeds like the german shorthaired.,approved,dog,german shorthaired
+data/images/0107_pomeranian_197.jpg,"Owners of pomeranians reach for this grain-free training treat mix because it does the basics well, day after day.",approved,dog,pomeranian
+data/images/0108_american_pit_bull_terrier_52.jpg,"Made for american pit bull terriers and other dogs, this no-pull dog harness is a favorite with owners who want a reliable everyday option.",approved,dog,american pit bull terrier
+data/images/0109_Siamese_82.jpg,"Made for Siameses and other cats, this hairball control treat mix is a favorite with owners who want a reliable everyday option.",approved,cat,Siamese
+data/images/0110_samoyed_162.jpg,This orthopedic dog bed was designed with dog comfort in mind and works well for breeds like the samoyed.,approved,dog,samoyed
+data/images/0111_pomeranian_196.jpg,"Made for pomeranians and other dogs, this grain-free training treat mix is a favorite with owners who want a reliable everyday option.",approved,dog,pomeranian
+data/images/0112_german_shorthaired_42.jpg,"Owners of german shorthaireds reach for this oatmeal shampoo for sensitive skin because it does the basics well, day after day.",approved,dog,german shorthaired
+data/images/0113_Bombay_10.jpg,This interactive feather wand toy was designed with cat comfort in mind and works well for breeds like the Bombay.,approved,cat,Bombay
+data/images/0114_Ragdoll_165.jpg,This clumping cat litter was designed with cat comfort in mind and works well for breeds like the Ragdoll.,approved,cat,Ragdoll
+data/images/0115_german_shorthaired_67.jpg,"A dependable durable rubber chew toy for dog owners, tested with breeds including the german shorthaired.",approved,dog,german shorthaired
+data/images/0116_Maine_Coon_161.jpg,Our self-grooming slicker brush is formulated with cat nutrition in mind -- a solid pick for Maine Coons at any age.,approved,cat,Maine Coon
+data/images/0117_Bengal_39.jpg,"Made for Bengals and other cats, this ceramic cat feeding bowl is a favorite with owners who want a reliable everyday option.",approved,cat,Bengal
+data/images/0118_boxer_67.jpg,"A dependable no-pull dog harness for dog owners, tested with breeds including the boxer.",approved,dog,boxer
+data/images/0119_japanese_chin_93.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for japanese chins at any age.,approved,dog,japanese chin
+data/images/0120_english_setter_20.jpg,"LAST CHANCE: this joint & mobility support chew sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,english setter
+data/images/0121_Bombay_179.jpg,This clumping cat litter CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Bombay
+data/images/0122_Russian_Blue_150.jpg,"Rated the best clumping cat litter in the world by every major review site, hands down.",policy_violation,cat,Russian Blue
+data/images/0123_Bombay_23.jpg,"Stop your Bombay's suffering today -- this ceramic cat feeding bowl is the only thing that actually works, period.",policy_violation,cat,Bombay
+data/images/0124_saint_bernard_162.jpg,The #1 vet-recommended no-pull dog harness in America -- nothing else on the market even compares.,policy_violation,dog,saint bernard
+data/images/0125_great_pyrenees_107.jpg,"Rated the best grain-free dog food in the world by every major review site, hands down.",policy_violation,dog,great pyrenees
+data/images/0126_Birman_7.jpg,Vets agree: this hairball control treat mix guarantees your Birman will live 5 years longer. No other hairball control treat mix comes close.,policy_violation,cat,Birman
+data/images/0127_British_Shorthair_9.jpg,The #1 vet-recommended self-grooming slicker brush in America -- nothing else on the market even compares.,policy_violation,cat,British Shorthair
+data/images/0128_Bombay_80.jpg,"LAST CHANCE: this ceramic cat feeding bowl sells out every time, buy now before the price doubles at midnight!",policy_violation,cat,Bombay
+data/images/0129_beagle_195.jpg,The #1 vet-recommended orthopedic dog bed in America -- nothing else on the market even compares.,policy_violation,dog,beagle
+data/images/0130_Bombay_115.jpg,"Stop your Bombay's suffering today -- this sisal scratching post is the only thing that actually works, period.",policy_violation,cat,Bombay
+data/images/0131_boxer_193.jpg,Vets agree: this slow-feed dog bowl guarantees your boxer will live 5 years longer. No other slow-feed dog bowl comes close.,policy_violation,dog,boxer
+data/images/0132_pug_133.jpg,"Rated the best grain-free training treat mix in the world by every major review site, hands down.",policy_violation,dog,pug
+data/images/0133_Abyssinian_78.jpg,This self-grooming slicker brush CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Abyssinian
+data/images/0134_american_pit_bull_terrier_72.jpg,"Rated the best grain-free training treat mix in the world by every major review site, hands down.",policy_violation,dog,american pit bull terrier
+data/images/0135_Bombay_217.jpg,"LAST CHANCE: this clumping cat litter sells out every time, buy now before the price doubles at midnight!",policy_violation,cat,Bombay
+data/images/0136_leonberger_158.jpg,This durable rubber chew toy CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,leonberger
+data/images/0137_Bombay_137.jpg,The #1 vet-recommended self-grooming slicker brush in America -- nothing else on the market even compares.,policy_violation,cat,Bombay
+data/images/0138_american_pit_bull_terrier_106.jpg,"Rated the best oatmeal shampoo for sensitive skin in the world by every major review site, hands down.",policy_violation,dog,american pit bull terrier
+data/images/0139_newfoundland_55.jpg,"Rated the best joint & mobility support chew in the world by every major review site, hands down.",policy_violation,dog,newfoundland
+data/images/0140_Ragdoll_195.jpg,"Stop your Ragdoll's suffering today -- this ceramic cat feeding bowl is the only thing that actually works, period.",policy_violation,cat,Ragdoll
+data/images/0141_Ragdoll_171.jpg,This sisal scratching post CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Ragdoll
+data/images/0142_staffordshire_bull_terrier_72.jpg,"Clinically proven to eliminate dog anxiety completely, this durable rubber chew toy reverses years of stress in one week.",policy_violation,dog,staffordshire bull terrier
+data/images/0143_wheaten_terrier_108.jpg,Only 2 left in stock! Sale ends tonight -- get this slow-feed dog bowl before it's gone forever.,policy_violation,dog,wheaten terrier
+data/images/0144_american_bulldog_26.jpg,"LAST CHANCE: this oatmeal shampoo for sensitive skin sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,american bulldog
+data/images/0145_Siamese_231.jpg,Vets agree: this grain-free cat food guarantees your Siamese will live 5 years longer. No other grain-free cat food comes close.,policy_violation,cat,Siamese
+data/images/0146_Siamese_80.jpg,Only 2 left in stock! Sale ends tonight -- get this grain-free cat food before it's gone forever.,policy_violation,cat,Siamese
+data/images/0147_British_Shorthair_75.jpg,"Clinically proven to eliminate cat anxiety completely, this self-grooming slicker brush reverses years of stress in one week.",policy_violation,cat,British Shorthair
+data/images/0148_great_pyrenees_146.jpg,The #1 vet-recommended slow-feed dog bowl in America -- nothing else on the market even compares.,policy_violation,dog,great pyrenees
+data/images/0149_Egyptian_Mau_100.jpg,This sisal scratching post CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Egyptian Mau
+data/images/0150_Ragdoll_138.jpg,Only 2 left in stock! Sale ends tonight -- get this interactive feather wand toy before it's gone forever.,policy_violation,cat,Ragdoll
+data/images/0151_wheaten_terrier_121.jpg,The #1 vet-recommended slow-feed dog bowl in America -- nothing else on the market even compares.,policy_violation,dog,wheaten terrier
+data/images/0152_wheaten_terrier_151.jpg,The #1 vet-recommended durable rubber chew toy in America -- nothing else on the market even compares.,policy_violation,dog,wheaten terrier
+data/images/0153_yorkshire_terrier_196.jpg,This grain-free dog food CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,yorkshire terrier
+data/images/0154_wheaten_terrier_136.jpg,"Stop your wheaten terrier's suffering today -- this oatmeal shampoo for sensitive skin is the only thing that actually works, period.",policy_violation,dog,wheaten terrier
+data/images/0155_american_bulldog_209.jpg,The #1 vet-recommended no-pull dog harness in America -- nothing else on the market even compares.,policy_violation,dog,american bulldog
+data/images/0156_Ragdoll_56.jpg,"Stop your Ragdoll's suffering today -- this clumping cat litter is the only thing that actually works, period.",policy_violation,cat,Ragdoll
+data/images/0157_beagle_96.jpg,"Clinically proven to eliminate dog anxiety completely, this durable rubber chew toy reverses years of stress in one week.",policy_violation,dog,beagle
+data/images/0158_english_cocker_spaniel_159.jpg,"LAST CHANCE: this orthopedic dog bed sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,english cocker spaniel
+data/images/0159_Abyssinian_196.jpg,"Clinically proven to eliminate cat anxiety completely, this soft-sided cat carrier reverses years of stress in one week.",policy_violation,cat,Abyssinian
+data/images/0160_Abyssinian_123.jpg,This soft-sided cat carrier CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Abyssinian
+data/images/0161_shiba_inu_181.jpg,Only 2 left in stock! Sale ends tonight -- get this no-pull dog harness before it's gone forever.,policy_violation,dog,shiba inu
+data/images/0162_boxer_139.jpg,Only 2 left in stock! Sale ends tonight -- get this joint & mobility support chew before it's gone forever.,policy_violation,dog,boxer
+data/images/0163_havanese_80.jpg,Vets agree: this orthopedic dog bed guarantees your havanese will live 5 years longer. No other orthopedic dog bed comes close.,policy_violation,dog,havanese
+data/images/0164_american_bulldog_122.jpg,Only 2 left in stock! Sale ends tonight -- get this no-pull dog harness before it's gone forever.,policy_violation,dog,american bulldog
+data/images/0165_american_bulldog_96.jpg,This grain-free dog food CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,american bulldog
+data/images/0166_havanese_21.jpg,This orthopedic dog bed CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,havanese
+data/images/0167_boxer_169.jpg,This slow-feed dog bowl CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,boxer
+data/images/0168_saint_bernard_161.jpg,This grain-free dog food CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,saint bernard
+data/images/0169_Bombay_151.jpg,"LAST CHANCE: this hairball control treat mix sells out every time, buy now before the price doubles at midnight!",policy_violation,cat,Bombay
+data/images/0170_Maine_Coon_64.jpg,"Clinically proven to eliminate cat anxiety completely, this interactive feather wand toy reverses years of stress in one week.",policy_violation,cat,Maine Coon
+data/images/0171_samoyed_103.jpg,"Rated the best oatmeal shampoo for sensitive skin in the world by every major review site, hands down.",policy_violation,dog,samoyed
+data/images/0172_pug_69.jpg,"Clinically proven to eliminate dog anxiety completely, this orthopedic dog bed reverses years of stress in one week.",policy_violation,dog,pug
+data/images/0173_British_Shorthair_55.jpg,The #1 vet-recommended grain-free cat food in America -- nothing else on the market even compares.,policy_violation,cat,British Shorthair
+data/images/0174_Egyptian_Mau_77.jpg,The #1 vet-recommended ceramic cat feeding bowl in America -- nothing else on the market even compares.,policy_violation,cat,Egyptian Mau
+data/images/0175_american_pit_bull_terrier_170.jpg,"LAST CHANCE: this oatmeal shampoo for sensitive skin sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,american pit bull terrier
+data/images/0176_basset_hound_44.jpg,The #1 vet-recommended grain-free dog food in America -- nothing else on the market even compares.,policy_violation,dog,basset hound
+data/images/0177_newfoundland_70.jpg,This durable rubber chew toy CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,newfoundland
+data/images/0178_Sphynx_78.jpg,The #1 vet-recommended soft-sided cat carrier in America -- nothing else on the market even compares.,policy_violation,cat,Sphynx
+data/images/0179_keeshond_129.jpg,The #1 vet-recommended slow-feed dog bowl in America -- nothing else on the market even compares.,policy_violation,dog,keeshond
+data/images/0180_scottish_terrier_151.jpg,"Clinically proven to eliminate dog anxiety completely, this oatmeal shampoo for sensitive skin reverses years of stress in one week.",policy_violation,dog,scottish terrier
+data/images/0181_Bombay_5.jpg,"Stop your Bombay's suffering today -- this clumping cat litter is the only thing that actually works, period.",policy_violation,cat,Bombay
+data/images/0182_Birman_11.jpg,"Clinically proven to eliminate cat anxiety completely, this ceramic cat feeding bowl reverses years of stress in one week.",policy_violation,cat,Birman
+data/images/0183_wheaten_terrier_148.jpg,Vets agree: this grain-free dog food guarantees your wheaten terrier will live 5 years longer. No other grain-free dog food comes close.,policy_violation,dog,wheaten terrier
+data/images/0184_american_pit_bull_terrier_202.jpg,"Stop your american pit bull terrier's suffering today -- this oatmeal shampoo for sensitive skin is the only thing that actually works, period.",policy_violation,dog,american pit bull terrier
+data/images/0185_leonberger_94.jpg,"LAST CHANCE: this oatmeal shampoo for sensitive skin sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,leonberger
+data/images/0186_german_shorthaired_71.jpg,This grain-free dog food CURES joint pain in dogs within days -- guaranteed or your money back.,policy_violation,dog,german shorthaired
+data/images/0187_Maine_Coon_213.jpg,This interactive feather wand toy CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Maine Coon
+data/images/0188_wheaten_terrier_53.jpg,The #1 vet-recommended slow-feed dog bowl in America -- nothing else on the market even compares.,policy_violation,dog,wheaten terrier
+data/images/0189_english_cocker_spaniel_37.jpg,"Stop your english cocker spaniel's suffering today -- this joint & mobility support chew is the only thing that actually works, period.",policy_violation,dog,english cocker spaniel
+data/images/0190_Egyptian_Mau_136.jpg,Only 2 left in stock! Sale ends tonight -- get this soft-sided cat carrier before it's gone forever.,policy_violation,cat,Egyptian Mau
+data/images/0191_Ragdoll_161.jpg,This soft-sided cat carrier CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Ragdoll
+data/images/0192_Persian_115.jpg,This soft-sided cat carrier CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,Persian
+data/images/0193_pomeranian_20.jpg,"Rated the best durable rubber chew toy in the world by every major review site, hands down.",policy_violation,dog,pomeranian
+data/images/0194_Maine_Coon_187.jpg,Only 2 left in stock! Sale ends tonight -- get this sisal scratching post before it's gone forever.,policy_violation,cat,Maine Coon
+data/images/0195_english_setter_142.jpg,"LAST CHANCE: this joint & mobility support chew sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,english setter
+data/images/0196_american_bulldog_93.jpg,Only 2 left in stock! Sale ends tonight -- get this grain-free dog food before it's gone forever.,policy_violation,dog,american bulldog
+data/images/0197_great_pyrenees_34.jpg,"Rated the best durable rubber chew toy in the world by every major review site, hands down.",policy_violation,dog,great pyrenees
+data/images/0198_Abyssinian_165.jpg,"LAST CHANCE: this interactive feather wand toy sells out every time, buy now before the price doubles at midnight!",policy_violation,cat,Abyssinian
+data/images/0199_american_pit_bull_terrier_163.jpg,Only 2 left in stock! Sale ends tonight -- get this no-pull dog harness before it's gone forever.,policy_violation,dog,american pit bull terrier
+data/images/0200_wheaten_terrier_155.jpg,Only 2 left in stock! Sale ends tonight -- get this grain-free training treat mix before it's gone forever.,policy_violation,dog,wheaten terrier
+data/images/0201_British_Shorthair_159.jpg,This soft-sided cat carrier CURES joint pain in cats within days -- guaranteed or your money back.,policy_violation,cat,British Shorthair
+data/images/0202_shiba_inu_82.jpg,Only 2 left in stock! Sale ends tonight -- get this grain-free dog food before it's gone forever.,policy_violation,dog,shiba inu
+data/images/0203_samoyed_110.jpg,"LAST CHANCE: this joint & mobility support chew sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,samoyed
+data/images/0204_Ragdoll_69.jpg,Vets agree: this self-grooming slicker brush guarantees your Ragdoll will live 5 years longer. No other self-grooming slicker brush comes close.,policy_violation,cat,Ragdoll
+data/images/0205_keeshond_121.jpg,Only 2 left in stock! Sale ends tonight -- get this durable rubber chew toy before it's gone forever.,policy_violation,dog,keeshond
+data/images/0206_saint_bernard_147.jpg,The #1 vet-recommended no-pull dog harness in America -- nothing else on the market even compares.,policy_violation,dog,saint bernard
+data/images/0207_pomeranian_154.jpg,"LAST CHANCE: this joint & mobility support chew sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,pomeranian
+data/images/0208_Egyptian_Mau_164.jpg,"Rated the best sisal scratching post in the world by every major review site, hands down.",policy_violation,cat,Egyptian Mau
+data/images/0209_newfoundland_122.jpg,Only 2 left in stock! Sale ends tonight -- get this slow-feed dog bowl before it's gone forever.,policy_violation,dog,newfoundland
+data/images/0210_boxer_11.jpg,The #1 vet-recommended orthopedic dog bed in America -- nothing else on the market even compares.,policy_violation,dog,boxer
+data/images/0211_pug_143.jpg,"LAST CHANCE: this durable rubber chew toy sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,pug
+data/images/0212_wheaten_terrier_96.jpg,The #1 vet-recommended durable rubber chew toy in America -- nothing else on the market even compares.,policy_violation,dog,wheaten terrier
+data/images/0213_american_bulldog_52.jpg,Only 2 left in stock! Sale ends tonight -- get this grain-free dog food before it's gone forever.,policy_violation,dog,american bulldog
+data/images/0214_Persian_258.jpg,Only 2 left in stock! Sale ends tonight -- get this grain-free cat food before it's gone forever.,policy_violation,cat,Persian
+data/images/0215_British_Shorthair_241.jpg,"Rated the best self-grooming slicker brush in the world by every major review site, hands down.",policy_violation,cat,British Shorthair
+data/images/0216_Ragdoll_156.jpg,The #1 vet-recommended ceramic cat feeding bowl in America -- nothing else on the market even compares.,policy_violation,cat,Ragdoll
+data/images/0217_Abyssinian_18.jpg,Only 2 left in stock! Sale ends tonight -- get this ceramic cat feeding bowl before it's gone forever.,policy_violation,cat,Abyssinian
+data/images/0218_Sphynx_240.jpg,The #1 vet-recommended clumping cat litter in America -- nothing else on the market even compares.,policy_violation,cat,Sphynx
+data/images/0219_chihuahua_100.jpg,"Clinically proven to eliminate dog anxiety completely, this orthopedic dog bed reverses years of stress in one week.",policy_violation,dog,chihuahua
+data/images/0220_wheaten_terrier_111.jpg,Only 2 left in stock! Sale ends tonight -- get this grain-free training treat mix before it's gone forever.,policy_violation,dog,wheaten terrier
+data/images/0221_havanese_188.jpg,"Stop your havanese's suffering today -- this joint & mobility support chew is the only thing that actually works, period.",policy_violation,dog,havanese
+data/images/0222_British_Shorthair_176.jpg,"Stop your British Shorthair's suffering today -- this hairball control treat mix is the only thing that actually works, period.",policy_violation,cat,British Shorthair
+data/images/0223_yorkshire_terrier_82.jpg,"LAST CHANCE: this grain-free dog food sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,yorkshire terrier
+data/images/0224_havanese_111.jpg,"Rated the best no-pull dog harness in the world by every major review site, hands down.",policy_violation,dog,havanese
+data/images/0225_staffordshire_bull_terrier_55.jpg,"LAST CHANCE: this no-pull dog harness sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,staffordshire bull terrier
+data/images/0226_basset_hound_183.jpg,The #1 vet-recommended grain-free dog food in America -- nothing else on the market even compares.,policy_violation,dog,basset hound
+data/images/0227_newfoundland_199.jpg,"Rated the best orthopedic dog bed in the world by every major review site, hands down.",policy_violation,dog,newfoundland
+data/images/0228_scottish_terrier_20.jpg,"LAST CHANCE: this grain-free dog food sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,scottish terrier
+data/images/0229_staffordshire_bull_terrier_200.jpg,The #1 vet-recommended oatmeal shampoo for sensitive skin in America -- nothing else on the market even compares.,policy_violation,dog,staffordshire bull terrier
+data/images/0230_great_pyrenees_30.jpg,"Rated the best joint & mobility support chew in the world by every major review site, hands down.",policy_violation,dog,great pyrenees
+data/images/0231_boxer_56.jpg,"Rated the best grain-free dog food in the world by every major review site, hands down.",policy_violation,dog,boxer
+data/images/0232_american_bulldog_89.jpg,"Stop your american bulldog's suffering today -- this grain-free dog food is the only thing that actually works, period.",policy_violation,dog,american bulldog
+data/images/0233_Sphynx_199.jpg,Only 2 left in stock! Sale ends tonight -- get this soft-sided cat carrier before it's gone forever.,policy_violation,cat,Sphynx
+data/images/0234_Russian_Blue_203.jpg,Only 2 left in stock! Sale ends tonight -- get this soft-sided cat carrier before it's gone forever.,policy_violation,cat,Russian Blue
+data/images/0235_Bengal_174.jpg,The #1 vet-recommended clumping cat litter in America -- nothing else on the market even compares.,policy_violation,cat,Bengal
+data/images/0236_shiba_inu_41.jpg,Only 2 left in stock! Sale ends tonight -- get this no-pull dog harness before it's gone forever.,policy_violation,dog,shiba inu
+data/images/0237_miniature_pinscher_99.jpg,"Rated the best joint & mobility support chew in the world by every major review site, hands down.",policy_violation,dog,miniature pinscher
+data/images/0238_beagle_161.jpg,The #1 vet-recommended durable rubber chew toy in America -- nothing else on the market even compares.,policy_violation,dog,beagle
+data/images/0239_samoyed_25.jpg,"LAST CHANCE: this grain-free training treat mix sells out every time, buy now before the price doubles at midnight!",policy_violation,dog,samoyed
+data/images/0240_german_shorthaired_185.jpg,"Made for Bengals and other cats, this hairball control treat mix is a favorite with owners who want a reliable everyday option.",misleading,dog,german shorthaired
+data/images/0241_Sphynx_1.jpg,This grain-free training treat mix was designed with dog comfort in mind and works well for breeds like the newfoundland.,misleading,cat,Sphynx
+data/images/0242_Persian_63.jpg,"A dependable slow-feed dog bowl for dog owners, tested with breeds including the shiba inu.",misleading,cat,Persian
+data/images/0243_japanese_chin_165.jpg,"A dependable ceramic cat feeding bowl for cat owners, tested with breeds including the Egyptian Mau.",misleading,dog,japanese chin
+data/images/0244_leonberger_51.jpg,This sisal scratching post was designed with cat comfort in mind and works well for breeds like the Bengal.,misleading,dog,leonberger
+data/images/0245_Bombay_112.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for great pyreneess at any age.,misleading,cat,Bombay
+data/images/0246_american_bulldog_126.jpg,Our clumping cat litter is formulated with cat nutrition in mind -- a solid pick for British Shorthairs at any age.,misleading,dog,american bulldog
+data/images/0247_Egyptian_Mau_221.jpg,This no-pull dog harness was designed with dog comfort in mind and works well for breeds like the boxer.,misleading,cat,Egyptian Mau
+data/images/0248_english_cocker_spaniel_41.jpg,"Owners of Maine Coons reach for this grain-free cat food because it does the basics well, day after day.",misleading,dog,english cocker spaniel
+data/images/0249_pug_98.jpg,"Owners of Maine Coons reach for this ceramic cat feeding bowl because it does the basics well, day after day.",misleading,dog,pug
+data/images/0250_japanese_chin_53.jpg,"Owners of Bombays reach for this grain-free cat food because it does the basics well, day after day.",misleading,dog,japanese chin
+data/images/0251_boxer_41.jpg,Our grain-free cat food is formulated with cat nutrition in mind -- a solid pick for Ragdolls at any age.,misleading,dog,boxer
+data/images/0252_havanese_70.jpg,"A dependable self-grooming slicker brush for cat owners, tested with breeds including the Egyptian Mau.",misleading,dog,havanese
+data/images/0253_havanese_5.jpg,"A dependable ceramic cat feeding bowl for cat owners, tested with breeds including the Siamese.",misleading,dog,havanese
+data/images/0254_samoyed_68.jpg,"Owners of Russian Blues reach for this ceramic cat feeding bowl because it does the basics well, day after day.",misleading,dog,samoyed
+data/images/0255_chihuahua_110.jpg,Our hairball control treat mix is formulated with cat nutrition in mind -- a solid pick for British Shorthairs at any age.,misleading,dog,chihuahua
+data/images/0256_wheaten_terrier_89.jpg,"Owners of British Shorthairs reach for this ceramic cat feeding bowl because it does the basics well, day after day.",misleading,dog,wheaten terrier
+data/images/0257_leonberger_39.jpg,"Owners of British Shorthairs reach for this interactive feather wand toy because it does the basics well, day after day.",misleading,dog,leonberger
+data/images/0258_shiba_inu_27.jpg,"A dependable interactive feather wand toy for cat owners, tested with breeds including the Birman.",misleading,dog,shiba inu
+data/images/0259_Siamese_60.jpg,Our no-pull dog harness is formulated with dog nutrition in mind -- a solid pick for staffordshire bull terriers at any age.,misleading,cat,Siamese
+data/images/0260_leonberger_65.jpg,Our interactive feather wand toy is formulated with cat nutrition in mind -- a solid pick for Bengals at any age.,misleading,dog,leonberger
+data/images/0261_Abyssinian_91.jpg,"A dependable grain-free training treat mix for dog owners, tested with breeds including the boxer.",misleading,cat,Abyssinian
+data/images/0262_pomeranian_21.jpg,"Owners of Birmans reach for this hairball control treat mix because it does the basics well, day after day.",misleading,dog,pomeranian
+data/images/0263_Egyptian_Mau_150.jpg,"Owners of japanese chins reach for this grain-free dog food because it does the basics well, day after day.",misleading,cat,Egyptian Mau
+data/images/0264_Ragdoll_164.jpg,This grain-free training treat mix was designed with dog comfort in mind and works well for breeds like the pug.,misleading,cat,Ragdoll
+data/images/0265_japanese_chin_14.jpg,"Made for Abyssinians and other cats, this hairball control treat mix is a favorite with owners who want a reliable everyday option.",misleading,dog,japanese chin
+data/images/0266_Siamese_152.jpg,Our slow-feed dog bowl is formulated with dog nutrition in mind -- a solid pick for miniature pinschers at any age.,misleading,cat,Siamese
+data/images/0267_Birman_92.jpg,"Made for wheaten terriers and other dogs, this no-pull dog harness is a favorite with owners who want a reliable everyday option.",misleading,cat,Birman
+data/images/0268_beagle_143.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the British Shorthair.,misleading,dog,beagle
+data/images/0269_staffordshire_bull_terrier_40.jpg,"Owners of Sphynxs reach for this ceramic cat feeding bowl because it does the basics well, day after day.",misleading,dog,staffordshire bull terrier
+data/images/0270_keeshond_167.jpg,"Made for Birmans and other cats, this ceramic cat feeding bowl is a favorite with owners who want a reliable everyday option.",misleading,dog,keeshond
+data/images/0271_leonberger_102.jpg,"Made for Maine Coons and other cats, this hairball control treat mix is a favorite with owners who want a reliable everyday option.",misleading,dog,leonberger
+data/images/0272_german_shorthaired_136.jpg,"Owners of Bengals reach for this ceramic cat feeding bowl because it does the basics well, day after day.",misleading,dog,german shorthaired
+data/images/0273_Abyssinian_4.jpg,"A dependable grain-free dog food for dog owners, tested with breeds including the scottish terrier.",misleading,cat,Abyssinian
+data/images/0274_havanese_163.jpg,"Owners of Bombays reach for this sisal scratching post because it does the basics well, day after day.",misleading,dog,havanese
+data/images/0275_Sphynx_203.jpg,"A dependable joint & mobility support chew for dog owners, tested with breeds including the miniature pinscher.",misleading,cat,Sphynx
+data/images/0276_Siamese_205.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for newfoundlands at any age.,misleading,cat,Siamese
+data/images/0277_Abyssinian_153.jpg,"Owners of keeshonds reach for this grain-free dog food because it does the basics well, day after day.",misleading,cat,Abyssinian
+data/images/0278_american_pit_bull_terrier_121.jpg,"Owners of Maine Coons reach for this self-grooming slicker brush because it does the basics well, day after day.",misleading,dog,american pit bull terrier
+data/images/0279_german_shorthaired_195.jpg,"Owners of Egyptian Maus reach for this grain-free cat food because it does the basics well, day after day.",misleading,dog,german shorthaired
+data/images/0280_scottish_terrier_157.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Ragdoll.,misleading,dog,scottish terrier
+data/images/0281_basset_hound_194.jpg,This sisal scratching post was designed with cat comfort in mind and works well for breeds like the Sphynx.,misleading,dog,basset hound
+data/images/0282_beagle_57.jpg,"Owners of Birmans reach for this ceramic cat feeding bowl because it does the basics well, day after day.",misleading,dog,beagle
+data/images/0283_Ragdoll_124.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for saint bernards at any age.,misleading,cat,Ragdoll
+data/images/0284_Bombay_97.jpg,Our no-pull dog harness is formulated with dog nutrition in mind -- a solid pick for great pyreneess at any age.,misleading,cat,Bombay
+data/images/0285_Abyssinian_45.jpg,"Made for saint bernards and other dogs, this grain-free training treat mix is a favorite with owners who want a reliable everyday option.",misleading,cat,Abyssinian
+data/images/0286_Birman_191.jpg,"Made for leonbergers and other dogs, this joint & mobility support chew is a favorite with owners who want a reliable everyday option.",misleading,cat,Birman
+data/images/0287_miniature_pinscher_110.jpg,Our self-grooming slicker brush is formulated with cat nutrition in mind -- a solid pick for Ragdolls at any age.,misleading,dog,miniature pinscher
+data/images/0288_Maine_Coon_19.jpg,Our no-pull dog harness is formulated with dog nutrition in mind -- a solid pick for chihuahuas at any age.,misleading,cat,Maine Coon
+data/images/0289_samoyed_170.jpg,"A dependable hairball control treat mix for cat owners, tested with breeds including the Persian.",misleading,dog,samoyed
+data/images/0290_British_Shorthair_187.jpg,"A dependable oatmeal shampoo for sensitive skin for dog owners, tested with breeds including the great pyrenees.",misleading,cat,British Shorthair
+data/images/0291_american_pit_bull_terrier_94.jpg,Our ceramic cat feeding bowl is formulated with cat nutrition in mind -- a solid pick for Abyssinians at any age.,misleading,dog,american pit bull terrier
+data/images/0292_miniature_pinscher_124.jpg,"Owners of British Shorthairs reach for this interactive feather wand toy because it does the basics well, day after day.",misleading,dog,miniature pinscher
+data/images/0293_pug_172.jpg,"Owners of Maine Coons reach for this clumping cat litter because it does the basics well, day after day.",misleading,dog,pug
+data/images/0294_Persian_196.jpg,Our slow-feed dog bowl is formulated with dog nutrition in mind -- a solid pick for american bulldogs at any age.,misleading,cat,Persian
+data/images/0295_Egyptian_Mau_62.jpg,This oatmeal shampoo for sensitive skin was designed with dog comfort in mind and works well for breeds like the basset hound.,misleading,cat,Egyptian Mau
+data/images/0296_japanese_chin_50.jpg,"A dependable ceramic cat feeding bowl for cat owners, tested with breeds including the Maine Coon.",misleading,dog,japanese chin
+data/images/0297_Russian_Blue_68.jpg,"Made for japanese chins and other dogs, this slow-feed dog bowl is a favorite with owners who want a reliable everyday option.",misleading,cat,Russian Blue
+data/images/0298_keeshond_64.jpg,Our hairball control treat mix is formulated with cat nutrition in mind -- a solid pick for Russian Blues at any age.,misleading,dog,keeshond
+data/images/0299_Bombay_56.jpg,"Owners of miniature pinschers reach for this no-pull dog harness because it does the basics well, day after day.",misleading,cat,Bombay
+data/images/0300_Bombay_87.jpg,Our grain-free training treat mix is formulated with dog nutrition in mind -- a solid pick for american pit bull terriers at any age.,misleading,cat,Bombay
+data/images/0301_newfoundland_11.jpg,This soft-sided cat carrier was designed with cat comfort in mind and works well for breeds like the Siamese.,misleading,dog,newfoundland
+data/images/0302_leonberger_37.jpg,"Owners of British Shorthairs reach for this grain-free cat food because it does the basics well, day after day.",misleading,dog,leonberger
+data/images/0303_scottish_terrier_105.jpg,Our sisal scratching post is formulated with cat nutrition in mind -- a solid pick for Bengals at any age.,misleading,dog,scottish terrier
+data/images/0304_Egyptian_Mau_63.jpg,"Owners of shiba inus reach for this grain-free training treat mix because it does the basics well, day after day.",misleading,cat,Egyptian Mau
+data/images/0305_Egyptian_Mau_172.jpg,"Owners of beagles reach for this oatmeal shampoo for sensitive skin because it does the basics well, day after day.",misleading,cat,Egyptian Mau
+data/images/0306_american_pit_bull_terrier_148.jpg,"Made for Birmans and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",misleading,dog,american pit bull terrier
+data/images/0307_german_shorthaired_28.jpg,This soft-sided cat carrier was designed with cat comfort in mind and works well for breeds like the Maine Coon.,misleading,dog,german shorthaired
+data/images/0308_shiba_inu_101.jpg,"Made for Bombays and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",misleading,dog,shiba inu
+data/images/0309_scottish_terrier_15.jpg,Our sisal scratching post is formulated with cat nutrition in mind -- a solid pick for Ragdolls at any age.,misleading,dog,scottish terrier
+data/images/0310_beagle_191.jpg,This self-grooming slicker brush was designed with cat comfort in mind and works well for breeds like the Bengal.,misleading,dog,beagle
+data/images/0311_japanese_chin_46.jpg,"Made for Persians and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",misleading,dog,japanese chin
+data/images/0312_english_cocker_spaniel_28.jpg,"Owners of Birmans reach for this hairball control treat mix because it does the basics well, day after day.",misleading,dog,english cocker spaniel
+data/images/0313_Russian_Blue_50.jpg,Our grain-free training treat mix is formulated with dog nutrition in mind -- a solid pick for staffordshire bull terriers at any age.,misleading,cat,Russian Blue
+data/images/0314_boxer_183.jpg,"Made for Bombays and other cats, this grain-free cat food is a favorite with owners who want a reliable everyday option.",misleading,dog,boxer
+data/images/0315_beagle_26.jpg,Our interactive feather wand toy is formulated with cat nutrition in mind -- a solid pick for British Shorthairs at any age.,misleading,dog,beagle
+data/images/0316_boxer_130.jpg,Our sisal scratching post is formulated with cat nutrition in mind -- a solid pick for Bengals at any age.,misleading,dog,boxer
+data/images/0317_yorkshire_terrier_23.jpg,"Made for Abyssinians and other cats, this clumping cat litter is a favorite with owners who want a reliable everyday option.",misleading,dog,yorkshire terrier
+data/images/0318_Maine_Coon_91.jpg,"Made for english cocker spaniels and other dogs, this orthopedic dog bed is a favorite with owners who want a reliable everyday option.",misleading,cat,Maine Coon
+data/images/0319_leonberger_9.jpg,"A dependable grain-free cat food for cat owners, tested with breeds including the Russian Blue.",misleading,dog,leonberger
+data/images/0320_Sphynx_2.jpg,"Made for german shorthaireds and other dogs, this slow-feed dog bowl is a favorite with owners who want a reliable everyday option.",misleading,cat,Sphynx
+data/images/0321_samoyed_176.jpg,"Owners of Siameses reach for this clumping cat litter because it does the basics well, day after day.",misleading,dog,samoyed
+data/images/0322_scottish_terrier_59.jpg,"Made for Russian Blues and other cats, this clumping cat litter is a favorite with owners who want a reliable everyday option.",misleading,dog,scottish terrier
+data/images/0323_Siamese_128.jpg,Our durable rubber chew toy is formulated with dog nutrition in mind -- a solid pick for shiba inus at any age.,misleading,cat,Siamese
+data/images/0324_basset_hound_198.jpg,"Made for Birmans and other cats, this grain-free cat food is a favorite with owners who want a reliable everyday option.",misleading,dog,basset hound
+data/images/0325_Persian_135.jpg,"Owners of chihuahuas reach for this grain-free training treat mix because it does the basics well, day after day.",misleading,cat,Persian
+data/images/0326_saint_bernard_192.jpg,"Made for Russian Blues and other cats, this clumping cat litter is a favorite with owners who want a reliable everyday option.",misleading,dog,saint bernard
+data/images/0327_great_pyrenees_151.jpg,Our sisal scratching post is formulated with cat nutrition in mind -- a solid pick for British Shorthairs at any age.,misleading,dog,great pyrenees
+data/images/0328_Maine_Coon_249.jpg,"Made for english cocker spaniels and other dogs, this grain-free dog food is a favorite with owners who want a reliable everyday option.",misleading,cat,Maine Coon
+data/images/0329_scottish_terrier_177.jpg,"A dependable soft-sided cat carrier for cat owners, tested with breeds including the Birman.",misleading,dog,scottish terrier
+data/images/0330_Bombay_58.jpg,Our joint & mobility support chew is formulated with dog nutrition in mind -- a solid pick for japanese chins at any age.,misleading,cat,Bombay
+data/images/0331_Bengal_33.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for pomeranians at any age.,misleading,cat,Bengal
+data/images/0332_japanese_chin_101.jpg,"Made for Egyptian Maus and other cats, this self-grooming slicker brush is a favorite with owners who want a reliable everyday option.",misleading,dog,japanese chin
+data/images/0333_newfoundland_49.jpg,"Made for Ragdolls and other cats, this ceramic cat feeding bowl is a favorite with owners who want a reliable everyday option.",misleading,dog,newfoundland
+data/images/0334_Siamese_181.jpg,"Owners of staffordshire bull terriers reach for this slow-feed dog bowl because it does the basics well, day after day.",misleading,cat,Siamese
+data/images/0335_miniature_pinscher_55.jpg,"Made for Egyptian Maus and other cats, this grain-free cat food is a favorite with owners who want a reliable everyday option.",misleading,dog,miniature pinscher
+data/images/0336_shiba_inu_126.jpg,This clumping cat litter was designed with cat comfort in mind and works well for breeds like the British Shorthair.,misleading,dog,shiba inu
+data/images/0337_shiba_inu_55.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Bombay.,misleading,dog,shiba inu
+data/images/0338_german_shorthaired_78.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Bombay.,misleading,dog,german shorthaired
+data/images/0339_Birman_1.jpg,"Owners of chihuahuas reach for this slow-feed dog bowl because it does the basics well, day after day.",misleading,cat,Birman
+data/images/0340_yorkshire_terrier_61.jpg,"Made for Maine Coons and other cats, this ceramic cat feeding bowl is a favorite with owners who want a reliable everyday option.",misleading,dog,yorkshire terrier
+data/images/0341_beagle_142.jpg,"Made for Birmans and other cats, this clumping cat litter is a favorite with owners who want a reliable everyday option.",misleading,dog,beagle
+data/images/0342_Siamese_161.jpg,"A dependable orthopedic dog bed for dog owners, tested with breeds including the beagle.",misleading,cat,Siamese
+data/images/0343_shiba_inu_119.jpg,"Owners of Bombays reach for this clumping cat litter because it does the basics well, day after day.",misleading,dog,shiba inu
+data/images/0344_basset_hound_34.jpg,"A dependable sisal scratching post for cat owners, tested with breeds including the Maine Coon.",misleading,dog,basset hound
+data/images/0345_american_bulldog_137.jpg,This sisal scratching post was designed with cat comfort in mind and works well for breeds like the Sphynx.,misleading,dog,american bulldog
+data/images/0346_miniature_pinscher_118.jpg,"A dependable hairball control treat mix for cat owners, tested with breeds including the Russian Blue.",misleading,dog,miniature pinscher
+data/images/0347_Bombay_39.jpg,"Owners of newfoundlands reach for this orthopedic dog bed because it does the basics well, day after day.",misleading,cat,Bombay
+data/images/0348_japanese_chin_44.jpg,"A dependable ceramic cat feeding bowl for cat owners, tested with breeds including the British Shorthair.",misleading,dog,japanese chin
+data/images/0349_Abyssinian_197.jpg,"Made for beagles and other dogs, this slow-feed dog bowl is a favorite with owners who want a reliable everyday option.",misleading,cat,Abyssinian
+data/images/0350_havanese_135.jpg,This ceramic cat feeding bowl was designed with cat comfort in mind and works well for breeds like the Bombay.,misleading,dog,havanese
+data/images/0351_japanese_chin_60.jpg,"Made for Sphynxs and other cats, this grain-free cat food is a favorite with owners who want a reliable everyday option.",misleading,dog,japanese chin
+data/images/0352_Siamese_54.jpg,This joint & mobility support chew was designed with dog comfort in mind and works well for breeds like the shiba inu.,misleading,cat,Siamese
+data/images/0353_chihuahua_163.jpg,This interactive feather wand toy was designed with cat comfort in mind and works well for breeds like the Russian Blue.,misleading,dog,chihuahua
+data/images/0354_miniature_pinscher_101.jpg,"Owners of Russian Blues reach for this interactive feather wand toy because it does the basics well, day after day.",misleading,dog,miniature pinscher
+data/images/0355_shiba_inu_85.jpg,"A dependable clumping cat litter for cat owners, tested with breeds including the Persian.",misleading,dog,shiba inu
+data/images/0356_yorkshire_terrier_155.jpg,"Owners of Siameses reach for this sisal scratching post because it does the basics well, day after day.",misleading,dog,yorkshire terrier
+data/images/0357_Ragdoll_88.jpg,"A dependable slow-feed dog bowl for dog owners, tested with breeds including the german shorthaired.",misleading,cat,Ragdoll
+data/images/0358_shiba_inu_112.jpg,"Made for Maine Coons and other cats, this grain-free cat food is a favorite with owners who want a reliable everyday option.",misleading,dog,shiba inu
+data/images/0359_boxer_161.jpg,This self-grooming slicker brush was designed with cat comfort in mind and works well for breeds like the Egyptian Mau.,misleading,dog,boxer
+data/images/0360_Bengal_21.jpg,This self-grooming slicker brush was designed with cat comfort in mind and works well for breeds like the Bengal.,low_quality,cat,Bengal
+data/images/0361_great_pyrenees_71.jpg,SLOW-FEED DOG BOWL SLOW-FEED DOG BOWL BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,great pyrenees
+data/images/0362_yorkshire_terrier_192.jpg,Our grain-free dog food is formulated with dog nutrition in mind -- a solid pick for yorkshire terriers at any age.,low_quality,dog,yorkshire terrier
+data/images/0363_Sphynx_119.jpg,hairball control treat mix!!!! !!! best!! cat hairball control treat mix now now now discount discount,low_quality,cat,Sphynx
+data/images/0364_Bombay_64.jpg,This interactive feather wand toy was designed with cat comfort in mind and works well for breeds like the Bombay.,low_quality,cat,Bombay
+data/images/0365_german_shorthaired_101.jpg,ORTHOPEDIC DOG BED ORTHOPEDIC DOG BED BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,german shorthaired
+data/images/0366_Sphynx_182.jpg,This hairball control treat mix was designed with cat comfort in mind and works well for breeds like the Sphynx.,low_quality,cat,Sphynx
+data/images/0367_Russian_Blue_132.jpg,CERAMIC CAT FEEDING BOWL CERAMIC CAT FEEDING BOWL BEST DEAL CLICK NOW SALE SALE BUY BUY CAT,low_quality,cat,Russian Blue
+data/images/0368_samoyed_48.jpg,"A dependable slow-feed dog bowl for dog owners, tested with breeds including the samoyed.",low_quality,dog,samoyed
+data/images/0369_Sphynx_71.jpg,product good buy now ceramic cat feeding bowl ceramic cat feeding bowl cheap price fast shipping click,low_quality,cat,Sphynx
+data/images/0370_leonberger_121.jpg,"A dependable no-pull dog harness for dog owners, tested with breeds including the leonberger.",low_quality,dog,leonberger
+data/images/0371_Persian_111.jpg,product good buy now grain-free cat food grain-free cat food cheap price fast shipping click,low_quality,cat,Persian
+data/images/0372_pug_168.jpg,This oatmeal shampoo for sensitive skin was designed with dog comfort in mind and works well for breeds like the pug.,low_quality,dog,pug
+data/images/0373_Ragdoll_151.jpg,self-grooming slicker brush!!!! !!! best!! cat self-grooming slicker brush now now now discount discount,low_quality,cat,Ragdoll
+data/images/0374_english_cocker_spaniel_157.jpg,"Owners of english cocker spaniels reach for this grain-free training treat mix because it does the basics well, day after day.",low_quality,dog,english cocker spaniel
+data/images/0375_german_shorthaired_74.jpg,GRAIN-FREE TRAINING TREAT MIX GRAIN-FREE TRAINING TREAT MIX BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,german shorthaired
+data/images/0376_boxer_104.jpg,"A dependable grain-free dog food for dog owners, tested with breeds including the boxer.",low_quality,dog,boxer
+data/images/0377_pug_135.jpg,GRAIN-FREE DOG FOOD GRAIN-FREE DOG FOOD BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,pug
+data/images/0378_pomeranian_125.jpg,"Owners of pomeranians reach for this grain-free training treat mix because it does the basics well, day after day.",low_quality,dog,pomeranian
+data/images/0379_boxer_76.jpg,grain-free dog food!!!! !!! best!! dog grain-free dog food now now now discount discount,low_quality,dog,boxer
+data/images/0380_yorkshire_terrier_49.jpg,This grain-free training treat mix was designed with dog comfort in mind and works well for breeds like the yorkshire terrier.,low_quality,dog,yorkshire terrier
+data/images/0381_chihuahua_46.jpg,product good buy now joint & mobility support chew joint & mobility support chew cheap price fast shipping click,low_quality,dog,chihuahua
+data/images/0382_staffordshire_bull_terrier_186.jpg,"Owners of staffordshire bull terriers reach for this grain-free training treat mix because it does the basics well, day after day.",low_quality,dog,staffordshire bull terrier
+data/images/0383_Siamese_154.jpg,product good buy now self-grooming slicker brush self-grooming slicker brush cheap price fast shipping click,low_quality,cat,Siamese
+data/images/0384_Maine_Coon_141.jpg,Our grain-free cat food is formulated with cat nutrition in mind -- a solid pick for Maine Coons at any age.,low_quality,cat,Maine Coon
+data/images/0385_yorkshire_terrier_129.jpg,DURABLE RUBBER CHEW TOY DURABLE RUBBER CHEW TOY BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,yorkshire terrier
+data/images/0386_Abyssinian_207.jpg,"A dependable hairball control treat mix for cat owners, tested with breeds including the Abyssinian.",low_quality,cat,Abyssinian
+data/images/0387_Egyptian_Mau_39.jpg,clumping cat litter!!!! !!! best!! cat clumping cat litter now now now discount discount,low_quality,cat,Egyptian Mau
+data/images/0388_samoyed_133.jpg,"Owners of samoyeds reach for this joint & mobility support chew because it does the basics well, day after day.",low_quality,dog,samoyed
+data/images/0389_great_pyrenees_45.jpg,product good buy now joint & mobility support chew joint & mobility support chew cheap price fast shipping click,low_quality,dog,great pyrenees
+data/images/0390_Abyssinian_70.jpg,"Made for Abyssinians and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",low_quality,cat,Abyssinian
+data/images/0391_Siamese_114.jpg,SOFT-SIDED CAT CARRIER SOFT-SIDED CAT CARRIER BEST DEAL CLICK NOW SALE SALE BUY BUY CAT,low_quality,cat,Siamese
+data/images/0392_pomeranian_3.jpg,This slow-feed dog bowl was designed with dog comfort in mind and works well for breeds like the pomeranian.,low_quality,dog,pomeranian
+data/images/0393_newfoundland_53.jpg,product good buy now orthopedic dog bed orthopedic dog bed cheap price fast shipping click,low_quality,dog,newfoundland
+data/images/0394_Persian_200.jpg,This grain-free cat food was designed with cat comfort in mind and works well for breeds like the Persian.,low_quality,cat,Persian
+data/images/0395_basset_hound_101.jpg,product good buy now grain-free dog food grain-free dog food cheap price fast shipping click,low_quality,dog,basset hound
+data/images/0396_Bombay_122.jpg,"A dependable self-grooming slicker brush for cat owners, tested with breeds including the Bombay.",low_quality,cat,Bombay
+data/images/0397_Birman_91.jpg,product good buy now self-grooming slicker brush self-grooming slicker brush cheap price fast shipping click,low_quality,cat,Birman
+data/images/0398_Bengal_172.jpg,This clumping cat litter was designed with cat comfort in mind and works well for breeds like the Bengal.,low_quality,cat,Bengal
+data/images/0399_wheaten_terrier_152.jpg,joint & mobility support chew!!!! !!! best!! dog joint & mobility support chew now now now discount discount,low_quality,dog,wheaten terrier
+data/images/0400_Egyptian_Mau_120.jpg,"Owners of Egyptian Maus reach for this sisal scratching post because it does the basics well, day after day.",low_quality,cat,Egyptian Mau
+data/images/0401_leonberger_123.jpg,slow-feed dog bowl!!!! !!! best!! dog slow-feed dog bowl now now now discount discount,low_quality,dog,leonberger
+data/images/0402_beagle_141.jpg,Our grain-free training treat mix is formulated with dog nutrition in mind -- a solid pick for beagles at any age.,low_quality,dog,beagle
+data/images/0403_chihuahua_170.jpg,product good buy now oatmeal shampoo for sensitive skin oatmeal shampoo for sensitive skin cheap price fast shipping click,low_quality,dog,chihuahua
+data/images/0404_leonberger_124.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for leonbergers at any age.,low_quality,dog,leonberger
+data/images/0405_Sphynx_15.jpg,ceramic cat feeding bowl!!!! !!! best!! cat ceramic cat feeding bowl now now now discount discount,low_quality,cat,Sphynx
+data/images/0406_Ragdoll_47.jpg,"A dependable clumping cat litter for cat owners, tested with breeds including the Ragdoll.",low_quality,cat,Ragdoll
+data/images/0407_havanese_3.jpg,product good buy now durable rubber chew toy durable rubber chew toy cheap price fast shipping click,low_quality,dog,havanese
+data/images/0408_boxer_12.jpg,"Made for boxers and other dogs, this oatmeal shampoo for sensitive skin is a favorite with owners who want a reliable everyday option.",low_quality,dog,boxer
+data/images/0409_miniature_pinscher_52.jpg,oatmeal shampoo for sensitive skin!!!! !!! best!! dog oatmeal shampoo for sensitive skin now now now discount discount,low_quality,dog,miniature pinscher
+data/images/0410_havanese_82.jpg,Our orthopedic dog bed is formulated with dog nutrition in mind -- a solid pick for havaneses at any age.,low_quality,dog,havanese
+data/images/0411_shiba_inu_45.jpg,joint & mobility support chew!!!! !!! best!! dog joint & mobility support chew now now now discount discount,low_quality,dog,shiba inu
+data/images/0412_Bengal_129.jpg,"A dependable clumping cat litter for cat owners, tested with breeds including the Bengal.",low_quality,cat,Bengal
+data/images/0413_beagle_44.jpg,product good buy now grain-free training treat mix grain-free training treat mix cheap price fast shipping click,low_quality,dog,beagle
+data/images/0414_japanese_chin_92.jpg,"A dependable joint & mobility support chew for dog owners, tested with breeds including the japanese chin.",low_quality,dog,japanese chin
+data/images/0415_english_setter_23.jpg,product good buy now slow-feed dog bowl slow-feed dog bowl cheap price fast shipping click,low_quality,dog,english setter
+data/images/0416_Bengal_184.jpg,"Owners of Bengals reach for this sisal scratching post because it does the basics well, day after day.",low_quality,cat,Bengal
+data/images/0417_Siamese_127.jpg,clumping cat litter!!!! !!! best!! cat clumping cat litter now now now discount discount,low_quality,cat,Siamese
+data/images/0418_leonberger_199.jpg,"A dependable oatmeal shampoo for sensitive skin for dog owners, tested with breeds including the leonberger.",low_quality,dog,leonberger
+data/images/0419_yorkshire_terrier_122.jpg,product good buy now oatmeal shampoo for sensitive skin oatmeal shampoo for sensitive skin cheap price fast shipping click,low_quality,dog,yorkshire terrier
+data/images/0420_pug_122.jpg,Our grain-free training treat mix is formulated with dog nutrition in mind -- a solid pick for pugs at any age.,low_quality,dog,pug
+data/images/0421_Egyptian_Mau_132.jpg,product good buy now self-grooming slicker brush self-grooming slicker brush cheap price fast shipping click,low_quality,cat,Egyptian Mau
+data/images/0422_pomeranian_105.jpg,"A dependable oatmeal shampoo for sensitive skin for dog owners, tested with breeds including the pomeranian.",low_quality,dog,pomeranian
+data/images/0423_yorkshire_terrier_58.jpg,slow-feed dog bowl!!!! !!! best!! dog slow-feed dog bowl now now now discount discount,low_quality,dog,yorkshire terrier
+data/images/0424_Russian_Blue_78.jpg,"Made for Russian Blues and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",low_quality,cat,Russian Blue
+data/images/0425_wheaten_terrier_181.jpg,no-pull dog harness!!!! !!! best!! dog no-pull dog harness now now now discount discount,low_quality,dog,wheaten terrier
+data/images/0426_Bengal_110.jpg,Our ceramic cat feeding bowl is formulated with cat nutrition in mind -- a solid pick for Bengals at any age.,low_quality,cat,Bengal
+data/images/0427_Egyptian_Mau_89.jpg,product good buy now ceramic cat feeding bowl ceramic cat feeding bowl cheap price fast shipping click,low_quality,cat,Egyptian Mau
+data/images/0428_Birman_19.jpg,"A dependable self-grooming slicker brush for cat owners, tested with breeds including the Birman.",low_quality,cat,Birman
+data/images/0429_keeshond_52.jpg,grain-free dog food!!!! !!! best!! dog grain-free dog food now now now discount discount,low_quality,dog,keeshond
+data/images/0430_saint_bernard_83.jpg,"Owners of saint bernards reach for this durable rubber chew toy because it does the basics well, day after day.",low_quality,dog,saint bernard
+data/images/0431_Abyssinian_54.jpg,CERAMIC CAT FEEDING BOWL CERAMIC CAT FEEDING BOWL BEST DEAL CLICK NOW SALE SALE BUY BUY CAT,low_quality,cat,Abyssinian
+data/images/0432_wheaten_terrier_43.jpg,Our durable rubber chew toy is formulated with dog nutrition in mind -- a solid pick for wheaten terriers at any age.,low_quality,dog,wheaten terrier
+data/images/0433_miniature_pinscher_167.jpg,product good buy now oatmeal shampoo for sensitive skin oatmeal shampoo for sensitive skin cheap price fast shipping click,low_quality,dog,miniature pinscher
+data/images/0434_Siamese_64.jpg,"Owners of Siameses reach for this self-grooming slicker brush because it does the basics well, day after day.",low_quality,cat,Siamese
+data/images/0435_boxer_73.jpg,joint & mobility support chew!!!! !!! best!! dog joint & mobility support chew now now now discount discount,low_quality,dog,boxer
+data/images/0436_leonberger_134.jpg,This durable rubber chew toy was designed with dog comfort in mind and works well for breeds like the leonberger.,low_quality,dog,leonberger
+data/images/0437_Persian_188.jpg,product good buy now hairball control treat mix hairball control treat mix cheap price fast shipping click,low_quality,cat,Persian
+data/images/0438_miniature_pinscher_45.jpg,"Owners of miniature pinschers reach for this no-pull dog harness because it does the basics well, day after day.",low_quality,dog,miniature pinscher
+data/images/0439_pug_45.jpg,product good buy now durable rubber chew toy durable rubber chew toy cheap price fast shipping click,low_quality,dog,pug
+data/images/0440_pomeranian_198.jpg,"Made for pomeranians and other dogs, this durable rubber chew toy is a favorite with owners who want a reliable everyday option.",low_quality,dog,pomeranian
+data/images/0441_havanese_67.jpg,NO-PULL DOG HARNESS NO-PULL DOG HARNESS BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,havanese
+data/images/0442_chihuahua_113.jpg,Our grain-free dog food is formulated with dog nutrition in mind -- a solid pick for chihuahuas at any age.,low_quality,dog,chihuahua
+data/images/0443_Russian_Blue_91.jpg,product good buy now hairball control treat mix hairball control treat mix cheap price fast shipping click,low_quality,cat,Russian Blue
+data/images/0444_saint_bernard_169.jpg,"A dependable slow-feed dog bowl for dog owners, tested with breeds including the saint bernard.",low_quality,dog,saint bernard
+data/images/0445_japanese_chin_119.jpg,product good buy now orthopedic dog bed orthopedic dog bed cheap price fast shipping click,low_quality,dog,japanese chin
+data/images/0446_Russian_Blue_107.jpg,Our grain-free cat food is formulated with cat nutrition in mind -- a solid pick for Russian Blues at any age.,low_quality,cat,Russian Blue
+data/images/0447_pomeranian_63.jpg,product good buy now no-pull dog harness no-pull dog harness cheap price fast shipping click,low_quality,dog,pomeranian
+data/images/0448_Siamese_188.jpg,"Made for Siameses and other cats, this interactive feather wand toy is a favorite with owners who want a reliable everyday option.",low_quality,cat,Siamese
+data/images/0449_Bengal_28.jpg,product good buy now hairball control treat mix hairball control treat mix cheap price fast shipping click,low_quality,cat,Bengal
+data/images/0450_shiba_inu_50.jpg,"Made for shiba inus and other dogs, this no-pull dog harness is a favorite with owners who want a reliable everyday option.",low_quality,dog,shiba inu
+data/images/0451_basset_hound_53.jpg,SLOW-FEED DOG BOWL SLOW-FEED DOG BOWL BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,basset hound
+data/images/0452_basset_hound_133.jpg,"Made for basset hounds and other dogs, this grain-free dog food is a favorite with owners who want a reliable everyday option.",low_quality,dog,basset hound
+data/images/0453_miniature_pinscher_28.jpg,grain-free training treat mix!!!! !!! best!! dog grain-free training treat mix now now now discount discount,low_quality,dog,miniature pinscher
+data/images/0454_boxer_34.jpg,"Made for boxers and other dogs, this oatmeal shampoo for sensitive skin is a favorite with owners who want a reliable everyday option.",low_quality,dog,boxer
+data/images/0455_shiba_inu_3.jpg,product good buy now orthopedic dog bed orthopedic dog bed cheap price fast shipping click,low_quality,dog,shiba inu
+data/images/0456_great_pyrenees_191.jpg,This joint & mobility support chew was designed with dog comfort in mind and works well for breeds like the great pyrenees.,low_quality,dog,great pyrenees
+data/images/0457_havanese_88.jpg,NO-PULL DOG HARNESS NO-PULL DOG HARNESS BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,havanese
+data/images/0458_yorkshire_terrier_190.jpg,"A dependable joint & mobility support chew for dog owners, tested with breeds including the yorkshire terrier.",low_quality,dog,yorkshire terrier
+data/images/0459_British_Shorthair_160.jpg,clumping cat litter!!!! !!! best!! cat clumping cat litter now now now discount discount,low_quality,cat,British Shorthair
+data/images/0460_english_cocker_spaniel_32.jpg,This oatmeal shampoo for sensitive skin was designed with dog comfort in mind and works well for breeds like the english cocker spaniel.,low_quality,dog,english cocker spaniel
+data/images/0461_saint_bernard_96.jpg,JOINT & MOBILITY SUPPORT CHEW JOINT & MOBILITY SUPPORT CHEW BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,saint bernard
+data/images/0462_Sphynx_94.jpg,"Owners of Sphynxs reach for this clumping cat litter because it does the basics well, day after day.",low_quality,cat,Sphynx
+data/images/0463_pug_62.jpg,grain-free training treat mix!!!! !!! best!! dog grain-free training treat mix now now now discount discount,low_quality,dog,pug
+data/images/0464_Siamese_32.jpg,Our self-grooming slicker brush is formulated with cat nutrition in mind -- a solid pick for Siameses at any age.,low_quality,cat,Siamese
+data/images/0465_staffordshire_bull_terrier_125.jpg,ORTHOPEDIC DOG BED ORTHOPEDIC DOG BED BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,staffordshire bull terrier
+data/images/0466_english_cocker_spaniel_179.jpg,"Made for english cocker spaniels and other dogs, this no-pull dog harness is a favorite with owners who want a reliable everyday option.",low_quality,dog,english cocker spaniel
+data/images/0467_samoyed_7.jpg,NO-PULL DOG HARNESS NO-PULL DOG HARNESS BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,samoyed
+data/images/0468_pomeranian_55.jpg,This oatmeal shampoo for sensitive skin was designed with dog comfort in mind and works well for breeds like the pomeranian.,low_quality,dog,pomeranian
+data/images/0469_boxer_107.jpg,product good buy now orthopedic dog bed orthopedic dog bed cheap price fast shipping click,low_quality,dog,boxer
+data/images/0470_basset_hound_36.jpg,This grain-free dog food was designed with dog comfort in mind and works well for breeds like the basset hound.,low_quality,dog,basset hound
+data/images/0471_Siamese_29.jpg,soft-sided cat carrier!!!! !!! best!! cat soft-sided cat carrier now now now discount discount,low_quality,cat,Siamese
+data/images/0472_Bengal_17.jpg,"Owners of Bengals reach for this clumping cat litter because it does the basics well, day after day.",low_quality,cat,Bengal
+data/images/0473_Sphynx_179.jpg,product good buy now self-grooming slicker brush self-grooming slicker brush cheap price fast shipping click,low_quality,cat,Sphynx
+data/images/0474_basset_hound_185.jpg,"Owners of basset hounds reach for this durable rubber chew toy because it does the basics well, day after day.",low_quality,dog,basset hound
+data/images/0475_scottish_terrier_27.jpg,product good buy now no-pull dog harness no-pull dog harness cheap price fast shipping click,low_quality,dog,scottish terrier
+data/images/0476_Bengal_13.jpg,"Owners of Bengals reach for this ceramic cat feeding bowl because it does the basics well, day after day.",low_quality,cat,Bengal
+data/images/0477_american_bulldog_208.jpg,OATMEAL SHAMPOO FOR SENSITIVE SKIN OATMEAL SHAMPOO FOR SENSITIVE SKIN BEST DEAL CLICK NOW SALE SALE BUY BUY DOG,low_quality,dog,american bulldog
+data/images/0478_leonberger_90.jpg,"Made for leonbergers and other dogs, this grain-free dog food is a favorite with owners who want a reliable everyday option.",low_quality,dog,leonberger
+data/images/0479_leonberger_33.jpg,product good buy now durable rubber chew toy durable rubber chew toy cheap price fast shipping click,low_quality,dog,leonberger
