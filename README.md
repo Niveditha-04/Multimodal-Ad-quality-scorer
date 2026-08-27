@@ -12,6 +12,50 @@ offline comparison against cached predictions on a held-out set -- not a live
 test with real traffic. Every number in this document comes from a checked-in
 results file; none are estimated.
 
+## v1 vs. v2: what's original scope and what's the extension
+
+This README (and everything above the "v2 extension" heading structure
+described here) covers the **original 6-phase build** (`main` branch, 3
+commits `f51dfe9`/`c714e7c`/`c0990be`): dataset, CLIP classifier + ablations,
+FastAPI service, RAG+LLM explanations, rule-based baseline + simulated A/B
+test, and the optional MCP tool wrapper.
+
+Everything below in this section, and the `agent/`, `eval/`, and
+`guardrails/` directories, is a **separate extension built on the
+`v2-agentic-eval` branch**, addressing four gaps identified by honest
+evaluation of the v1 build: no LLM output evaluation, no adversarial
+guardrails, SQLite instead of a real RDBMS, and a passive (not agentic) MCP
+tool. It does not replace or invalidate anything in v1 -- it's additional
+work on top of it, kept on a separate branch specifically so v1's verified,
+committed state was never at risk while this was built. Each v2 phase has
+its own detailed README; this section is a pointer, not a duplicate.
+
+- **Phase 7 -- Postgres migration** (`db/README.md`'s Postgres section):
+  local Homebrew Postgres, `db/models.py` needed zero code changes (pure
+  SQLAlchemy, verified by actually creating the schema and inspecting it),
+  all 5 `db/queries.sql` queries verified numerically identical against the
+  SQLite baseline. SQLite remains the default -- Postgres is opt-in via
+  `DATABASE_URL`, not a new hard requirement.
+- **Phase 8 -- LLM evaluation harness** (`eval/README.md`): a 32-ad golden
+  set with independently-sourced ground truth, scored on groundedness/rule
+  accuracy/hallucination. Headline finding: **25.0% hallucination rate**
+  (95% CI [13.3%, 42.1%]), traced to a specific ambiguous sentence in
+  `db/policy_categories.py`'s `mismatched_creative` rule
+  (`eval/root_cause_analysis.md`), not generic model unreliability.
+- **Phase 9 -- guardrails** (`guardrails/README.md`): 8 adversarial prompt
+  injection tests, all resisted by the undefended baseline (an honest
+  finding, not manufactured); hardening added as defense-in-depth anyway,
+  with the output validator's own detection capability separately verified
+  against synthetic already-successful-injection strings (which caught a
+  real bug in the validator itself).
+- **Phase 10 -- agentic orchestration** (`agent/README.md`): an agent that
+  autonomously calls the Phase 6 MCP tool across an 18-ad batch and
+  synthesizes a review. Verified genuinely agentic (not a scripted loop) by
+  inspecting the actual tool-use transcript; found the agent's own
+  cross-batch synthesis can introduce errors (a product-detail mix-up
+  between two different ads) distinct from anything the underlying tool
+  itself got wrong.
+
 ## Architecture
 
 ```
