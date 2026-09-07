@@ -1,5 +1,16 @@
 # Multimodal Ad Quality & Policy Violation Scorer
 
+**The primary technical work in this repository is a model compression
+and optimization study** on a small trained classifier head: two
+independent pruning implementations verified against each other
+bit-for-bit, structured pruning, INT8 quantization, a full benchmark
+suite with plots, and a containerized serving path for the result. See
+"Model compression and optimization study" below for the complete
+writeup. Everything else in this document describes the pet-product
+ad-quality scoring system that classifier head is part of, which the
+compression study builds on and which the rest of this README covers as
+supporting context.
+
 This is a portfolio project. It scores pet-product advertising creatives,
 meaning image and text pairs, for policy violations and quality issues.
 It uses frozen CLIP embeddings, a small trained classifier head, a
@@ -19,15 +30,16 @@ offline comparison against cached predictions on a held-out set, not a
 live test with real traffic. Every number in this document comes from a
 checked-in results file. None are estimated.
 
-This README covers the original 6-phase build: the dataset, the CLIP
+This README covers the original 6-phase build (the dataset, the CLIP
 classifier with ablations, the FastAPI service, the RAG plus LLM
 explanations, the rule-based baseline with a simulated A/B test, and the
-optional MCP tool wrapper. A separate extension exists on a different
-branch (`v2-agentic-eval`), covering a Postgres migration, an LLM
-evaluation harness, adversarial guardrails testing, and an agentic
-orchestration layer on top of the MCP tool. That extension is kept on its
-own branch specifically so this branch's verified, committed state is
-never put at risk by later work.
+optional MCP tool wrapper) as the supporting system, and the compression
+study built on top of it as the primary technical work. A separate
+extension exists on a different branch (`v2-agentic-eval`), covering a
+Postgres migration, an LLM evaluation harness, adversarial guardrails
+testing, and an agentic orchestration layer on top of the MCP tool. That
+extension is kept on its own branch specifically so this branch's
+verified, committed state is never put at risk by later work.
 
 ## Architecture
 
@@ -84,6 +96,83 @@ Alternatively, `docker compose up` builds and runs the API in a
 container, no local Python setup needed. See the Docker section under
 "Model compression and optimization study" below.
 
+## Model compression and optimization study
+
+A separate study, on top of the same trained classifier head, in
+`compression/`. The CLIP backbone stays frozen everywhere. Only the
+131,716-parameter MLP head is touched: pruned, fine-tuned, and quantized.
+Full detail, every table, and both plots are in `compression/README.md`.
+This section is a summary.
+
+Four techniques were compared, each fine-tuned afterward with a full
+per-epoch accuracy-recovery curve, not a single before/after number:
+
+1. **Unstructured magnitude pruning, self-implemented.** The masking logic
+   (global threshold via `torch.kthvalue`, zero below it, reapply the mask
+   after every fine-tuning step) is hand-written, not a library call.
+2. **The same sweep with `torch.nn.utils.prune`.** Built specifically to
+   compare against the hand-written version at matching sparsity levels.
+3. **Structured (neuron-level) pruning.** Removes whole hidden units,
+   ranked by combined incoming and outgoing weight norm, and copies
+   survivors into a physically smaller model.
+4. **INT8 post-training quantization**, applied to the best-performing
+   pruned and fine-tuned checkpoint.
+
+**The self-implemented and toolkit versions produce bit-for-bit identical
+masks and identical post-fine-tune accuracy at every sparsity level
+tested (30%, 50%, 70%, 90%).** This was not true on the first attempt.
+Building the comparison surfaced a real bug: the fine-tuning code was not
+seeded, and the head's dropout layer samples a random mask on every
+training step, so two runs from an identical starting point could still
+diverge. Fixed by seeding before fine-tuning starts. See
+`compression/README.md` for the full account.
+
+Final benchmark, every configuration:
+
+| Config | Accuracy | F1 | Params | Raw size | Classifier-head latency | Gzip compression |
+|---|---|---|---|---|---|---|
+| Baseline | 0.8958 | 0.8971 | 131,716 | 529,181 B | 0.0238 ms | 0% |
+| Unstructured pruning, 30-90% | 0.9062-0.9167 | 0.9068-0.9177 | 131,716 (unchanged) | 529,181 B (unchanged) | 0.023-0.024 ms | 23-81% |
+| Structured pruning, 25-75% | 0.9167-**0.9375** | 0.9173-**0.9375** | 98,788-32,932 | 397,469-134,045 B | 0.0214-0.0186 ms | 25-75% |
+| Structured pruning, 90% | 0.8021 | 0.7972 | 13,381 | 55,901 B | 0.0180 ms | 90% |
+| Structured 75% + INT8 quantized | 0.9375 | 0.9375 | 32,932 | 36,685 B | **0.0850 ms** | 93% |
+
+Raw size is flat across every unstructured-pruning row on purpose, not an
+error. Masking zeroes out weight values without changing the tensor's
+shape, so the dense file never shrinks. Gzip compression (the last
+column) gives a fair, achievable-compression number instead. Structured
+pruning is the one method that produces a genuinely smaller file without
+needing any extra compression step, since it removes parameters outright.
+
+**Final recommended configuration: structured pruning at 75%, without
+quantization.** It has the best accuracy of the whole study (90 correct
+out of 96 test examples, versus baseline's 86 out of 96), a real 75%
+parameter reduction, and a real classifier-head latency improvement over
+baseline. Quantization was tested on top of it and rejected for
+production use, not because it failed technically (accuracy stayed
+exactly the same) but because it made classifier-head latency roughly
+4.6x worse, confirmed across three independent trials. At this model's
+size, the fixed overhead of quantizing and dequantizing every forward
+call outweighs any compute it saves. This slowdown is in the head's own
+forward pass only, not the full `/score` request, which also runs CLIP
+inference and a live call to the Anthropic API. This is disclosed as the
+headline finding of the quantization step, not buried as a footnote.
+
+The same FastAPI service used throughout this project (`api/main.py`)
+can serve any of these checkpoints via a `CLASSIFIER_CHECKPOINT`
+environment variable, verified with real `POST /score` and `GET /stats`
+calls against all four checkpoint shapes. `docker-compose.yml` runs the
+baseline and the recommended structured-pruned configuration side by
+side, on separate ports, from the same image.
+
+Everything from here through "Database" covers the supporting system the
+compression study above operates on: how the classifier head was
+originally trained, its baseline results before any pruning, the RAG
+explanation layer built around it, and the database layer. This is
+necessary context for reproducing the full pipeline or understanding
+exactly what the classifier head being pruned and quantized actually is,
+but it is not this repository's primary technical focus.
+
 ## Running the full pipeline from scratch
 
 Order matters here. Each step reads output from the one before it. All
@@ -139,6 +228,11 @@ To run the 5 reference queries directly, use `sqlite3 db/ads.db <
 db/queries.sql`.
 
 ## Results
+
+These are the classifier head's baseline results, established before the
+compression study above and unchanged by it. Every number in the
+compression study's benchmark table is measured against this same
+baseline.
 
 ### Classifier: frozen CLIP plus a trained MLP head
 
@@ -284,6 +378,9 @@ compared to a clean JSON payload.
 
 ## RAG plus LLM explanation layer
 
+This is supporting infrastructure for the `/score` endpoint's
+explanation feature, separate from the compression study above.
+
 There are 7 policy rules, written for this project and not lifted from
 any real platform, plus 288 past flagged examples. These examples come
 only from the training split. The 96 test ads are never in the retrieval
@@ -355,72 +452,6 @@ There are 5 reference queries with real, verified output, in
 `db/queries.sql`. The app defaults to SQLite, using `db/ads.db`, with no
 setup required. The models in `db/session.py` are pure SQLAlchemy, so
 `DATABASE_URL` can point at a different database without code changes.
-
-## Model compression and optimization study
-
-A separate study, on top of the same trained classifier head, in
-`compression/`. The CLIP backbone stays frozen everywhere. Only the
-131,716-parameter MLP head is touched: pruned, fine-tuned, and quantized.
-Full detail, every table, and both plots are in `compression/README.md`.
-This section is a summary.
-
-Four techniques were compared, each fine-tuned afterward with a full
-per-epoch accuracy-recovery curve, not a single before/after number:
-
-1. **Unstructured magnitude pruning, self-implemented.** The masking logic
-   (global threshold via `torch.kthvalue`, zero below it, reapply the mask
-   after every fine-tuning step) is hand-written, not a library call.
-2. **The same sweep with `torch.nn.utils.prune`.** Built specifically to
-   compare against the hand-written version at matching sparsity levels.
-3. **Structured (neuron-level) pruning.** Removes whole hidden units,
-   ranked by combined incoming and outgoing weight norm, and copies
-   survivors into a physically smaller model.
-4. **INT8 post-training quantization**, applied to the best-performing
-   pruned and fine-tuned checkpoint.
-
-**The self-implemented and toolkit versions produce bit-for-bit identical
-masks and identical post-fine-tune accuracy at every sparsity level
-tested (30%, 50%, 70%, 90%).** This was not true on the first attempt.
-Building the comparison surfaced a real bug: the fine-tuning code was not
-seeded, and the head's dropout layer samples a random mask on every
-training step, so two runs from an identical starting point could still
-diverge. Fixed by seeding before fine-tuning starts. See
-`compression/README.md` for the full account.
-
-Final benchmark, every configuration:
-
-| Config | Accuracy | F1 | Params | Raw size | Latency | Gzip compression |
-|---|---|---|---|---|---|---|
-| Baseline | 0.8958 | 0.8971 | 131,716 | 529,181 B | 0.0238 ms | 0% |
-| Unstructured pruning, 30-90% | 0.9062-0.9167 | 0.9068-0.9177 | 131,716 (unchanged) | 529,181 B (unchanged) | 0.023-0.024 ms | 23-81% |
-| Structured pruning, 25-75% | 0.9167-**0.9375** | 0.9173-**0.9375** | 98,788-32,932 | 397,469-134,045 B | 0.0214-0.0186 ms | 25-75% |
-| Structured pruning, 90% | 0.8021 | 0.7972 | 13,381 | 55,901 B | 0.0180 ms | 90% |
-| Structured 75% + INT8 quantized | 0.9375 | 0.9375 | 32,932 | 36,685 B | **0.0850 ms** | 93% |
-
-Raw size is flat across every unstructured-pruning row on purpose, not an
-error. Masking zeroes out weight values without changing the tensor's
-shape, so the dense file never shrinks. Gzip compression (the last
-column) gives a fair, achievable-compression number instead. Structured
-pruning is the one method that produces a genuinely smaller file without
-needing any extra compression step, since it removes parameters outright.
-
-**Final recommended configuration: structured pruning at 75%, without
-quantization.** It has the best accuracy of the whole study, a real 75%
-parameter reduction, and a real latency improvement over baseline.
-Quantization was tested on top of it and rejected for production use, not
-because it failed technically (accuracy stayed exactly the same) but
-because it made single-sample latency roughly 4.6x worse, confirmed
-across three independent trials. At this model's size, the fixed
-overhead of quantizing and dequantizing every forward call outweighs any
-compute it saves. This is disclosed as the headline finding of the
-quantization step, not buried as a footnote.
-
-The same FastAPI service used throughout this project (`api/main.py`)
-can serve any of these checkpoints via a `CLASSIFIER_CHECKPOINT`
-environment variable, verified with real `POST /score` and `GET /stats`
-calls against all four checkpoint shapes. `docker-compose.yml` runs the
-baseline and the recommended structured-pruned configuration side by
-side, on separate ports, from the same image.
 
 ## Limitations
 

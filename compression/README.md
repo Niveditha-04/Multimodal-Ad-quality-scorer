@@ -33,7 +33,7 @@ the same split, same model, and same evaluation logic.
 | Total parameters | 131,716 |
 | Raw state_dict size | 529,181 bytes |
 | Gzip-compressed size | 489,351 bytes |
-| Latency, batch=1, CPU (mean) | 0.0238 ms |
+| Classifier-head latency, batch=1, CPU (mean) | 0.0238 ms |
 
 Script: `compression/baseline_benchmark.py`.
 
@@ -112,7 +112,7 @@ are physically gone.
 Same one-shot-from-baseline, then fine-tune, then recovery-curve
 methodology as Steps 2 and 3, at four neuron-removal fractions.
 
-| Neurons removed | Hidden dim | Params | Real reduction | Accuracy | F1 | Latency |
+| Neurons removed | Hidden dim | Params | Real reduction | Accuracy | F1 | Classifier-head latency |
 |---|---|---|---|---|---|---|
 | 25% | 96 | 98,788 | 25.00% | 0.9167 | 0.9173 | 0.0214 ms |
 | 50% | 64 | 65,860 | 50.00% | 0.9167 | 0.9173 | 0.0197 ms |
@@ -121,7 +121,8 @@ methodology as Steps 2 and 3, at four neuron-removal fractions.
 
 Unlike unstructured pruning, this produces a genuinely smaller on-disk
 checkpoint (134,045 bytes at 75% removal, versus baseline's 529,181) and a
-real, measurable latency drop, because the matmuls themselves shrink.
+real, measurable classifier-head latency drop, because the matmuls
+themselves shrink.
 
 Two things worth stating plainly rather than smoothing over:
 
@@ -162,13 +163,14 @@ this scale, not a shortcut taken to save time.
 |---|---|---|---|
 | Accuracy | 0.9375 | 0.9375 | 0.0000 |
 | Raw size | 134,045 B | 36,685 B | -72.63% |
-| Latency (mean) | 0.0186 ms | 0.0850 ms | **+4.6x slower** |
+| Classifier-head latency (mean) | 0.0186 ms | 0.0850 ms | **+4.6x slower** |
 
 Accuracy is perfectly preserved. Size drops by nearly three quarters.
 
-**The latency result is the important finding here, and it was verified
-three times before being trusted, not reported from one run.** Independent
-trials measured 4.14x, 4.63x, and 4.83x slower, consistently. Dynamic
+**The classifier-head latency result is the important finding here, and
+it was verified three times before being trusted, not reported from one
+run.** Independent trials measured 4.14x, 4.63x, and 4.83x slower,
+consistently. Dynamic
 quantization adds a quantize/dequantize step around every forward call.
 At this model's scale (batch size 1, hidden dim 32), that fixed overhead
 outweighs the tiny amount of compute it saves. This is a real, documented
@@ -185,9 +187,12 @@ present, matching PyTorch's own default order, and is typical on x86.
 
 ![Accuracy and F1 vs. compression](results/plots/accuracy_f1_vs_compression.png)
 
-![Latency vs. compression](results/plots/latency_vs_compression.png)
+![Classifier-head latency vs. compression](results/plots/latency_vs_compression.png)
 
-Both plots use gzip-compressed size reduction as the x-axis, not raw size.
+The y-axis in the second plot is classifier-head latency specifically
+(the head's own forward pass, batch size 1, CPU), not full `/score`
+request latency. Both plots use gzip-compressed size reduction as the
+x-axis, not raw size.
 Raw size is flat across all four unstructured-pruning points (see Step 2
 and 3's note above), so a raw-size x-axis would put all four at 0%,
 technically accurate but visually useless. Gzip gives one fair,
@@ -196,7 +201,7 @@ including the ones that generate the real deltas.
 
 Full table, every configuration:
 
-| Config | Accuracy | F1 | Params | Raw size | Gzip size | Latency | Gzip compression |
+| Config | Accuracy | F1 | Params | Raw size | Gzip size | Classifier-head latency | Gzip compression |
 |---|---|---|---|---|---|---|---|
 | Baseline | 0.8958 | 0.8971 | 131,716 | 529,181 B | 489,351 B | 0.0238 ms | 0% |
 | Unstructured 30% | 0.9062 | 0.9068 | 131,716 | 529,181 B | 376,517 B | 0.0230 ms | 23.06% |
@@ -210,9 +215,10 @@ Full table, every configuration:
 | Structured 75% + INT8 | 0.9375 | 0.9375 | 32,932 | 36,685 B | 33,470 B | **0.0850 ms** | 93.16% |
 
 Every row here reproduces bit-for-bit (accuracy, F1, parameter counts) on
-a fresh end-to-end rerun of the entire pipeline. Latency shows only
-expected small run-to-run timing noise, confirmed by rerunning the full
-7-script sequence from scratch after it was first committed.
+a fresh end-to-end rerun of the entire pipeline. Classifier-head latency
+shows only expected small run-to-run timing noise, confirmed by
+rerunning the full 7-script sequence from scratch after it was first
+committed.
 
 Torch.prune's four rows are recorded in
 `compression/results/final_benchmark.json` but excluded from both plots,
@@ -260,17 +266,23 @@ transfer inside the container.
 **Structured pruning at 75% neuron removal, without INT8 quantization.**
 
 This is a deliberate choice, not the highest-compression option available.
-Structured 75% has the best accuracy of the entire study (0.9375), a real
-75% parameter reduction, a real 397KB-to-134KB size drop, and a real
-latency improvement (0.0238 ms to 0.0186 ms). Adding quantization on top
-would shrink the file further (down to 36,685 bytes) at zero accuracy
-cost, but at a 4.6x latency cost, verified three times. For a live
-single-request-at-a-time serving path, that tradeoff is not worth taking:
-disk size was never the bottleneck here (even the unquantized baseline is
-517KB, trivial for any real deployment), and quantization's only
-measurable effect at this model's scale is making the one thing that
-actually matters for a serving endpoint, response latency, meaningfully
-worse.
+Structured 75% has the best accuracy of the entire study (0.9375, or 90
+correct out of 96 test examples versus baseline's 86 out of 96), a real
+75% parameter reduction, a real 517KB-to-131KB size drop, and a real
+classifier-head latency improvement (0.0238 ms to 0.0186 ms). Adding
+quantization on top would shrink the file further (down to 36,685 bytes)
+at zero accuracy cost, but at a 4.6x classifier-head latency cost,
+verified three times. That tradeoff is not worth taking: disk size was
+never the bottleneck here (even the unquantized baseline is 517KB,
+trivial for any real deployment), and quantization's only measurable
+effect at this model's scale is making classifier-head inference
+meaningfully slower for no accuracy gain. This is the head's own forward
+pass specifically, not the full `/score` request. A real `/score` call
+also runs CLIP inference and, for a flagged ad, a live call to the
+Anthropic API, both far larger than the head's own microsecond-scale
+latency, so the quantization slowdown measured here is a real,
+reproducible cost on the one component this study actually changes, not
+a claim about total request latency.
 
 `docker-compose.yml`'s `api-optimized` service serves this configuration
 by default, for exactly this reason.
