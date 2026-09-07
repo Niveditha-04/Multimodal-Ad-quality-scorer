@@ -15,11 +15,18 @@ WEIGHTS_PATH = Path("model/classifier_head.pt")
 VERSION_TAG = "joint_v2_postfix"
 
 
-def get_model_version() -> str:
-    if not WEIGHTS_PATH.exists():
-        raise FileNotFoundError(f"{WEIGHTS_PATH} not found -- train the classifier first")
-    digest = hashlib.sha256(WEIGHTS_PATH.read_bytes()).hexdigest()[:8]
-    return f"{VERSION_TAG}_{digest}"
+def get_model_version(weights_path: Path = WEIGHTS_PATH, version_tag: str = VERSION_TAG) -> str:
+    """weights_path/version_tag default to the original joint classifier so
+    every existing caller is unaffected. api/main.py passes its actual
+    CLASSIFIER_CHECKPOINT/tag here when serving a compression-study
+    checkpoint, so model_version keeps tracking the real weights in use --
+    the same discipline db/README.md documents for the rule-baseline arm:
+    a version string must be tied to actual weight content, never assumed.
+    """
+    if not weights_path.exists():
+        raise FileNotFoundError(f"{weights_path} not found -- train the classifier first")
+    digest = hashlib.sha256(weights_path.read_bytes()).hexdigest()[:8]
+    return f"{version_tag}_{digest}"
 
 
 if __name__ == "__main__":
