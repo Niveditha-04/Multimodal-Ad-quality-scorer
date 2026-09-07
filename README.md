@@ -39,6 +39,7 @@ api/            FastAPI service: POST /score, GET /stats
 rag/            Chroma vector store + Claude-generated explanations
 ab_test/        Rule-based baseline + statistical comparison vs. the classifier
 mcp_server/     (optional) MCP tool wrapper around the same scoring pipeline
+compression/    Pruning and quantization study on the classifier head (CLIP stays frozen)
 ```
 
 This diagram shows what happens for one `/score` request:
@@ -62,7 +63,9 @@ flowchart LR
 Python 3.11, PyTorch, Hugging Face `transformers` (model:
 `openai/clip-vit-base-patch32`), FastAPI, SQLAlchemy (SQLite by default),
 ChromaDB, the Anthropic API (model: `claude-sonnet-4-6`), scikit-learn,
-and pandas or numpy.
+and pandas or numpy. The compression study additionally uses
+`torch.nn.utils.prune`, `torch.quantization.quantize_dynamic`, matplotlib,
+and Docker.
 
 ## Setup
 
@@ -76,6 +79,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env   # then fill in ANTHROPIC_API_KEY
 ```
+
+Alternatively, `docker compose up` builds and runs the API in a
+container, no local Python setup needed. See the Docker section under
+"Model compression and optimization study" below.
 
 ## Running the full pipeline from scratch
 
@@ -348,6 +355,72 @@ There are 5 reference queries with real, verified output, in
 `db/queries.sql`. The app defaults to SQLite, using `db/ads.db`, with no
 setup required. The models in `db/session.py` are pure SQLAlchemy, so
 `DATABASE_URL` can point at a different database without code changes.
+
+## Model compression and optimization study
+
+A separate study, on top of the same trained classifier head, in
+`compression/`. The CLIP backbone stays frozen everywhere. Only the
+131,716-parameter MLP head is touched: pruned, fine-tuned, and quantized.
+Full detail, every table, and both plots are in `compression/README.md`.
+This section is a summary.
+
+Four techniques were compared, each fine-tuned afterward with a full
+per-epoch accuracy-recovery curve, not a single before/after number:
+
+1. **Unstructured magnitude pruning, self-implemented.** The masking logic
+   (global threshold via `torch.kthvalue`, zero below it, reapply the mask
+   after every fine-tuning step) is hand-written, not a library call.
+2. **The same sweep with `torch.nn.utils.prune`.** Built specifically to
+   compare against the hand-written version at matching sparsity levels.
+3. **Structured (neuron-level) pruning.** Removes whole hidden units,
+   ranked by combined incoming and outgoing weight norm, and copies
+   survivors into a physically smaller model.
+4. **INT8 post-training quantization**, applied to the best-performing
+   pruned and fine-tuned checkpoint.
+
+**The self-implemented and toolkit versions produce bit-for-bit identical
+masks and identical post-fine-tune accuracy at every sparsity level
+tested (30%, 50%, 70%, 90%).** This was not true on the first attempt.
+Building the comparison surfaced a real bug: the fine-tuning code was not
+seeded, and the head's dropout layer samples a random mask on every
+training step, so two runs from an identical starting point could still
+diverge. Fixed by seeding before fine-tuning starts. See
+`compression/README.md` for the full account.
+
+Final benchmark, every configuration:
+
+| Config | Accuracy | F1 | Params | Raw size | Latency | Gzip compression |
+|---|---|---|---|---|---|---|
+| Baseline | 0.8958 | 0.8971 | 131,716 | 529,181 B | 0.0238 ms | 0% |
+| Unstructured pruning, 30-90% | 0.9062-0.9167 | 0.9068-0.9177 | 131,716 (unchanged) | 529,181 B (unchanged) | 0.023-0.024 ms | 23-81% |
+| Structured pruning, 25-75% | 0.9167-**0.9375** | 0.9173-**0.9375** | 98,788-32,932 | 397,469-134,045 B | 0.0214-0.0186 ms | 25-75% |
+| Structured pruning, 90% | 0.8021 | 0.7972 | 13,381 | 55,901 B | 0.0180 ms | 90% |
+| Structured 75% + INT8 quantized | 0.9375 | 0.9375 | 32,932 | 36,685 B | **0.0850 ms** | 93% |
+
+Raw size is flat across every unstructured-pruning row on purpose, not an
+error. Masking zeroes out weight values without changing the tensor's
+shape, so the dense file never shrinks. Gzip compression (the last
+column) gives a fair, achievable-compression number instead. Structured
+pruning is the one method that produces a genuinely smaller file without
+needing any extra compression step, since it removes parameters outright.
+
+**Final recommended configuration: structured pruning at 75%, without
+quantization.** It has the best accuracy of the whole study, a real 75%
+parameter reduction, and a real latency improvement over baseline.
+Quantization was tested on top of it and rejected for production use, not
+because it failed technically (accuracy stayed exactly the same) but
+because it made single-sample latency roughly 4.6x worse, confirmed
+across three independent trials. At this model's size, the fixed
+overhead of quantizing and dequantizing every forward call outweighs any
+compute it saves. This is disclosed as the headline finding of the
+quantization step, not buried as a footnote.
+
+The same FastAPI service used throughout this project (`api/main.py`)
+can serve any of these checkpoints via a `CLASSIFIER_CHECKPOINT`
+environment variable, verified with real `POST /score` and `GET /stats`
+calls against all four checkpoint shapes. `docker-compose.yml` runs the
+baseline and the recommended structured-pruned configuration side by
+side, on separate ports, from the same image.
 
 ## Limitations
 
