@@ -9,7 +9,7 @@
     "nonzero_parameters": 32932,
     "raw_size_bytes": 134045,
     "gzip_size_bytes": 123081,
-    "latency_mean_ms": 0.01866568927653134,
+    "latency_mean_ms": 0.01861996145453304,
     "is_structured": true
   },
   "float_row": {
@@ -47,9 +47,9 @@
     "sparsity_pct": 0.0,
     "raw_size_bytes": 134045,
     "gzip_size_bytes": 123081,
-    "latency_mean_ms": 0.01854412443935871,
-    "latency_median_ms": 0.01837499439716339,
-    "latency_p95_ms": 0.019002071348950263
+    "latency_mean_ms": 0.021365944761782885,
+    "latency_median_ms": 0.018417020328342915,
+    "latency_p95_ms": 0.03801039711106568
   },
   "quantized_row": {
     "name": "best_pruned_finetuned_int8",
@@ -86,9 +86,9 @@
     "sparsity_pct": 0.0,
     "raw_size_bytes": 36685,
     "gzip_size_bytes": 33470,
-    "latency_mean_ms": 0.08703572174999863,
-    "latency_median_ms": 0.081416976172477,
-    "latency_p95_ms": 0.1149190473370254,
+    "latency_mean_ms": 0.08496613334864378,
+    "latency_median_ms": 0.08125000749714673,
+    "latency_p95_ms": 0.10747462802100925,
     "quantization_engine": "qnnpack",
     "source_checkpoint": "compression/checkpoints/structured_pruned_75pct.pt",
     "source_method": "structured",

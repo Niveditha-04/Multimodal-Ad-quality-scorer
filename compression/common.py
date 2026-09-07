@@ -58,17 +58,27 @@ def build_head(input_dim: int = 1024, hidden_dim: int = HIDDEN_DIM) -> MLPHead:
     return MLPHead(input_dim=input_dim, hidden_dim=hidden_dim, n_classes=len(LABELS), dropout=DROPOUT)
 
 
-def load_checkpoint(path) -> MLPHead:
-    """Loads either checkpoint format used in this study: a plain state_dict
+def load_checkpoint(path) -> torch.nn.Module:
+    """Loads any checkpoint format used in this study: a plain state_dict
     (self-implemented and torch.prune checkpoints, which keep the baseline's
-    fixed hidden_dim=128 shape) or the {"state_dict", "hidden_dim"} dict
-    structured_pruning.py saves (since a structurally-pruned model has a
-    non-default hidden_dim that must be known to reconstruct the module
-    before load_state_dict can work).
+    fixed hidden_dim=128 shape) or the self-describing {"state_dict",
+    "hidden_dim", "quantized"} dict that structured_pruning.py and
+    quantize_int8.py save -- needed because a structurally-pruned model has
+    a non-default hidden_dim, and a quantized model must be converted with
+    quantize_dynamic() BEFORE load_state_dict can work (its state_dict holds
+    packed int8 params that only fit a module already in quantized form).
+    api/main.py uses the identical logic so the API and this study's own
+    scripts can never disagree about how to open the same checkpoint file.
     """
     obj = torch.load(path, map_location="cpu")
     if isinstance(obj, dict) and "state_dict" in obj and "hidden_dim" in obj:
         model = build_head(hidden_dim=obj["hidden_dim"])
+        if obj.get("quantized"):
+            engine = obj.get("quantization_engine", "qnnpack")
+            if engine not in torch.backends.quantized.supported_engines:
+                engine = torch.backends.quantized.supported_engines[0]
+            torch.backends.quantized.engine = engine
+            model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
         model.load_state_dict(obj["state_dict"])
     else:
         model = build_head()
