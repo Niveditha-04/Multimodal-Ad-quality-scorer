@@ -58,6 +58,25 @@ def build_head(input_dim: int = 1024, hidden_dim: int = HIDDEN_DIM) -> MLPHead:
     return MLPHead(input_dim=input_dim, hidden_dim=hidden_dim, n_classes=len(LABELS), dropout=DROPOUT)
 
 
+def load_checkpoint(path) -> MLPHead:
+    """Loads either checkpoint format used in this study: a plain state_dict
+    (self-implemented and torch.prune checkpoints, which keep the baseline's
+    fixed hidden_dim=128 shape) or the {"state_dict", "hidden_dim"} dict
+    structured_pruning.py saves (since a structurally-pruned model has a
+    non-default hidden_dim that must be known to reconstruct the module
+    before load_state_dict can work).
+    """
+    obj = torch.load(path, map_location="cpu")
+    if isinstance(obj, dict) and "state_dict" in obj and "hidden_dim" in obj:
+        model = build_head(hidden_dim=obj["hidden_dim"])
+        model.load_state_dict(obj["state_dict"])
+    else:
+        model = build_head()
+        model.load_state_dict(obj)
+    model.eval()
+    return model
+
+
 def load_baseline_head() -> MLPHead:
     model = build_head()
     model.load_state_dict(torch.load("model/classifier_head.pt", map_location="cpu"))
@@ -159,14 +178,29 @@ def measure_latency_ms(model: torch.nn.Module, input_dim: int = 1024, n_warmup: 
     }
 
 
-def full_benchmark_row(model: torch.nn.Module, X_test: np.ndarray, y_test: np.ndarray, name: str, extra: dict | None = None) -> dict:
+def full_benchmark_row(
+    model: torch.nn.Module, X_test: np.ndarray, y_test: np.ndarray, name: str,
+    extra: dict | None = None, parameter_counts_override: tuple[int, int] | None = None,
+) -> dict:
     """One row of the final comparison table: correctness + size + speed,
     all measured directly against the actual model object passed in (never
     hand-typed), for the given test set.
+
+    parameter_counts_override is (total, nonzero) and exists only for
+    dynamically-quantized models: torch.quantization.quantize_dynamic packs
+    weights into an opaque _packed_params structure that is not a
+    registered nn.Parameter, so model.parameters() silently returns an
+    empty list for a quantized module -- count_parameters would report 0,
+    which is wrong, not just imprecise. Quantization changes each weight's
+    bit-width, not the number of logical weights, so the override is the
+    pre-quantization float model's true parameter count.
     """
     metrics = evaluate(model, X_test, y_test)
-    total_params = count_parameters(model)
-    nonzero_params = count_nonzero_parameters(model)
+    if parameter_counts_override is not None:
+        total_params, nonzero_params = parameter_counts_override
+    else:
+        total_params = count_parameters(model)
+        nonzero_params = count_nonzero_parameters(model)
     raw_size = state_dict_raw_size_bytes(model)
     gzip_size = state_dict_gzip_size_bytes(model)
     latency = measure_latency_ms(model)
