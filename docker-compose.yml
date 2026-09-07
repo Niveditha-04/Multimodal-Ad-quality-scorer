@@ -1,0 +1,25 @@
+# Runs the baseline and the compression study's recommended optimized
+# configuration side by side, from the same image, so the two can be
+# compared without hand-typing docker run flags. Both need
+# ANTHROPIC_API_KEY (for the RAG explanation call); set it in a local
+# .env file or export it before running `docker compose up`.
+#
+# See compression/README.md for why "structured 75% + INT8 quantized" is
+# NOT what api-optimized runs by default here -- quantization measurably
+# hurt latency at this model's scale (Step 6), so the recommended
+# production configuration is the structured-pruned checkpoint alone.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+
+  api-optimized:
+    build: .
+    ports:
+      - "8001:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - CLASSIFIER_CHECKPOINT=compression/checkpoints/structured_pruned_75pct.pt
