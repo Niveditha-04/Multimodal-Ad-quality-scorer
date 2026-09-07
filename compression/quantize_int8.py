@@ -87,7 +87,21 @@ def main():
     size_reduction = 1 - quant_row["raw_size_bytes"] / float_row["raw_size_bytes"]
     print(f"raw size reduction from quantization alone: {size_reduction:.2%}")
 
-    torch.save(quantized_model.state_dict(), CHECKPOINT_DIR / "best_int8_quantized.pt")
+    # self-describing checkpoint, same convention as structured_pruning.py's
+    # {"state_dict", "hidden_dim"} format plus "quantized"/"quantization_engine"
+    # -- so anything loading this checkpoint (the API included) can
+    # reconstruct the right module shape and quantize it BEFORE calling
+    # load_state_dict, without needing to be told out-of-band. A plain
+    # state_dict alone can't self-describe "this needs hidden_dim=32 and a
+    # quantize_dynamic() call before loading", and getting that wrong from a
+    # manually-set config value is exactly the kind of silent failure mode
+    # this project has caught and fixed elsewhere (see db/session.py's
+    # DATABASE_URL bug on the v2-agentic-eval branch).
+    torch.save(
+        {"state_dict": quantized_model.state_dict(), "hidden_dim": float_model.net[0].out_features,
+         "quantized": True, "quantization_engine": engine},
+        CHECKPOINT_DIR / "best_int8_quantized.pt",
+    )
 
     save_json(
         {"selected_source": selection, "float_row": float_row, "quantized_row": quant_row,

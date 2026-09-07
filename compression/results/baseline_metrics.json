@@ -33,7 +33,7 @@
   "sparsity_pct": 0.0,
   "raw_size_bytes": 529181,
   "gzip_size_bytes": 489351,
-  "latency_mean_ms": 0.022134791826829314,
-  "latency_median_ms": 0.02195802517235279,
-  "latency_p95_ms": 0.0226249685510993
+  "latency_mean_ms": 0.023766042082570493,
+  "latency_median_ms": 0.022791471565142274,
+  "latency_p95_ms": 0.024002059944905337
 }
