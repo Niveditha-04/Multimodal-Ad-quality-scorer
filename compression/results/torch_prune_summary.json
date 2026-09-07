@@ -1,5 +1,5 @@
 {
-  "method": "self_implemented_magnitude_pruning",
+  "method": "torch_nn_utils_prune",
   "prunable_params": [
     "net.0.weight",
     "net.3.weight"
@@ -8,7 +8,7 @@
     {
       "target_sparsity": 0.3,
       "row": {
-        "name": "self_pruned_30pct",
+        "name": "torch_prune_30pct",
         "accuracy": 0.90625,
         "macro_f1": 0.9067734754206052,
         "per_class": {
@@ -40,15 +40,15 @@
         "total_parameters": 131716,
         "nonzero_parameters": 92241,
         "sparsity_pct": 29.97,
-        "raw_size_bytes": 529181,
-        "gzip_size_bytes": 376517,
-        "latency_mean_ms": 0.024172830977477133,
-        "latency_median_ms": 0.02274999860674143,
-        "latency_p95_ms": 0.025098558398894952,
+        "raw_size_bytes": 529245,
+        "gzip_size_bytes": 376522,
+        "latency_mean_ms": 0.022861936246044934,
+        "latency_median_ms": 0.02241699257865548,
+        "latency_p95_ms": 0.023500004317611456,
         "target_sparsity": 0.3,
-        "achieved_sparsity_on_prunable_weights": 0.29999848005836577,
         "pre_finetune_accuracy": 0.8958333333333334,
-        "pre_finetune_macro_f1": 0.8971404472982533
+        "pre_finetune_macro_f1": 0.8971404472982533,
+        "masks_identical_to_self_implemented": true
       },
       "recovery_curve": [
         {
@@ -147,7 +147,7 @@
     {
       "target_sparsity": 0.5,
       "row": {
-        "name": "self_pruned_50pct",
+        "name": "torch_prune_50pct",
         "accuracy": 0.90625,
         "macro_f1": 0.9067734754206052,
         "per_class": {
@@ -179,15 +179,15 @@
         "total_parameters": 131716,
         "nonzero_parameters": 65924,
         "sparsity_pct": 49.95,
-        "raw_size_bytes": 529181,
-        "gzip_size_bytes": 290743,
-        "latency_mean_ms": 0.023085440858267248,
-        "latency_median_ms": 0.022666994482278824,
-        "latency_p95_ms": 0.023250002413988113,
+        "raw_size_bytes": 529245,
+        "gzip_size_bytes": 290791,
+        "latency_mean_ms": 0.022315340000204742,
+        "latency_median_ms": 0.022457970771938562,
+        "latency_p95_ms": 0.022790979710407555,
         "target_sparsity": 0.5,
-        "achieved_sparsity_on_prunable_weights": 0.5,
         "pre_finetune_accuracy": 0.90625,
-        "pre_finetune_macro_f1": 0.9069443688668807
+        "pre_finetune_macro_f1": 0.9069443688668807,
+        "masks_identical_to_self_implemented": true
       },
       "recovery_curve": [
         {
@@ -286,7 +286,7 @@
     {
       "target_sparsity": 0.7,
       "row": {
-        "name": "self_pruned_70pct",
+        "name": "torch_prune_70pct",
         "accuracy": 0.90625,
         "macro_f1": 0.9067734754206052,
         "per_class": {
@@ -318,15 +318,15 @@
         "total_parameters": 131716,
         "nonzero_parameters": 39607,
         "sparsity_pct": 69.93,
-        "raw_size_bytes": 529181,
-        "gzip_size_bytes": 197067,
-        "latency_mean_ms": 0.028559580794535577,
-        "latency_median_ms": 0.02337503246963024,
-        "latency_p95_ms": 0.05704520444851368,
+        "raw_size_bytes": 529245,
+        "gzip_size_bytes": 197101,
+        "latency_mean_ms": 0.024534085066989064,
+        "latency_median_ms": 0.02279097680002451,
+        "latency_p95_ms": 0.027670239796862003,
         "target_sparsity": 0.7,
-        "achieved_sparsity_on_prunable_weights": 0.7000015199416343,
         "pre_finetune_accuracy": 0.90625,
-        "pre_finetune_macro_f1": 0.9062193126022913
+        "pre_finetune_macro_f1": 0.9062193126022913,
+        "masks_identical_to_self_implemented": true
       },
       "recovery_curve": [
         {
@@ -425,7 +425,7 @@
     {
       "target_sparsity": 0.9,
       "row": {
-        "name": "self_pruned_90pct",
+        "name": "torch_prune_90pct",
         "accuracy": 0.9166666666666666,
         "macro_f1": 0.9177057697566311,
         "per_class": {
@@ -457,15 +457,15 @@
         "total_parameters": 131716,
         "nonzero_parameters": 13290,
         "sparsity_pct": 89.91,
-        "raw_size_bytes": 529181,
-        "gzip_size_bytes": 91689,
-        "latency_mean_ms": 0.023790524806827307,
-        "latency_median_ms": 0.023040978703647852,
-        "latency_p95_ms": 0.0244160124566406,
+        "raw_size_bytes": 529245,
+        "gzip_size_bytes": 91702,
+        "latency_mean_ms": 0.02222324162721634,
+        "latency_median_ms": 0.022083986550569534,
+        "latency_p95_ms": 0.02258399035781622,
         "target_sparsity": 0.9,
-        "achieved_sparsity_on_prunable_weights": 0.9000030398832685,
         "pre_finetune_accuracy": 0.8854166666666666,
-        "pre_finetune_macro_f1": 0.8879796309519336
+        "pre_finetune_macro_f1": 0.8879796309519336,
+        "masks_identical_to_self_implemented": true
       },
       "recovery_curve": [
         {
@@ -560,6 +560,28 @@
           "test_macro_f1": 0.9177057697566311
         }
       ]
+    }
+  ],
+  "mask_agreement_with_self_implemented": [
+    {
+      "target_sparsity": 0.3,
+      "masks_identical": true,
+      "n_differing_elements": 0
+    },
+    {
+      "target_sparsity": 0.5,
+      "masks_identical": true,
+      "n_differing_elements": 0
+    },
+    {
+      "target_sparsity": 0.7,
+      "masks_identical": true,
+      "n_differing_elements": 0
+    },
+    {
+      "target_sparsity": 0.9,
+      "masks_identical": true,
+      "n_differing_elements": 0
     }
   ]
 }

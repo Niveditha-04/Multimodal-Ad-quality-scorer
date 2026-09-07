@@ -228,7 +228,17 @@ def fine_tune_with_mask(
     early stopping or checkpoint selection, so no test-set information
     leaks into training decisions; it is a monitoring curve, not a
     selection signal.
+
+    Seeds with RANDOM_SEED before training starts. The head uses
+    nn.Dropout(0.3), which samples a fresh random mask on every training
+    forward pass -- without seeding here, two calls with an identical
+    starting model and identical prune masks can still diverge purely from
+    unseeded dropout, which would look like a bug in the pruning logic
+    when it isn't one. Seeding makes "same mask in -> same fine-tuned
+    result out" hold exactly, which is what actually lets Step 2 vs Step 3
+    isolate the mask-computation method as the only variable.
     """
+    torch.manual_seed(RANDOM_SEED)
     named_params = dict(model.named_parameters())
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     criterion = torch.nn.CrossEntropyLoss()
