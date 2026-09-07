@@ -1,0 +1,31 @@
+.git
+.gitignore
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+
+# training data, embeddings, and results the image never reads at
+# serving time -- see Dockerfile for exactly what's needed
+data/
+model/embeddings.npz
+model/results/
+model/train_classifier.py
+model/extract_embeddings.py
+model/verify_embedding_space.py
+model/compute_confidence_intervals.py
+db/ads.db
+db/policy_categories.py
+db/load_dataset.py
+db/populate_eval_scores.py
+db/queries.sql
+db/README.md
+rag/build_vector_store.py
+rag/verify_retrieval.py
+rag/results/
+ab_test/
+mcp_server/
+compression/results/
+compression/*.py
+docs/

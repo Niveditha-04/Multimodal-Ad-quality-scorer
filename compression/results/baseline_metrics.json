@@ -1,0 +1,39 @@
+{
+  "name": "baseline_fp32",
+  "accuracy": 0.8958333333333334,
+  "macro_f1": 0.8971404472982533,
+  "per_class": {
+    "approved": {
+      "precision": 0.7777777777777778,
+      "recall": 0.875,
+      "f1": 0.8235294117647058,
+      "support": 24
+    },
+    "policy_violation": {
+      "precision": 1.0,
+      "recall": 0.9166666666666666,
+      "f1": 0.9565217391304348,
+      "support": 24
+    },
+    "misleading": {
+      "precision": 0.8260869565217391,
+      "recall": 0.7916666666666666,
+      "f1": 0.8085106382978723,
+      "support": 24
+    },
+    "low_quality": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 24
+    }
+  },
+  "total_parameters": 131716,
+  "nonzero_parameters": 131716,
+  "sparsity_pct": 0.0,
+  "raw_size_bytes": 529181,
+  "gzip_size_bytes": 489351,
+  "latency_mean_ms": 0.023766042082570493,
+  "latency_median_ms": 0.022791471565142274,
+  "latency_p95_ms": 0.024002059944905337
+}
