@@ -194,3 +194,99 @@ def save_json(obj: dict, path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(obj, indent=2))
     print(f"saved {path}")
+
+
+FT_LR = 1e-3
+FT_WEIGHT_DECAY = 1e-4
+FT_MAX_EPOCHS = 60
+FT_PATIENCE = 15
+
+
+def fine_tune_with_mask(
+    model,
+    X_train, y_train, X_val, y_val, X_test, y_test,
+    masks: dict | None = None,
+    max_epochs: int = FT_MAX_EPOCHS,
+    patience: int = FT_PATIENCE,
+    lr: float = FT_LR,
+    weight_decay: float = FT_WEIGHT_DECAY,
+    log_every: int = 5,
+):
+    """Fine-tunes `model` in place after pruning. If `masks` is given (a
+    dict of param_name -> 0/1 tensor, same shape as the parameter), the
+    mask is reapplied to the corresponding parameter after every optimizer
+    step, so pruned weights cannot be revived by gradient updates -- this
+    is what makes a prune-then-fine-tune pass different from just training
+    a smaller-effective-capacity model and hoping it stays sparse. Not
+    needed for structured pruning, where the pruned neurons are physically
+    removed from the model rather than masked.
+
+    Best-checkpoint selection uses validation loss only (never test),
+    matching model/train_classifier.py's discipline. Test-set accuracy is
+    also evaluated every `log_every` epochs purely to build the
+    accuracy-recovery curve this study asks for -- it is never used for
+    early stopping or checkpoint selection, so no test-set information
+    leaks into training decisions; it is a monitoring curve, not a
+    selection signal.
+    """
+    named_params = dict(model.named_parameters())
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    criterion = torch.nn.CrossEntropyLoss()
+
+    X_train_t = torch.tensor(X_train, dtype=torch.float32)
+    y_train_t = torch.tensor(y_train, dtype=torch.long)
+    X_val_t = torch.tensor(X_val, dtype=torch.float32)
+    y_val_t = torch.tensor(y_val, dtype=torch.long)
+
+    def apply_masks():
+        if not masks:
+            return
+        with torch.no_grad():
+            for name, mask in masks.items():
+                named_params[name].mul_(mask)
+
+    apply_masks()  # in case the incoming model wasn't already masked
+
+    best_val_loss = float("inf")
+    best_state = {k: v.clone() for k, v in model.state_dict().items()}
+    epochs_no_improve = 0
+    recovery_curve = []
+
+    for epoch in range(max_epochs):
+        model.train()
+        optimizer.zero_grad()
+        logits = model(X_train_t)
+        loss = criterion(logits, y_train_t)
+        loss.backward()
+        optimizer.step()
+        apply_masks()
+
+        model.eval()
+        with torch.no_grad():
+            val_logits = model(X_val_t)
+            val_loss = criterion(val_logits, y_val_t).item()
+
+        if val_loss < best_val_loss - 1e-5:
+            best_val_loss = val_loss
+            best_state = {k: v.clone() for k, v in model.state_dict().items()}
+            epochs_no_improve = 0
+        else:
+            epochs_no_improve += 1
+
+        if epoch % log_every == 0 or epoch == max_epochs - 1:
+            test_metrics = evaluate(model, X_test, y_test)
+            recovery_curve.append({
+                "epoch": epoch,
+                "train_loss": loss.item(),
+                "val_loss": val_loss,
+                "test_accuracy": test_metrics["accuracy"],
+                "test_macro_f1": test_metrics["macro_f1"],
+            })
+
+        if epochs_no_improve >= patience:
+            break
+
+    model.load_state_dict(best_state)
+    apply_masks()
+    model.eval()
+    return model, recovery_curve
