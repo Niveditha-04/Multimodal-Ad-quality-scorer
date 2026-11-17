@@ -2,13 +2,10 @@
 agent can call ad compliance checking as a tool directly, without going
 through the HTTP API.
 
-Deliberately separate from api/main.py and does not import it -- this reuses
-the same underlying shared modules (model/clip_features.py,
-model/classifier_architecture.py, rag/explain.py) that api/main.py also
-uses, so both entry points score identically without either one depending
-on the other being up. This is , explicitly optional/stretch per the
-project spec -- it doesn't touch or depend on anything Phases 1-5 built
-being modified.
+Separate from api/main.py and does not import it. Both entry points use the
+same shared modules (model/clip_features.py, model/classifier_architecture.py,
+rag/explain.py), so they score identically without depending on each other
+being up.
 """
 import io
 
@@ -65,11 +62,10 @@ def check_ad_compliance(image_path: str, ad_text: str) -> dict:
     """
     _ensure_loaded()
 
-    # Returns a structured {"error": ...} dict rather than raising for
-    # expected input problems (missing file, empty text). Tested both ways:
-    # raising ValueError here gets wrapped by the SDK into UnexpectedToolError
-    # with a full traceback at this layer, which is a worse result for a
-    # calling agent than a clean, readable error message in the tool output.
+    # Expected input problems (missing file, empty text) return a structured
+    # {"error": ...} dict instead of raising. A raised ValueError is wrapped by
+    # the SDK into an UnexpectedToolError with a full traceback, which is harder
+    # for a calling agent to read than an error message in the tool output.
     if not ad_text or not ad_text.strip():
         return {"error": "ad_text must not be empty"}
 

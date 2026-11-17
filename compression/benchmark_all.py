@@ -1,26 +1,17 @@
-"""Step 7: pulls together every result from Steps 1-6 into one final
-benchmark table and two plots.
+"""Combines the baseline, pruning and quantization results into one benchmark
+table (final_benchmark.json) and two plots (results/plots/).
 
-X-axis for both plots is gzip-compressed size reduction vs. the baseline
-checkpoint, not raw (uncompressed) size reduction. That choice matters and
-is not cosmetic: unstructured pruning (Steps 2-3) keeps the same dense
-[128,1024]/[4,128] tensor shape at every sparsity level, so its RAW
-on-disk size never moves (529,181 bytes at 30% sparsity and at 90% --
-see compression/results/self_pruning_summary.json). Plotting raw
-compression would put all four unstructured points at x=0%, which is
-technically accurate but visually degenerate and hides that unstructured
-pruning does buy real, different amounts of *achievable* compression at
-different sparsity levels once you actually compress the zeros (gzip is a
-simple, always-available way to realize that, without needing a sparse
-tensor format). Structured pruning and quantization both show real raw
-compression too; gzip is still used for them for one consistent, fair
-axis across every method. This is the same reasoning already documented
-in compression/common.py's state_dict_gzip_size_bytes docstring.
+The x-axis of both plots is gzip-compressed size reduction relative to the
+baseline checkpoint, not raw size. Unstructured pruning keeps the dense
+[128, 1024] and [4, 128] tensor shapes at every sparsity level, so its raw
+on-disk size is the same (529,181 bytes) from 30% to 90% sparsity, and a
+raw-size axis would put all four points at 0%. Gzip shows the compression
+achievable once the zeros are compressed and gives one consistent axis for
+every method (see state_dict_gzip_size_bytes in compression/common.py).
 
-Self-implemented and torch.nn.utils.prune are collapsed into a single
-"unstructured pruning" series here, since Step 3 proved they produce
-numerically identical checkpoints (matching masks, matching accuracy) --
-plotting them as two series would just draw two overlapping lines.
+Self-implemented and torch.nn.utils.prune pruning are plotted as one
+"unstructured pruning" series, since they produce identical masks and
+identical accuracy at every sparsity level.
 """
 import json
 from pathlib import Path
@@ -75,9 +66,8 @@ def load_all_rows():
     add(quant_d["quantized_row"], "quantized",
         f"structured 75% + INT8 quant ({quant_d['quantization_engine']})")
 
-    # torch.prune rows are recorded for the table (self-implemented-vs-toolkit
-    # proof) but excluded from `rows`/plots above since Step 3 showed they are
-    # numerically identical to the unstructured rows already added
+    # torch.prune rows are kept in the table output but not plotted: they are
+    # identical to the unstructured rows already added
     torch_rows = [level["row"] for level in torch_d["levels"]]
 
     return rows, torch_rows, baseline
@@ -179,7 +169,7 @@ def main():
     from compression.common import save_json
     save_json(
         {"rows": rows, "torch_prune_rows_identical_to_unstructured": torch_rows,
-         "note": "torch_prune rows are numerically identical to unstructured rows (see Step 3); excluded from plots to avoid overplotting"},
+         "note": "torch_prune rows are numerically identical to the unstructured rows and are excluded from the plots to avoid overplotting"},
         RESULTS_DIR / "final_benchmark.json",
     )
 

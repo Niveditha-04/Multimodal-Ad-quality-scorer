@@ -1,31 +1,25 @@
 """Builds eval/golden_set.json: 32 flagged test-set ads with independently
 determined ground truth, for scoring generated explanations against.
 
-Selection: every ad here has predicted_label != 'approved' from the joint
-classifier (model_version=joint_v2_97565ac7) on the 96-ad test set --
-these are exactly the ads that would actually trigger explanation generation
-through /score, since approved ads never get one. Includes ALL 4 known
-misclassification cases in this test set (ad_ids 6, 97, 105, 146 -- ground
-truth is genuinely compliant/a different violation than what the model
-predicted), not just the one from the v1 README, plus a confidence-spread
-sample of true positives from each of the three violation categories.
+Selection: every ad has predicted_label != 'approved' from the joint classifier
+(model_version=joint_v2_97565ac7) on the 96-ad test set, which are the
+ads that trigger explanation generation through /score. The set includes all 4
+misclassified ads in the test set (ad_ids 6, 97, 105, 146), whose ground truth
+is a compliant ad or a different violation than predicted, plus a
+confidence-spread sample of true positives from each of the three violation
+categories.
 
-Ground truth for species/breed comes from data/dataset.csv's
-source_species/source_breed columns -- recorded directly from the Oxford
-Pet filename convention at dataset-construction time, independent of any
-model or LLM inference, so it isn't vulnerable to the failure mode where
-the same reasoning that generates an explanation also grades it. A sample
-of 8 of these 32 (all 4 misclassification cases plus one true positive from
-each category, plus one of each low_quality subtype) was additionally
-visually confirmed by viewing the actual image files directly -- not just
-trusting the metadata -- before this script was finalized.
+Species and breed ground truth comes from the source_species and source_breed
+columns of data/dataset.csv, recorded from the Oxford Pet filename convention
+when the dataset was built, independent of any model or LLM output. 8 of the 32
+ads (the 4 misclassified ones, one true positive per category, and one of each
+low_quality subtype) were also checked by viewing the image files.
 
-Which policy rule genuinely applies is determined by matching each ad's
-actual text against the known template categories from
-data/build_dataset.py (HEALTH_CLAIM_TEMPLATES, URGENCY_CLAIM_TEMPLATES,
-SUPERLATIVE_CLAIM_TEMPLATES, and the fear-based "Stop your ... suffering"
-template that maps to prohibited_language), cross-checked against the
-actual rule text in db/policy_categories.py.
+The policy rule that genuinely applies to each ad is found by matching its text
+against the template categories in data/build_dataset.py (HEALTH_CLAIM_TEMPLATES,
+URGENCY_CLAIM_TEMPLATES, SUPERLATIVE_CLAIM_TEMPLATES, and the fear-based "Stop
+your ... suffering" template that maps to prohibited_language) and the rule text
+in db/policy_categories.py.
 """
 import json
 
@@ -34,7 +28,7 @@ import pandas as pd
 # ad_id -> which policy_categories.py category_name genuinely applies,
 # independent of what the model predicted. "none" = genuinely compliant ad.
 GENUINE_RULE = {
-    6: "none",  # approved, wrongly predicted misleading -- the v1 README's known case
+    6: "none",  # approved, wrongly predicted misleading
     97: "none",  # approved, wrongly predicted misleading
     105: "none",  # approved, wrongly predicted misleading
     146: "unsubstantiated_health_claims",  # "guarantees...5 years longer" -- wrongly predicted misleading

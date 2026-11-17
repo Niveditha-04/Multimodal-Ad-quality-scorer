@@ -1,7 +1,6 @@
 """Computes aggregate scores from eval/scores.py against eval/golden_set.json.
-Cross-checks that every golden-set ad has a score (no silent omissions) and
-computes the numbers programmatically rather than by hand, to catch any
-arithmetic slip in the manual scoring pass.
+Checks that every golden-set ad has a score, then computes the aggregates in
+code.
 """
 import json
 import math

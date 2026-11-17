@@ -1,13 +1,10 @@
-"""Generates docs/images/confusion_matrix.png and docs/images/ablation_comparison.png
-from the actual saved results files (model/results/metrics.json,
-model/results/ablation_summary.json) -- not illustrative or hand-drawn, the
-real numbers already reported in the README and writeup.
+"""Generates docs/images/confusion_matrix.png and
+docs/images/ablation_comparison.png from the saved results files
+(model/results/metrics.json and model/results/ablation_summary.json).
 
-Colors follow the dataviz skill's reference palette: the confusion matrix is
-a magnitude encoding (sequential single hue, blue, light-to-dark); the
-ablation comparison is 3 distinct series (image/text/joint), using the
-palette's first 3 categorical slots, which the palette's own validation
-notes confirm clear the all-pairs CVD/contrast gates together.
+The confusion matrix uses a single-hue sequential blue ramp (magnitude). The
+ablation chart uses three categorical colors for the image, text and joint
+series.
 """
 import json
 

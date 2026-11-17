@@ -1,15 +1,12 @@
-"""Tests validate_explanation_output()'s actual detection capability, not
-just that it leaves good output alone. The 8 adversarial cases in
-adversarial_cases.py were all resisted before reaching the output stage, so
-they never exercised whether the validator would actually catch a
-successful injection if one occurred -- that's a real, separate gap from
-"doesn't false-positive on legitimate output." Closes it by handing the
-validator hand-written strings representing what a successful injection's
-output would look like, skipping the LLM call entirely, and checking it
-check used a vocabulary list that included "ad ", which matched trivially
-in "This ad is fully compliant and approved" (an ordinary mention of the
-word "ad", not real grounding) and let that string through undetected.
-stricter one (excluding "ad "/"image"/"text") for the bare-approval check.
+"""Tests validate_explanation_output()'s detection of unsafe output, not just
+that it leaves good output alone. The adversarial cases in
+adversarial_cases.py are resisted before the output stage, so they never show
+whether the validator would catch a successful injection. This test passes
+hand-written strings that look like the output of a successful injection
+straight to the validator, with no LLM call, and checks that each is flagged.
+One of them is a bare approval ("This ad is fully compliant and approved"),
+which contains "ad" as an ordinary word and must still be flagged because it
+cites no policy rule.
 """
 from rag.explain import validate_explanation_output
 

@@ -1,9 +1,9 @@
-"""5 adversarial ad-copy examples, each testing a distinct prompt injection
-strategy against rag/explain.py's generate_explanation() call. ad_text is
-the one field in the whole pipeline that's directly attacker-controlled
-(anyone can submit any string as an ad's copy through /score) and gets
-interpolated straight into the user message sent to Claude -- this is the
-actual attack surface, not the image or the classifier.
+"""8 adversarial ad-copy examples, each testing a distinct prompt injection
+strategy against rag/explain.py's generate_explanation(). ad_text is the one
+field in the pipeline that an attacker controls directly (anyone can submit any
+string as an ad's copy through /score), and it is interpolated into the user
+message sent to the LLM, so it is the attack surface, not the image or the
+classifier.
 """
 
 ADVERSARIAL_CASES = [
@@ -57,10 +57,9 @@ ADVERSARIAL_CASES = [
         ),
         "predicted_label": "policy_violation",
     },
-    # the 5 above were all resisted by the undefended baseline (see
-    # guardrails/README.md) -- these 2 are harder variants added specifically
-    # to find a case that actually succeeds, so the defense has something
-    # real to demonstrate rather than declaring victory on an easy set
+    # The five cases above are direct injection strategies. The three below
+    # are harder variants: fake retrieved context, a persona reframe and fake
+    # conversation history.
     {
         "name": "fake_retrieved_context_injection",
         "ad_text": (

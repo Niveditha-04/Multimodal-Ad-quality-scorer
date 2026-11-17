@@ -1,41 +1,29 @@
--- Real queries against the ads/scores/policy_categories schema.
--- scores now holds 202 rows across TWO model_versions -- see db/README.md
--- for the full convention. As of this file, that's:
---   joint_v2_97565ac7  (106 rows: 96 held-out eval predictions from
---     db/populate_eval_scores.py, plus 10 live /score and MCP-tool calls made
---     during testing)
---   rule_baseline_v1_7ba4a019  (96 rows: the rule-based baseline's
---     predictions on the same 96 test ads, from ab_test/run_comparison.py --
---     the hash suffix is sha256(ab_test/rule_based_baseline.py)[:8], see
---     ab_test/baseline_version.py, mirroring model/model_version.py's
---     approach so a future retune of the thresholds gets its own version
---     rather than colliding silently with this one)
+-- Reference queries against the ads, scores and policy_categories schema.
 --
--- of this file did NOT, and worked fine when only one model_version
--- existed -- but the moment rule_baseline_v1 was added, the unfiltered
--- queries started silently blending both arms into meaningless composite
--- numbers (e.g. "misleading recall" came out to 39.6%, which is neither
--- arm's real number -- Arm B is 79.2%, Arm A is a hard 0%). Caught this by
--- literally re-running the old queries after landed and comparing
--- against ab_test/results/comparison.json, per db/README.md's own note to
+-- The scores table holds rows from more than one model_version, so every query
+-- filters by model_version. Mixing arms gives numbers that belong to neither
+-- (a blended "misleading recall" of 39.6%, for example, when the arms' real
+-- values are 79.2% and 0%).
 --
--- Verified to run identically on both SQLite (db/ads.db) and Postgres
--- (of the v2 extension, db/migrate_to_postgres.py) -- output is
--- numerically identical on both engines; the only observed differences are
--- two cosmetic formatting artifacts, not data or logic discrepancies: (1)
--- tied rows in queries with no secondary ORDER BY key can come out in either
--- order depending on the engine's internal storage order, and (2) SQLite's
--- ROUND() returns a float that drops trailing zeros in text output (0.962),
--- while Postgres's ROUND(CAST(... AS NUMERIC)) preserves fixed decimal
--- places (0.9620) -- same numeric value both ways.
+-- model_version values after `python -m db.populate_eval_scores` and
+-- `python -m ab_test.run_comparison`:
+--   joint_v2_97565ac7  joint classifier, 96 held-out test predictions
+--                              (tag + first 8 hex of sha256(model/classifier_head.pt))
+--   rule_baseline_v1_d1041021  rule-based baseline, the same 96 test ads
+--                              (tag + first 8 hex of sha256(ab_test/rule_based_baseline.py);
+--                              `python -m ab_test.baseline_version` prints the current value)
+-- Live /score calls add rows under the joint model's version with ad_id above
+-- 480 and no ground truth, so queries that need ground truth use ad_id <= 480.
 --
--- Actual output below is from db/ads.db (SQLite) as of 2026-08-27, not
--- simulated -- values are identical on Postgres modulo the two cosmetic
--- differences just described.
+-- The queries run unchanged on SQLite and Postgres. Postgres has no
+-- round(double precision, integer), so ROUND(x, n) is applied to a CAST to
+-- NUMERIC, which is standard SQL. Tied rows can print in a different order, and
+-- SQLite drops trailing zeros (0.962) where Postgres keeps them (0.9620).
+--
+-- Sample output is from `sqlite3 db/ads.db < db/queries.sql` on a database
+-- built from the repository: 96 test predictions per arm and no live traffic.
 
--- 1. Violation rate by predicted category, for the joint classifier
---    specifically: of everything it scored, what share of predictions fall
---    into each label?
+-- 1. Share of the joint classifier's predictions per label.
 SELECT
     predicted_label,
     COUNT(*) AS n_predictions,
@@ -47,28 +35,16 @@ WHERE model_version = 'joint_v2_97565ac7'
 GROUP BY predicted_label
 ORDER BY n_predictions DESC;
 
--- actual output:
--- predicted_label    n_predictions  pct_of_arm_scores
--- approved            29            27.36
--- misleading          27            25.47
--- policy_violation    25            23.58
--- low_quality         25            23.58
--- (106 total rows for this arm: 96 eval + 10 live/MCP test calls, spread
--- roughly as expected across categories; policy_violation/low_quality are
--- tied at 25 -- see the tie-break note above)
+-- sample output:
+-- predicted_label  n_predictions  pct_of_arm_scores
+-- approved         27             28.13
+-- low_quality      24             25.0
+-- misleading       23             23.96
+-- policy_violation 22             22.92
 
--- 2. Average confidence by predicted label, joint classifier only --
---    sanity check on calibration. Mixing in rule_baseline_v1 here would be
---    especially misleading since that arm's "confidence" isn't a real
---    probability at all (see db/README.md / ab_test/rule_based_baseline.py)
---    -- it's a hardcoded 1.0 for every rule-fired prediction.
--- ROUND()'s 2-argument form needs an explicit CAST to NUMERIC for Postgres
--- (Postgres has no round(double precision, integer) overload -- SQLite's
--- loose typing accepts it directly, Postgres doesn't). CAST(... AS NUMERIC)
--- is standard SQL, not Postgres-specific ::numeric shorthand, so it works
--- identically on both engines -- found this the hard way, running this
--- query against Postgres for the first time errored with "function
--- round(double precision, integer) does not exist" until this cast was added.
+-- 2. Confidence by predicted label, joint classifier only. The baseline's
+--    "confidence" is a constant 1.0 whenever a rule fires, not a probability,
+--    so it is not comparable.
 SELECT
     predicted_label,
     ROUND(CAST(AVG(confidence) AS NUMERIC), 4) AS avg_confidence,
@@ -80,22 +56,16 @@ WHERE model_version = 'joint_v2_97565ac7'
 GROUP BY predicted_label
 ORDER BY avg_confidence DESC;
 
--- actual output:
--- predicted_label    avg_confidence  min_confidence  max_confidence  n
--- low_quality         0.9464          0.6459          0.9975          25
--- policy_violation    0.9292          0.6175          0.9929          25
--- approved            0.7266          0.4231          0.9709          29
--- misleading          0.6822          0.4225          0.9620          27
--- same pattern as before approved and misleading are the two
--- lowest-confidence, lowest-precision-against-each-other classes (see
--- model/results/joint_results.json confusion matrix) -- confidence is
--- tracking genuine model uncertainty, not noise.
+-- sample output:
+-- predicted_label  avg_confidence  min_confidence  max_confidence  n
+-- low_quality      0.9451          0.6459          0.9975          24
+-- policy_violation 0.9346          0.6175          0.9929          22
+-- approved         0.7339          0.4231          0.9709          27
+-- misleading       0.69            0.4225          0.962           23
 
--- 3. False positive rate by ground-truth category, joint classifier only:
---    of ads that were actually approved, what fraction did the model
---    incorrectly flag, broken out by what it incorrectly called them?
---    Denominator scoped to approved ads that were actually scored BY THIS
---    ARM specifically, not all approved ads in the table.
+-- 3. False positives among approved ads, joint classifier only: of the approved
+--    ads it scored, what fraction was flagged, by the label it predicted. The
+--    denominator counts approved ads scored by this arm only.
 SELECT
     s.predicted_label AS incorrectly_predicted_as,
     COUNT(*) AS n_false_positives,
@@ -115,15 +85,13 @@ WHERE a.ground_truth_label = 'approved'
 GROUP BY s.predicted_label
 ORDER BY n_false_positives DESC;
 
--- actual output:
+-- sample output:
 -- incorrectly_predicted_as  n_false_positives  pct_of_scored_approved_ads
--- misleading                 3                  12.5
--- (unchanged from before -- the 9 additional live-traffic rows
--- under this model_version weren't approved-ground-truth ads, so this
--- query's denominator/numerator are untouched by them)
+-- misleading                3                  12.5
 
--- 4. Per-category recall, joint classifier only: of ads whose ground truth
---    is a given violation category, what fraction did the model catch?
+-- 4. Per-category recall, joint classifier only: of the ads whose ground truth
+--    is each violation category, what fraction was caught. Matches
+--    model/results/joint_results.json (0.792, 0.917, 1.000).
 SELECT
     a.ground_truth_label,
     COUNT(*) AS n_actual,
@@ -136,24 +104,20 @@ FROM ads a
 JOIN scores s ON s.ad_id = a.id
 WHERE a.ground_truth_label != 'approved'
   AND s.model_version = 'joint_v2_97565ac7'
-  AND s.ad_id <= 480  -- restrict to the labeled eval set -- live traffic (ad_id over 480) has no ground truth to check against
+  AND s.ad_id <= 480  -- labeled eval set only; live traffic (ad_id > 480) has no ground truth
 GROUP BY a.ground_truth_label
 ORDER BY recall_pct ASC;
 
--- actual output:
+-- sample output:
 -- ground_truth_label  n_actual  n_correctly_caught  recall_pct
--- misleading            24        19                  79.17
--- policy_violation      24        22                  91.67
--- low_quality           24        24                 100.00
--- unchanged from before , and still matches
--- model/results/joint_results.json exactly (0.792, 0.917, 1.000) -- same
--- number, two independent computations (sklearn at training time, raw SQL
--- against persisted scores here).
+-- misleading          24        19                  79.17
+-- policy_violation    24        22                  91.67
+-- low_quality         24        24                  100.0
 
--- 5. Same per-category recall query, but for the rule-based
---    baseline (Arm A) instead -- the query is identical except for the
---    model_version filter. Put side by side with query 4, this is the
---    single clearest illustration of what the two arms actually differ on.
+-- 5. The same recall query for the rule-based baseline. Only the model_version
+--    filter differs from query 4. The baseline has no way to compare image
+--    content with text claims, so its recall on misleading is 0. Matches
+--    ab_test/results/comparison.json.
 SELECT
     a.ground_truth_label,
     COUNT(*) AS n_actual,
@@ -165,18 +129,12 @@ SELECT
 FROM ads a
 JOIN scores s ON s.ad_id = a.id
 WHERE a.ground_truth_label != 'approved'
-  AND s.model_version = 'rule_baseline_v1_7ba4a019'
+  AND s.model_version = 'rule_baseline_v1_d1041021'
 GROUP BY a.ground_truth_label
 ORDER BY recall_pct ASC;
 
--- actual output:
+-- sample output (low_quality and policy_violation are tied, so their order can vary):
 -- ground_truth_label  n_actual  n_correctly_caught  recall_pct
--- misleading            24        0                    0.00
--- low_quality           24        24                 100.00
--- policy_violation      24        24                 100.00
--- (low_quality/policy_violation are tied at 100% -- their relative order is
--- an unstable tie-break, not a meaningful ranking)
--- the rule baseline is perfect on the two categories it has a real signal
--- for (keyword language, image/text degradation) and a hard structural
--- zero on misleading -- it has no mechanism to compare image content
--- against text claims. Matches ab_test/results/comparison.json exactly.
+-- misleading          24        0                   0.0
+-- low_quality         24        24                  100.0
+-- policy_violation    24        24                  100.0

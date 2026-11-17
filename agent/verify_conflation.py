@@ -1,24 +1,16 @@
-"""Programmatically checks each agent run's final_summary against the raw,
-ground-truth tool_call_log from that same run, looking for cross-ad
-conflation: cases where the summary attributes ad X's actual
-predicted_label or confidence to a different ad Y in a structured table row.
+"""Checks each agent run's final_summary against the raw tool_call_log from the
+same run for cross-ad conflation: the summary attributes one ad's
+predicted_label or confidence to a different ad in a structured table row.
 
-Built after observing what looked like a cross-ad mix-up in run 1's
-narrative text, per explicit instruction not to lock that into the README
-as a confirmed pattern from a single observation -- re-ran the agent 2 more
-times on the identical batch and checked here, the same discipline that
-turned rule-fabrication finding from "happened once" into
-"verified independently three times" before it was written up as a pattern.
+The agent is run several times on the identical batch
+(agent/results/audit_run*.json), so a mix-up seen once can be checked for
+reproducibility.
 
-A first version of this script used naive proximity matching (an ad_id
-followed within N characters by some decimal number, anywhere in the
-summary text) and produced false positives -- e.g. flagging ad 8 as wrong
-because ad 25's correctly-stated confidence happened to appear within 60
-characters of "8" in an unrelated closing-note sentence, since the two ads
-were mentioned near each other but the number wasn't actually attributed to
-ad 8. This version parses actual markdown table rows instead: for each row
-that names exactly one ad_id and one confidence-shaped number in the same
-row, that's a real, unambiguous attribution, not a proximity guess.
+Parsing is row-based: only a markdown table row that names exactly one ad_id
+and one confidence-shaped number counts as an attribution. Matching an ad_id to
+any nearby number in free text gives false positives, because a number stated
+correctly for one ad can sit close to another ad's id in an unrelated
+sentence.
 """
 import json
 import re
@@ -39,13 +31,10 @@ def parse_priority_table_rows(summary: str) -> dict[int, float]:
         if not m:
             continue
         ad_id, conf = int(m.group(1)), float(m.group(2))
-        # skip rows where the "ad_id" is actually a priority rank number
-        # (distinguishable: a real ad_id from this batch, a rank 1-18 could
-        # collide, so only trust rows containing a batch ad_id AND where
-        # that number isn't also plausibly just "priority N" -- resolved by
-        # only keeping the LAST bare integer in the row before the pipe
-        # that precedes the confidence, which is the ad_id column in every
-        # observed table format here)
+        # Skip rows where the leading number is a priority rank rather than an
+        # ad_id: a rank from 1 to 18 can collide with a batch ad_id, so only the
+        # last bare integer before the confidence column is used, which is the
+        # ad_id column in every table format seen here.
         claimed[ad_id] = conf
     return claimed
 

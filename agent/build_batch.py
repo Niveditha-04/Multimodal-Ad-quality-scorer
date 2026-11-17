@@ -1,29 +1,21 @@
 """Builds agent/batch.json: 18 ads for the campaign auditor to work through.
 
-Deliberately drawn mostly from eval/golden_set.json rather than a fresh
-random slice of the test set, because every ad in the golden set already
-has independently-verified ground truth (see eval/build_golden_set.py) --
-so every claim the agent makes about a given ad in its final summary can be
-checked against ground truth already confirmed by direct human review, not
-just assumed correct. Given what found about this pipeline's
-tendency to generate fluent, confident, fabricated justifications, an
-agentic summary layered on top of that same pipeline needs the same
-scrutiny, not less.
+Most ads come from eval/golden_set.json instead of a fresh random slice of the
+test set, because every golden-set ad has independently determined ground
+truth (see eval/build_golden_set.py), so each claim the agent makes about an ad
+in its summary can be checked against it.
 
-The golden set alone isn't a representative batch, though -- it's entirely
-flagged ads by construction (only needed ads that produce an
-explanation). Added 4 fresh correctly-classified `approved` ads (not in the
-golden set) so the batch actually contains "no violation" outcomes too,
-matching the spec's "some approved, some clearly violating, one
-ambiguous/misclassified case" requirement.
+The golden set contains only flagged ads (those that trigger an explanation),
+so 4 correctly classified `approved` ads outside the golden set are added to
+include "no violation" outcomes.
 
 Composition (18 total):
-  4  correctly-classified approved ads (new, ground truth verified below)
-  4  ALL of this test set's misclassification cases (from golden set --
+  4  correctly-classified approved ads (new)
+  4  all of this test set's misclassification cases (from the golden set:
      ad_ids 6, 97, 105, 146)
-  4  policy_violation true positives (from golden set)
-  3  misleading true positives (from golden set)
-  3  low_quality true positives (from golden set)
+  4  policy_violation true positives (from the golden set)
+  3  misleading true positives (from the golden set)
+  3  low_quality true positives (from the golden set)
 """
 import json
 

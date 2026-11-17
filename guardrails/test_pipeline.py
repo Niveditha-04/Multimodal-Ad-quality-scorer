@@ -1,8 +1,7 @@
-"""Runs the 5 adversarial cases through the real rag.explain.generate_explanation()
-pipeline and saves the actual output -- run once before any defense exists
-(guardrails/results_before_defense.json) and again after
-(guardrails/results_after_defense.json), so both are real, comparable
-evidence rather than a claimed before/after.
+"""Runs the adversarial cases through the real rag.explain.generate_explanation()
+pipeline and saves the raw output. guardrails/results_before_defense.json is a
+run before the prompt hardening and output validator were added, and
+guardrails/results_after_defense.json is a run after.
 """
 import json
 import sys

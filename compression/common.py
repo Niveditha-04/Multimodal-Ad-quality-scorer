@@ -1,11 +1,10 @@
 """Shared measurement and I/O utilities for the classifier-head compression
-study. CLIP's backbone is out of scope everywhere in this module -- every
-function here operates on the small MLPHead only, using embeddings already
-extracted to model/embeddings.npz by model/extract_embeddings.py.
+study. Everything here operates on the small MLPHead only, using embeddings
+already extracted to model/embeddings.npz by model/extract_embeddings.py. The
+CLIP backbone is not involved.
 
-Reuses model/train_classifier.py's exact train/val/test split logic so
-every number produced here is directly comparable to model/results/
-metrics.json (the original baseline), not a re-derived approximation.
+The train/val/test split logic comes from model/train_classifier.py, so the
+numbers are directly comparable to model/results/metrics.json.
 """
 import gzip
 import io
@@ -59,16 +58,13 @@ def build_head(input_dim: int = 1024, hidden_dim: int = HIDDEN_DIM) -> MLPHead:
 
 
 def load_checkpoint(path) -> torch.nn.Module:
-    """Loads any checkpoint format used in this study: a plain state_dict
-    (self-implemented and torch.prune checkpoints, which keep the baseline's
-    fixed hidden_dim=128 shape) or the self-describing {"state_dict",
-    "hidden_dim", "quantized"} dict that structured_pruning.py and
-    quantize_int8.py save -- needed because a structurally-pruned model has
+    """Loads any checkpoint format used here: a plain state_dict (the
+    unstructured-pruned checkpoints keep the baseline's hidden_dim of 128) or
+    the self-describing {"state_dict", "hidden_dim", "quantized"} dict saved by
+    structured_pruning.py and quantize_int8.py. A structurally pruned model has
     a non-default hidden_dim, and a quantized model must be converted with
-    quantize_dynamic() BEFORE load_state_dict can work (its state_dict holds
-    packed int8 params that only fit a module already in quantized form).
-    api/main.py uses the identical logic so the API and this study's own
-    scripts can never disagree about how to open the same checkpoint file.
+    quantize_dynamic() before load_state_dict, because its state_dict holds
+    packed int8 parameters. api/main.py uses the same logic.
     """
     obj = torch.load(path, map_location="cpu")
     if isinstance(obj, dict) and "state_dict" in obj and "hidden_dim" in obj:
@@ -133,11 +129,9 @@ def count_nonzero_parameters(model: torch.nn.Module) -> int:
 
 
 def state_dict_raw_size_bytes(model: torch.nn.Module) -> int:
-    """Size of the dense state_dict serialized with torch.save, in bytes.
-    This is what actually lands on disk / in a Docker image for a model
-    that isn't using a sparse tensor format -- so unstructured-pruned
-    models with many zeros do NOT shrink here. That is a real, honest
-    compression/README.md.
+    """Size of the dense state_dict serialized with torch.save, in bytes. This
+    is the size on disk or in a Docker image when no sparse format is used, so
+    unstructured-pruned models with many zeros do not shrink.
     """
     buf = io.BytesIO()
     torch.save(model.state_dict(), buf)
@@ -145,12 +139,9 @@ def state_dict_raw_size_bytes(model: torch.nn.Module) -> int:
 
 
 def state_dict_gzip_size_bytes(model: torch.nn.Module) -> int:
-    """Size of the same state_dict after gzip compression. Zeros compress
-    extremely well, so this gives a realistic 'achievable on-disk size'
-    for unstructured-pruned checkpoints without needing a sparse tensor
-    format -- a fair, honest way to credit unstructured pruning for real
-    compression potential instead of reporting 0% for every unstructured
-    result.
+    """Size of the same state_dict after gzip compression. Zeros compress very
+    well, so this approximates the achievable on-disk size of unstructured-pruned
+    checkpoints without needing a sparse tensor format.
     """
     buf = io.BytesIO()
     torch.save(model.state_dict(), buf)
@@ -191,18 +182,15 @@ def full_benchmark_row(
     model: torch.nn.Module, X_test: np.ndarray, y_test: np.ndarray, name: str,
     extra: dict | None = None, parameter_counts_override: tuple[int, int] | None = None,
 ) -> dict:
-    """One row of the final comparison table: correctness + size + speed,
-    all measured directly against the actual model object passed in (never
-    hand-typed), for the given test set.
+    """One row of the benchmark table: accuracy, size and speed, all measured
+    from the model object passed in.
 
-    parameter_counts_override is (total, nonzero) and exists only for
-    dynamically-quantized models: torch.quantization.quantize_dynamic packs
-    weights into an opaque _packed_params structure that is not a
-    registered nn.Parameter, so model.parameters() silently returns an
-    empty list for a quantized module -- count_parameters would report 0,
-    which is wrong, not just imprecise. Quantization changes each weight's
-    bit-width, not the number of logical weights, so the override is the
-    pre-quantization float model's true parameter count.
+    parameter_counts_override is (total, nonzero) and is only for dynamically
+    quantized models. quantize_dynamic stores weights in a packed structure
+    that is not an nn.Parameter, so model.parameters() is empty and
+    count_parameters would return 0. Quantization changes each weight's bit
+    width, not the number of weights, so the override is the pre-quantization
+    parameter count.
     """
     metrics = evaluate(model, X_test, y_test)
     if parameter_counts_override is not None:
@@ -255,30 +243,23 @@ def fine_tune_with_mask(
     weight_decay: float = FT_WEIGHT_DECAY,
     log_every: int = 5,
 ):
-    """Fine-tunes `model` in place after pruning. If `masks` is given (a
-    dict of param_name -> 0/1 tensor, same shape as the parameter), the
-    mask is reapplied to the corresponding parameter after every optimizer
-    step, so pruned weights cannot be revived by gradient updates -- this
-    is what makes a prune-then-fine-tune pass different from just training
-    a smaller-effective-capacity model and hoping it stays sparse. Not
-    needed for structured pruning, where the pruned neurons are physically
-    removed from the model rather than masked.
+    """Fine-tunes `model` in place after pruning. If `masks` is given (a dict of
+    param_name -> 0/1 tensor with the parameter's shape), the mask is reapplied
+    after every optimizer step so pruned weights cannot be revived by gradient
+    updates. Structured pruning needs no masks, since the pruned neurons are
+    removed from the model.
 
-    Best-checkpoint selection uses validation loss only (never test),
-    matching model/train_classifier.py's discipline. Test-set accuracy is
-    also evaluated every `log_every` epochs purely to build the
-    accuracy-recovery curve this study asks for -- it is never used for
-    early stopping or checkpoint selection, so no test-set information
-    leaks into training decisions; it is a monitoring curve, not a
-    selection signal.
+    The best checkpoint is chosen by validation loss only, as in
+    model/train_classifier.py. Test accuracy is evaluated every `log_every`
+    epochs to build the accuracy-recovery curve. It is never used for early
+    stopping or checkpoint selection.
 
-    Seeds with RANDOM_SEED before training starts. The head uses
-    nn.Dropout(0.3), which samples a fresh random mask on every training
-    forward pass -- without seeding here, two calls with an identical
-    starting model and identical prune masks can still diverge purely from
-    when it isn't one. Seeding makes "same mask in -> same fine-tuned
-    result out" hold exactly, which is what actually lets Step 2 vs Step 3
-    isolate the mask-computation method as the only variable.
+    Seeds with RANDOM_SEED before training. The head uses nn.Dropout(0.3),
+    which samples a new mask on every training forward pass, so without a seed
+    two runs from an identical model and prune mask would diverge. Seeding
+    makes the same mask always give the same fine-tuned result, which lets the
+    self-implemented and torch.nn.utils.prune sweeps differ only in how the
+    mask is computed.
     """
     torch.manual_seed(RANDOM_SEED)
     named_params = dict(model.named_parameters())

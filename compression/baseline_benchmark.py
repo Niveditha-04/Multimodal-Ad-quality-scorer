@@ -1,12 +1,11 @@
-"""Step 1 of the compression study: measure the CURRENT trained classifier
-head (model/classifier_head.pt, already trained by model/train_classifier.py
---modality joint) before any pruning or quantization touches it. Every later
-compression result in this study is measured against these exact numbers.
+"""Measures the trained classifier head (model/classifier_head.pt) before any
+pruning or quantization: accuracy, macro F1, parameter count, state_dict size
+(raw and gzip-compressed) and single-sample CPU latency. Every compression
+result is compared against these numbers.
 
-Cross-checks its own accuracy/F1 against model/results/metrics.json (the
-number already reported in the top-level README) as a sanity check that
-this script's evaluation logic is loading the same split, same model, and
-producing the same result -- not a subtly different computation.
+The accuracy is cross-checked against model/results/metrics.json, so the
+script is known to load the same split and model as the original training
+run. It raises if the two differ.
 """
 import json
 from pathlib import Path
@@ -37,15 +36,11 @@ def main():
     print(f"  exact match: {match}")
     if not match:
         raise RuntimeError(
-            "Baseline accuracy computed here does not match model/results/metrics.json -- "
-            "stop and investigate before trusting any downstream compression comparison."
+            "Baseline accuracy does not match model/results/metrics.json. "
+            "Check the split and checkpoint before comparing compressed models."
         )
 
     save_json(row, path=RESULTS_DIR / "baseline_metrics.json")
-    save_json({"cross_check_metrics_json_accuracy": existing["accuracy"],
-               "cross_check_this_script_accuracy": row["accuracy"],
-               "exact_match": match},
-              path=RESULTS_DIR / "baseline_cross_check.json")
 
 
 if __name__ == "__main__":

@@ -1,10 +1,8 @@
 """Traceable model_version string for the rule-based baseline, mirroring
 model/model_version.py's approach for the joint classifier. The baseline's
-thresholds and blocklist were tuned once during calibration (see
-ab_test/calibration_log.md) -- if they're ever retuned, hashing the source
-file means the version string changes automatically, same reasoning as
-hashing classifier_head.pt: old and new baseline runs can't silently collide
-under one version string in the scores table.
+thresholds and blocklist live in ab_test/rule_based_baseline.py. Hashing that
+source file changes the version string whenever they change, so old and new
+baseline runs never share a version string in the scores table.
 """
 import hashlib
 from pathlib import Path

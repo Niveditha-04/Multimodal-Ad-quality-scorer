@@ -48,14 +48,12 @@ def embed_batch(
     (unnormalized) norm -- same convention as what's saved to embeddings.npz.
     Callers that need the classifier's actual input space must L2-normalize
     via l2_normalize() below; kept as a separate step so the raw projected
-    vectors stay available for other uses (e.g. the cosine-similarity sanity
-    checks in ).
+    vectors stay available for other uses (e.g. cosine-similarity checks).
 
-    See model/verify_embedding_space.py for the empirical proof that
-    .pooler_output on the RETURNED object from get_image_features/
-    get_text_features holds the post-projection embedding, not the raw
-    pre-projection sub-model pooler -- this is not obvious from the shape
-    alone (see that script's docstring).
+    .pooler_output on the object returned by get_image_features/
+    get_text_features holds the post-projection embedding (512-dim for both
+    towers), not the raw pre-projection pooler output. The text tower's
+    shape does not distinguish the two, so this is the one to remember.
     """
     inputs = processor(
         text=list(texts), images=list(images), return_tensors="pt",

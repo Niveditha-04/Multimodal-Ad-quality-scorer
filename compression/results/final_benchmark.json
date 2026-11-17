@@ -305,5 +305,5 @@
       "masks_identical_to_self_implemented": true
     }
   ],
-  "note": "torch_prune rows are numerically identical to unstructured rows (see Step 3); excluded from plots to avoid overplotting"
+  "note": "torch_prune rows are numerically identical to the unstructured rows and are excluded from the plots to avoid overplotting"
 }

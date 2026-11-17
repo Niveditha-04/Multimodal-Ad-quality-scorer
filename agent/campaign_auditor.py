@@ -1,19 +1,16 @@
-"""the "Ad Campaign Auditor" -- an agent that autonomously
-orchestrates the MCP tool (check_ad_compliance) across a batch of
-ads, rather than a human calling /score one ad at a time.
+"""The "Ad Campaign Auditor": an agent that decides which calls to make to the
+MCP tool check_ad_compliance across a batch of ads, instead of a person calling
+/score one ad at a time.
 
-This is a genuinely different thing from , not a relabeling of it:
-is a single callable tool that scores one ad on request. This is an
-agent that decides, on its own, which tool calls to make and in what order,
-gathers the results across an entire batch, and produces a synthesized
-review -- counts, cross-ad patterns, and a prioritized human-review list --
-that no single check_ad_compliance call could produce by itself.
+check_ad_compliance scores one ad per call. The auditor chooses the calls and
+their order, collects the results for the whole batch, and writes a
+synthesized review (counts, cross-ad patterns and a prioritized human-review
+list) that no single tool call produces.
 
-Uses the real Anthropic Messages API tool-use loop (not the Tool Runner
-helper, to keep every tool-execution decision explicit and inspectable for
-verification purposes) and dispatches each tool call through
-mcp_server.server.call_tool() -- the actual MCP dispatch path validated in
-, not a bare function call that happens to share the implementation.
+It runs the Anthropic Messages API tool-use loop directly rather than the SDK's
+Tool Runner helper, so every tool-execution decision is visible, and it
+dispatches each call through mcp_server.server.call_tool(), the MCP dispatch
+path, not a direct function call.
 """
 import asyncio
 import json
@@ -145,11 +142,9 @@ def main() -> None:
     result = asyncio.run(run_audit(ad_ids))
 
     if result["stop_reason"] != "end_turn":
-        # a response cut off by max_tokens can still look complete by
-        # coincidence (ended mid-table, right after a plausible-looking
-        # row) -- this happened on a real run of this script, caught only
-        # by checking stop_reason explicitly, not by reading the text and
-        # deciding it looked finished
+        # A response cut off by max_tokens can end mid-table and still look
+        # complete, so stop_reason is checked explicitly instead of judging the
+        # text.
         print(f"\n*** WARNING: final response did not end naturally "
               f"(stop_reason={result['stop_reason']!r}) -- summary below may be truncated ***\n")
 

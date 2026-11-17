@@ -9,8 +9,8 @@ small head on top, in one of three modality configurations:
   joint  - concatenated image+text embeddings (1024-dim)
 
 All three load the exact same train/test split from data/split.json, so
-their metrics are directly comparable -- that comparison is the point (see
-the ablation writeup in results/ablation.json). Embeddings are L2-normalized
+their metrics are directly comparable (see model/results/ablation_summary.json).
+Embeddings are L2-normalized
 per modality before use/concatenation, since raw CLIP image and text
 embeddings have different norms (~11 vs ~8) and cosine similarity -- what
 CLIP was actually trained on -- implies unit-normalized vectors.

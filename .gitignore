@@ -6,3 +6,6 @@ data/raw/
 rag/chroma_db/
 .DS_Store
 .env
+data/images/
+compression/checkpoints/*.pt
+!compression/checkpoints/structured_pruned_75pct.pt

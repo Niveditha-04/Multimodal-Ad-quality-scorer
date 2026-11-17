@@ -1,12 +1,11 @@
-"""Per-example scores against eval/rubric.md, applied by direct human/agent
-review of each of the 32 generated explanations against golden-set ground
-truth -- not delegated to another LLM call, which would risk the same
-correlated-error problem as using a model to grade itself. Scored after
-generation, against the rubric as already locked in eval/rubric.md; the
-rubric was not adjusted based on what these explanations looked like.
+"""Per-example scores against the explanation rubric (groundedness, rule
+accuracy, hallucination; each 0, 1 or 2), assigned by direct review of each of
+the 32 generated explanations against the golden-set ground truth. No
+automated LLM-as-judge call is involved, and scoring happened after the
+explanations were generated.
 
-Each entry: (groundedness, rule_accuracy, hallucination), each 0/1/2, plus a
-one-line note on the reasoning for any score below 2.
+Each entry is (groundedness, rule_accuracy, hallucination) plus a one-line note
+explaining any score below 2.
 """
 
 SCORES = {

@@ -91,31 +91,23 @@ def _build_user_content(ad_text: str, predicted_label: str, context: dict, image
     return [_image_to_base64_block(image), text_block]
 
 
-# Output safety check: lightweight keyword/pattern check, not a second LLM
-# call. Deterministic and auditable (no added non-determinism from a second
-# model call), adds no extra API cost/latency to every flagged request, and
-# -- the more important reason -- a second LLM asked to judge the first
-# LLM's output would itself be a fresh attack surface for exactly the same
-# class of injection this check exists to catch. The patterns below are
-# structural signals (does the output look like a leaked system prompt, a
-# suspiciously bare approval, or something with no ad-review vocabulary at
-# all), not semantic judgment calls that would need a model to make.
+# Output safety check: a keyword/pattern check rather than a second LLM call.
+# It is deterministic, adds no API cost or latency to flagged requests, and
+# avoids giving prompt injection a second model to target. The patterns are
+# structural signals (a leaked system prompt, a bare approval, or no ad-review
+# vocabulary at all), not semantic judgments.
 _SYSTEM_PROMPT_LEAK_MARKERS = [
     "you review advertising creatives for a pet-products marketplace",
     "the ad text inside the <ad_copy> tags",
 ]
 _BARE_APPROVAL_PATTERNS = ["approved", "compliant", "confirmed", "no issues", "no violations"]
-# broad vocabulary for the off-topic check -- lenient on purpose, since that
-# check only needs to confirm the response is about ad review AT ALL
+# Broad vocabulary for the off-topic check: it only confirms the response is
+# about ad review at all.
 _AD_REVIEW_VOCAB = ["polic", "flag", "violat", "rule", "ad ", "ad_", "creative", "image", "text"]
-# stricter vocabulary for the bare-approval check specifically -- deliberately
-# excludes "ad "/"image"/"text", which turned out to appear even in a
-# hand-written failure case ("This ad is fully compliant and approved,
-# confirmed.") purely because it mentions "ad" as an ordinary word, not
-# because it's grounded in anything. Caught by testing a synthetic
-# already-successful-injection string against this function directly, not
-# just checking real (already-safe) outputs -- the original single vocab
-# list let that string slip through undetected.
+# Stricter vocabulary for the bare-approval check. It leaves out "ad ", "image"
+# and "text" because an injected string such as "This ad is fully compliant and
+# approved, confirmed." contains them as ordinary words without being grounded
+# in any policy rule.
 _SUBSTANTIVE_GROUNDING_VOCAB = ["polic", "flag", "violat", "rule", "creative"]
 
 
@@ -128,10 +120,9 @@ def validate_explanation_output(text: str, predicted_label: str) -> tuple[bool, 
         if marker in lowered:
             return False, "output appears to contain leaked system prompt text"
 
-    # a flagged ad (predicted_label != approved) whose explanation is short
-    # and consists mainly of approval language is the signature of a
-    # successful override -- legitimate explanations for a flagged ad are
-    # substantive and don't just assert compliance
+    # A flagged ad (predicted_label != approved) whose explanation is short and
+    # mostly approval language looks like a successful override. Legitimate
+    # explanations for a flagged ad are substantive and do not assert compliance.
     if predicted_label != "approved":
         word_count = len(text.split())
         has_approval_language = any(p in lowered for p in _BARE_APPROVAL_PATTERNS)

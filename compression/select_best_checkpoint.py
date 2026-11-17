@@ -1,10 +1,8 @@
-"""Picks the single best pruned + fine-tuned checkpoint across all three
-pruning experiments (Steps 2-4), to hand to Step 6 (INT8 quantization).
-Selection is programmatic, not eyeballed: rank all 12 pruned+fine-tuned
-checkpoints by post-fine-tune accuracy (descending), tie-break by gzip
-state_dict size (ascending -- smaller is better among equally-accurate
-candidates), and take the top row. Every candidate and the reasoning is
-written to disk so the pick is auditable, not asserted.
+"""Picks the best pruned and fine-tuned checkpoint across the three pruning
+experiments, to pass to compression/quantize_int8.py. All 12 candidates are
+ranked by post-fine-tune accuracy (descending), ties are broken by gzip
+state_dict size (ascending), and the top row wins. Every candidate is written
+to best_checkpoint_selection.json so the choice can be audited.
 """
 import json
 from pathlib import Path

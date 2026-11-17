@@ -1,27 +1,23 @@
 """Rule-based baseline classifier (Arm A for the comparison).
 
-Three independently calibrated heuristics, each tuned ONLY on data/split.json's
-TRAINING ad ids (never the test set -- same discipline as the ML classifier,
-see model/compute_confidence_intervals.py and db/README.md). Calibration
-evidence and thresholds chosen are documented in each function's docstring.
+Three heuristics, each calibrated only on the 384 training ad ids in
+data/split.json (the test set is never used). The calibration results sit
+next to each threshold below.
 
-Deliberately does NOT attempt to detect "misleading" (image-text species
-mismatch). This isn't an oversight -- a text/basic-image rule system has no
-way to determine what species is actually pictured without some form of
-image understanding model, which would defeat the point of a "simple
-baseline." Arm A's recall on misleading is expected to be near zero, and
-that gap is exactly what motivates the multimodal classifier's existence.
-Precedence when a text/image could trigger multiple rules: check
-policy_violation first (most specific, keyword-grounded), then low_quality,
-else approved.
+The baseline does not try to detect "misleading" (image-text species
+mismatch). A text and basic-image rule system cannot tell what species a
+photo shows without an image-understanding model, so its recall on that
+class is expected to be near zero.
+Precedence when several rules could fire: policy_violation first (most
+specific, keyword-based), then low_quality, else approved.
 """
 import re
 
 import numpy as np
 from PIL import Image, ImageFilter
 
-# calibrated on train split: 100% recall, 0% false positives on the other
-# 3 classes (see ab_test/calibration_log.md)
+# Blocklist, train split: 96/96 policy_violation caught, 0 false positives on
+# the other three classes.
 BLOCKLIST_PATTERNS = [
     r"\bcure[sd]?\b", r"\bguarantee[sd]?\b", r"#1\b", r"clinically proven",
     r"\bonly \d+ left\b", r"sale ends", r"last chance", r"before it'?s gone",
@@ -30,16 +26,16 @@ BLOCKLIST_PATTERNS = [
 ]
 _BLOCKLIST_RE = [re.compile(p, re.IGNORECASE) for p in BLOCKLIST_PATTERNS]
 
-# calibrated on train split: 0% false positives on the other 3 classes,
-# ~45% recall on low_quality (catches the text-garbled half; structurally
-# cannot catch the image-degraded half, which the blur heuristic below covers)
+# Spam text rule, train split: 43/96 (44.8%) low_quality caught, 0 false
+# positives on the other three classes. It catches the text-garbled half of
+# low_quality and cannot see the image-degraded half.
 CAPS_RATIO_THRESHOLD = 0.5
 EXCLAMATION_THRESHOLD = 3
 MAX_NGRAM_CHECK = 4
 
-# calibrated on train split: 400 gives 0% false positives on approved,
-# catches 51/96 (53%) of low_quality -- right at the ~50% ceiling since only
-# half of low_quality is image-degraded (see calibration run)
+# Blur rule, train split: a threshold of 400 flags 0/96 approved ads and
+# catches 49/96 (51.0%) of low_quality. Higher thresholds catch more but flag
+# approved ads too (500: 1/96, 600: 6/96, 800: 13/96, 1000: 26/96).
 BLUR_EDGE_VARIANCE_THRESHOLD = 400
 
 

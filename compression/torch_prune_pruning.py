@@ -1,26 +1,18 @@
-"""Step 3: the same global unstructured magnitude pruning sweep as
-compression/manual_magnitude_pruning.py, but computed with
-torch.nn.utils.prune (prune.global_unstructured + prune.L1Unstructured)
-instead of hand-written masking logic. Same sparsity levels, same target
-parameters (net.0.weight, net.3.weight), same baseline checkpoint, so the
-two are directly comparable.
+"""The global unstructured magnitude pruning sweep of
+manual_magnitude_pruning.py, computed with torch.nn.utils.prune
+(global_unstructured with L1Unstructured) instead of hand-written masking.
+Same sparsity levels, target parameters (net.0.weight, net.3.weight) and
+baseline checkpoint.
 
-To isolate exactly one variable -- how the mask is computed -- both
-methods are then fine-tuned through the identical
-compression/common.fine_tune_with_mask code path. torch.nn.utils.prune's
-own reparametrization (weight = weight_orig * weight_mask, recomputed
-every forward) would actually keep the model sparse through fine-tuning
-without any explicit mask reapplication, which is a real, worth-noting
-difference from the hand-written version -- but using it here would also
-change two things at once (mask computation AND fine-tuning mechanics),
-muddying the comparison. So the toolkit's mask is extracted via
-prune.remove() (baking pruned weights into a plain state_dict) and handed
-to the same fine-tuning function used in Step 2. That difference in how
-torch.prune keeps sparsity during ITS native fine-tuning workflow is
-documented in compression/README.md rather than silently absorbed.
+Only the mask computation differs. torch.nn.utils.prune's reparametrization
+(weight = weight_orig * weight_mask) would keep the model sparse during
+fine-tuning without reapplying a mask, but using it would change the
+fine-tuning mechanics as well. So the toolkit's mask is extracted, baked into
+a plain state_dict with prune.remove(), and fine-tuned with the same
+fine_tune_with_mask function as the hand-written version.
 
-Also checks, at every sparsity level, whether the two methods prune the
-exact same weight positions -- if the math is right, they should.
+At every sparsity level the script also checks that the two methods prune
+exactly the same weight positions.
 """
 import torch
 import torch.nn.utils.prune as prune
@@ -40,10 +32,9 @@ def torch_prune_masks(model: torch.nn.Module, sparsity: float) -> dict:
         "net.0.weight": model.net[0].weight_mask.clone(),
         "net.3.weight": model.net[3].weight_mask.clone(),
     }
-    # bake the mask into a plain weight tensor and remove the
+    # Bake the mask into a plain weight tensor and remove the
     # weight_orig/weight_mask reparametrization, so the model is a normal
-    # MLPHead again and can go through the same fine-tuning + benchmarking
-    # code as every other checkpoint in this study
+    # MLPHead again for the shared fine-tuning and benchmarking code.
     prune.remove(model.net[0], "weight")
     prune.remove(model.net[3], "weight")
     return masks
@@ -70,7 +61,7 @@ def main():
         n_diff = sum(
             int((torch_masks[name] != self_masks[name]).sum().item()) for name in PRUNABLE_PARAMS
         )
-        print(f"mask exact match vs. self-implemented (Step 2): {agree} ({n_diff} differing elements)")
+        print(f"mask exact match vs. self-implemented: {agree} ({n_diff} differing elements)")
         mask_agreement.append({"target_sparsity": sparsity, "masks_identical": agree, "n_differing_elements": n_diff})
 
         pre_ft = evaluate(model, X_test, y_test)

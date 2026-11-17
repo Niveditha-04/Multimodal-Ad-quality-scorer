@@ -1,28 +1,20 @@
-"""Step 4: structured (neuron-level) pruning, as a separate experiment from
-the unstructured pruning in Steps 2-3.
+"""Structured (neuron-level) pruning of the classifier head.
 
-Unstructured pruning (Steps 2-3) zeros individual weight elements but keeps
-the dense [128, 1024] / [4, 128] tensor shapes -- the on-disk state_dict
-and the matmul cost don't actually shrink unless you add sparse storage or
-sparse-aware kernels (neither of which this project uses; see
-compression/README.md). Structured pruning instead removes whole hidden
-units from the head's single hidden layer, so the resulting model has a
-genuinely smaller net.0.weight / net.3.weight shape, fewer real
-parameters, a smaller dense state_dict, and (for a matmul this small,
-mostly) a real forward-pass speedup -- the actual benefit unstructured
-pruning can't deliver without extra infrastructure.
+Unstructured pruning (manual_magnitude_pruning.py, torch_prune_pruning.py)
+zeros individual weights but keeps the dense [128, 1024] and [4, 128] tensor
+shapes, so the saved state_dict and the matmul cost do not shrink without
+sparse storage or kernels. Structured pruning removes whole hidden units: the
+model has smaller net.0.weight and net.3.weight tensors, fewer parameters, a
+smaller state_dict and a faster forward pass.
 
-Neuron importance = L2 norm of that neuron's incoming weight row
+Neuron importance is the L2 norm of the neuron's incoming weight row
 (net.0.weight[i, :]) plus the L2 norm of its outgoing weight column
-(net.3.weight[:, i]) -- a standard combined in/out importance score for a
-single-hidden-layer MLP. The lowest-importance neurons are removed;
-survivors' rows/columns are copied directly into a smaller MLPHead
-(hidden_dim reduced), not masked -- there is nothing left to mask, the
-parameters are physically gone.
+(net.3.weight[:, i]). The lowest-importance neurons are removed and the
+survivors' rows and columns are copied into a smaller MLPHead (reduced
+hidden_dim), so nothing is masked.
 
-Same one-shot-from-baseline, then-fine-tune, then-record-recovery-curve
-methodology as Steps 2-3, so all three pruning experiments are reported on
-equal footing in the final benchmark (Step 7).
+As in the other pruning scripts, each level is pruned one-shot from the
+baseline, fine-tuned, and recorded with an accuracy-recovery curve.
 """
 import torch
 

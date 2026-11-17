@@ -29,10 +29,9 @@ compression/ study:
 
 A structured-pruning or quantized checkpoint from compression/ is saved as
 a self-describing {"state_dict", "hidden_dim", "quantized"} dict (see
-compression/common.py's load_checkpoint, which this mirrors), so for those
-CLASSIFIER_HIDDEN_DIM/CLASSIFIER_QUANTIZED are read automatically from the
-file itself and don't need to be set correctly by hand -- avoiding exactly
-on the v2-agentic-eval branch already taught this project to worry about.
+compression/common.py's load_checkpoint, which this mirrors). For those,
+the hidden size and the quantized flag are read from the file itself, so
+CLASSIFIER_HIDDEN_DIM and CLASSIFIER_QUANTIZED never need to match it by hand.
 """
 import io
 import os
@@ -195,12 +194,10 @@ async def score_ad(image: UploadFile = File(...), text: str = Form(...)):
 
 @app.get("/stats")
 def get_stats(model_version: str | None = None):
-    # scores accumulates rows from multiple model_versions (this classifier,
-    # the rule-based baseline, past retrains) -- see db/README.md. Every
-    # reference query in db/queries.sql filters by model_version for exactly
-    # this reason; this endpoint defaults to the currently-loaded model so a
-    # caller gets that model's own stats, not a blend across arms. Pass
-    # ?model_version=... to inspect a different arm (e.g. the baseline).
+    # scores holds rows from several model_versions (this classifier, the
+    # rule-based baseline, retrained versions), so every query filters by
+    # model_version, as in db/queries.sql. This endpoint defaults to the
+    # loaded model; pass ?model_version=... to inspect a different arm.
     filter_version = model_version or ml_state["model_version"]
 
     session = SessionLocal()

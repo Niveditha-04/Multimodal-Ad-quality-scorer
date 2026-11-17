@@ -1,21 +1,17 @@
-"""Step 2: self-implemented unstructured global magnitude pruning on the
-classifier head's two Linear layers (net.0.weight, net.3.weight; biases are
-left untouched, a standard convention since biases are a tiny fraction of
-parameters and pruning them buys almost nothing).
+"""Unstructured global magnitude pruning, implemented without a pruning
+library, on the classifier head's two Linear weight matrices (net.0.weight and
+net.3.weight). Biases are left unpruned because they are a tiny share of the
+parameters.
 
-No pruning library is used here. The masking logic -- computing a global
-magnitude threshold across all target weights combined, building a binary
-keep-mask, zeroing everything below threshold, and reapplying that mask
-after every fine-tuning gradient step so pruned weights cannot be revived
--- is all written by hand below and in compression/common.py's
-fine_tune_with_mask. compression/torch_prune_pruning.py repeats the exact
-same sparsity sweep using torch.nn.utils.prune, so the two can be compared
-directly at matching sparsity levels.
+One magnitude threshold is computed across both matrices combined, everything
+at or below it is zeroed through a 0/1 keep-mask, and the mask is reapplied
+after every fine-tuning step (fine_tune_with_mask in compression/common.py) so
+pruned weights stay at zero. torch_prune_pruning.py runs the same sweep with
+torch.nn.utils.prune for comparison.
 
-For each target sparsity, pruning starts fresh from the baseline checkpoint
-(one-shot pruning, not cumulative/iterative), gets evaluated immediately
-(pre-fine-tune), then fine-tuned with the mask enforced, producing an
-accuracy-recovery curve rather than a single before/after number.
+Each target sparsity is pruned one-shot from the baseline checkpoint,
+evaluated immediately, then fine-tuned with the mask enforced, which gives an
+accuracy-recovery curve instead of a single before/after number.
 """
 import torch
 

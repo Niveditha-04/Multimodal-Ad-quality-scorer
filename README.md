@@ -1,466 +1,144 @@
 # Multimodal Ad Quality & Policy Violation Scorer
 
-**The primary technical work in this repository is a model compression
-and optimization study** on a small trained classifier head: two
-independent pruning implementations verified against each other
-bit-for-bit, structured pruning, INT8 quantization, a full benchmark
-suite with plots, and a containerized serving path for the result. See
-"Model compression and optimization study" below for the complete
-writeup. Everything else in this document describes the pet-product
-ad-quality scoring system that classifier head is part of, which the
-compression study builds on and which the rest of this README covers as
-supporting context.
+Scores pet-product ad creatives (image plus text) for policy violations with frozen CLIP embeddings and a small trained classifier head, and explains flagged ads with retrieved policy rules and an LLM.
+It also covers compressing the head, an offline A/B test against a rule-based baseline, LLM-explanation evaluation, prompt-injection guardrails and an agentic auditor.
 
-This is a portfolio project. It scores pet-product advertising creatives,
-meaning image and text pairs, for policy violations and quality issues.
-It uses frozen CLIP embeddings, a small trained classifier head, a
-SQL-backed data layer, a RAG-grounded LLM explanation layer, and a
-simulated offline comparison against a rule-based baseline. CLIP is a
-model that turns an image or a piece of text into a numeric vector, in a
-way that lets you compare the two directly. RAG stands for
-retrieval-augmented generation. It means the system looks up relevant
-policy text before asking the LLM to write an explanation, rather than
-relying on the LLM's own memory of the rules.
+## Results at a glance
 
-**This is a portfolio demonstration, not a production system.** The
-dataset is synthetic. It pairs real photos with generated ad copy.
-"Fine-tuning" refers only to a small classifier head trained on top of a
-frozen CLIP backbone, not the backbone itself. The "A/B test" is an
-offline comparison against cached predictions on a held-out set, not a
-live test with real traffic. Every number in this document comes from a
-checked-in results file. None are estimated.
-
-This README covers the original 6-phase build (the dataset, the CLIP
-classifier with ablations, the FastAPI service, the RAG plus LLM
-explanations, the rule-based baseline with a simulated A/B test, and the
-optional MCP tool wrapper) as the supporting system, and the compression
-study built on top of it as the primary technical work. A separate
-extension exists on a different branch (`v2-agentic-eval`), covering a
-Postgres migration, an LLM evaluation harness, adversarial guardrails
-testing, and an agentic orchestration layer on top of the MCP tool. That
-extension is kept on its own branch specifically so this branch's
-verified, committed state is never put at risk by later work.
-
-## Architecture
-
-```
-data/           Oxford-IIIT Pet photos + synthetic ad copy, built into data/dataset.csv
-db/             SQLAlchemy schema (ads, scores, policy_categories) + queries.sql
-model/          CLIP embedding extraction + classifier head training/eval
-api/            FastAPI service: POST /score, GET /stats
-rag/            Chroma vector store + Claude-generated explanations
-ab_test/        Rule-based baseline + statistical comparison vs. the classifier
-mcp_server/     (optional) MCP tool wrapper around the same scoring pipeline
-compression/    Pruning and quantization study on the classifier head (CLIP stays frozen)
-```
-
-This diagram shows what happens for one `/score` request:
-
-```mermaid
-flowchart LR
-    A[Ad image + text] --> B[Frozen CLIP encoder]
-    B --> C[L2-normalize and concatenate embeddings]
-    C --> D[Trained MLP classifier head]
-    D --> E{Flagged?}
-    E -->|No| F[Return approved]
-    E -->|Yes| G[RAG retrieval: policy rules + past examples]
-    G --> H[Claude generates grounded explanation]
-    H --> I[Store ad, score, explanation in database]
-    F --> I
-    I --> J[Return result to caller]
-```
-
-## Tech stack
-
-Python 3.11, PyTorch, Hugging Face `transformers` (model:
-`openai/clip-vit-base-patch32`), FastAPI, SQLAlchemy (SQLite by default),
-ChromaDB, the Anthropic API (model: `claude-sonnet-4-6`), scikit-learn,
-and pandas or numpy. The compression study additionally uses
-`torch.nn.utils.prune`, `torch.quantization.quantize_dynamic`, matplotlib,
-and Docker.
-
-## Setup
-
-All commands below, for setup, the pipeline, and the API, assume you are
-running from the project root. Every script uses paths relative to it,
-such as `data/`, `db/`, and `model/`, not absolute paths.
-
-```bash
-python3.11 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # then fill in ANTHROPIC_API_KEY
-```
-
-Alternatively, `docker compose up` builds and runs the API in a
-container, no local Python setup needed. See the Docker section under
-"Model compression and optimization study" below.
-
-## Model compression and optimization study
-
-A separate study, on top of the same trained classifier head, in
-`compression/`. The CLIP backbone stays frozen everywhere. Only the
-131,716-parameter MLP head is touched: pruned, fine-tuned, and quantized.
-Full detail, every table, and both plots are in `compression/README.md`.
-This section is a summary.
-
-Four techniques were compared, each fine-tuned afterward with a full
-per-epoch accuracy-recovery curve, not a single before/after number:
-
-1. **Unstructured magnitude pruning, self-implemented.** The masking logic
-   (global threshold via `torch.kthvalue`, zero below it, reapply the mask
-   after every fine-tuning step) is hand-written, not a library call.
-2. **The same sweep with `torch.nn.utils.prune`.** Built specifically to
-   compare against the hand-written version at matching sparsity levels.
-3. **Structured (neuron-level) pruning.** Removes whole hidden units,
-   ranked by combined incoming and outgoing weight norm, and copies
-   survivors into a physically smaller model.
-4. **INT8 post-training quantization**, applied to the best-performing
-   pruned and fine-tuned checkpoint.
-
-**The self-implemented and toolkit versions produce bit-for-bit identical
-masks and identical post-fine-tune accuracy at every sparsity level
-tested (30%, 50%, 70%, 90%).** This was not true on the first attempt.
-seeded, and the head's dropout layer samples a random mask on every
-training step, so two runs from an identical starting point could still
-`compression/README.md` for the full account.
-
-Final benchmark, every configuration:
-
-| Config | Accuracy | F1 | Params | Raw size | Classifier-head latency | Gzip compression |
-|---|---|---|---|---|---|---|
-| Baseline | 0.8958 | 0.8971 | 131,716 | 529,181 B | 0.0238 ms | 0% |
-| Unstructured pruning, 30-90% | 0.9062-0.9167 | 0.9068-0.9177 | 131,716 (unchanged) | 529,181 B (unchanged) | 0.023-0.024 ms | 23-81% |
-| Structured pruning, 25-75% | 0.9167-**0.9375** | 0.9173-**0.9375** | 98,788-32,932 | 397,469-134,045 B | 0.0214-0.0186 ms | 25-75% |
-| Structured pruning, 90% | 0.8021 | 0.7972 | 13,381 | 55,901 B | 0.0180 ms | 90% |
-| Structured 75% + INT8 quantized | 0.9375 | 0.9375 | 32,932 | 36,685 B | **0.0850 ms** | 93% |
-
-Raw size is flat across every unstructured-pruning row on purpose, not an
-error. Masking zeroes out weight values without changing the tensor's
-shape, so the dense file never shrinks. Gzip compression (the last
-column) gives a fair, achievable-compression number instead. Structured
-pruning is the one method that produces a genuinely smaller file without
-needing any extra compression step, since it removes parameters outright.
-
-**Final recommended configuration: structured pruning at 75%, without
-quantization.** It has the best accuracy of the whole study (90 correct
-out of 96 test examples, versus baseline's 86 out of 96), a real 75%
-parameter reduction, and a real classifier-head latency improvement over
-baseline. Quantization was tested on top of it and rejected for
-production use, not because it failed technically (accuracy stayed
-exactly the same) but because it made classifier-head latency roughly
-4.6x worse, confirmed across three independent trials. At this model's
-size, the fixed overhead of quantizing and dequantizing every forward
-call outweighs any compute it saves. This slowdown is in the head's own
-forward pass only, not the full `/score` request, which also runs CLIP
-inference and a live call to the Anthropic API. This is disclosed as the
-headline finding of the quantization step, not buried as a footnote.
-
-The same FastAPI service used throughout this project (`api/main.py`)
-can serve any of these checkpoints via a `CLASSIFIER_CHECKPOINT`
-environment variable, verified with real `POST /score` and `GET /stats`
-calls against all four checkpoint shapes. `docker-compose.yml` runs the
-baseline and the recommended structured-pruned configuration side by
-side, on separate ports, from the same image.
-
-Everything from here through "Database" covers the supporting system the
-compression study above operates on: how the classifier head was
-originally trained, its baseline results before any pruning, the RAG
-explanation layer built around it, and the database layer. This is
-necessary context for reproducing the full pipeline or understanding
-exactly what the classifier head being pruned and quantized actually is,
-but it is not this repository's primary technical focus.
-
-## Running the full pipeline from scratch
-
-Order matters here. Each step reads output from the one before it. All
-steps are idempotent, meaning re-running is safe. Scripts either skip
-work that is already done, or fail loudly on existing data, rather than
-silently duplicating it.
-
-`data/dataset.csv` and all 480 files in `data/images/` are already
-committed to this repository. This means the actual minimal path starts
-at step 2 below. Step 1, `build_dataset.py`, is only needed if you want to
-regenerate the dataset from scratch, for example to verify the generation
-process yourself. Running it re-downloads the roughly 800MB Oxford-IIIT
-Pet archive, even though the built output is already present.
-
-```bash
-# 1. (optional) Regenerate the dataset from scratch instead of using the
-#    committed data/dataset.csv and data/images/. This uses the same fixed
-#    seed (42), so it reproduces the identical 480 rows. It is just slower
-#    and uses more bandwidth.
-python data/build_dataset.py       # downloads Oxford-IIIT Pet (~800MB), rebuilds data/dataset.csv
-
-# 2. Data layer
-python -m db.load_dataset          # loads 480 ads + 7 policy rules into db/ads.db
-python data/check_leakage.py       # verifies no image is reused across rows (informational)
-python data/make_split.py          # writes data/split.json, the one split every model below reuses
-
-# 3. Model layer
-python -m model.extract_embeddings         # frozen CLIP embeddings, saved to model/embeddings.npz
-python -m model.verify_embedding_space     # confirms embeddings are in CLIP's projected space, not the raw pooler output
-python -m model.train_classifier --modality image   # ablation
-python -m model.train_classifier --modality text    # ablation
-python -m model.train_classifier --modality joint    # the actual classifier, saved to model/classifier_head.pt
-python -m model.compute_confidence_intervals
-
-# 4. Populate the DB with real eval predictions, so db/queries.sql has real data
-python -m db.populate_eval_scores
-
-# 5. RAG layer
-python -m rag.build_vector_store
-python -m rag.verify_retrieval     # sanity-checks retrieval quality (informational)
-
-# 6. API (needs ANTHROPIC_API_KEY in .env for the explanation path)
-uvicorn api.main:app --reload
-
-# 7. Simulated offline A/B comparison
-python -m ab_test.run_comparison
-
-# 8. (optional) MCP server, a separate entry point not required for anything above
-python -m mcp_server.server
-```
-
-To run the 5 reference queries directly, use `sqlite3 db/ads.db <
-db/queries.sql`.
-
-## Results
-
-These are the classifier head's baseline results, established before the
-compression study above and unchanged by it. Every number in the
-compression study's benchmark table is measured against this same
-baseline.
-
-### Classifier: frozen CLIP plus a trained MLP head
-
-**CLIP's backbone, `openai/clip-vit-base-patch32`, is never fine-tuned.**
-Only a 2-layer MLP head is trained on top of frozen, L2-normalized CLIP
-embeddings. That head has a 1024-to-128-to-4 structure, with a dropout
-rate of 0.3. This is stated explicitly, because the phrase "multimodal
-fine-tuning" can easily be misread as fine-tuning the backbone, which
-this project does not do.
-
-We used a 384-to-96 train and test split, stratified by label and
-grouped by source image. We verified zero image reuse across the 480
-rows, checked both by filename and by content hash, using a fixed random
-seed. Full metrics are in `model/results/metrics.json`.
-
-| | Accuracy | approved | policy_violation | misleading | low_quality |
-|---|---|---|---|---|---|
-| Test accuracy / recall | 89.6% | 0.875 | 0.917 | 0.792 | 1.000 |
-| 95% Wilson confidence interval (accuracy) | 81.9% to 94.2% | | | | |
-
-![Confusion matrix for the joint classifier on the 96-ad test set](docs/images/confusion_matrix.png)
-
-With only 24 test examples per class, per-class recall numbers carry real
-sampling uncertainty. See `model/results/confidence_intervals.json` for
-the full interval table before treating any single decimal as precise.
-
-### Ablation: does the model actually use both modalities?
-
-Before trusting the joint model, we trained three variants on the
-identical split: image-only, text-only, and joint, meaning the
-concatenation of both. The concern going in was real. CLIP's zero-shot
-alignment between cat and dog images might make the `misleading` category
-trivial to detect from the image alone. A text-only model might nail the
-`policy_violation` category without ever needing the image. If either of
-those were true, calling this system "multimodal" would just be
-marketing.
-
-| Modality | Accuracy | approved | policy_violation | misleading | low_quality |
-|---|---|---|---|---|---|
-| Image-only | 36.5% | 0.208 | 0.458 | 0.292 | 0.500 |
-| Text-only | 68.8% | 0.542 | 1.000 | 0.625 | 0.583 |
-| Joint | 89.6% | 0.875 | 0.917 | 0.792 | 1.000 |
-
-![Per-class recall comparison across image-only, text-only, and joint models](docs/images/ablation_comparison.png)
-
-The full writeup, with statistical caveats, is in
-`model/results/ablation_summary.json`.
-
-The `misleading` category needs both modalities. The joint model's
-recall, 0.792, clearly beats both single-modality ablations (image 0.292,
-text 0.625). Detecting a species mismatch is inherently relational.
-Neither modality alone can know what the other one claims.
-
-The `policy_violation` category does not need the image. Text-only
-recall, 1.000, actually edges out the joint model's 0.917. We report this
-as it is, not smoothed over. Concatenating irrelevant image features cost
-a small amount of recall at the margin. A text-only path would likely
-outperform the joint model on this specific category in a real system.
-
-The three modalities' overall-accuracy 95% confidence intervals do not
-overlap: image is 27.5% to 46.4%, text is 58.9% to 77.1%, and joint is
-81.9% to 94.2%. This means the ranking of joint over text over image is
-statistically solid, despite the small test set. Individual per-class
-numbers are not all this robust. Image-only's `misleading` recall, 0.292,
-has a confidence interval of 14.9% to 49.2%. That interval includes the
-0.25 random-chance baseline. This means that specific point estimate is
-not statistically distinguishable from guessing, even though the
-underlying reasoning, that the image alone cannot see the text, is
-correct.
-
-### Simulated offline A/B comparison: joint classifier versus rule-based baseline
-
-**This is an offline comparison against a fixed, cached, labeled test
-set. It is not a live A/B test with real production traffic.** Arm B's
-predictions were computed once and reused. Arm A was scored fresh, but
-against the same, never-changing 96 ads. Full results are in
-`ab_test/results/comparison.json`. Baseline calibration details are in
-`ab_test/calibration_log.md`.
-
-| | Arm A (rule-based) | Arm B (joint classifier) |
+| Area | Result | Source |
 |---|---|---|
-| Accuracy | 75.0% | 89.6% |
-| Binary flagged precision | 1.000 | 0.957 |
-| Binary flagged recall | 0.667 | 0.917 |
-| False positive rate | 0.0% | 12.5% |
-| False negative rate | 33.3% | 8.3% |
+| Classifier, 96 test ads | **89.6% accuracy** (95% CI 81.9% to 94.2%), macro F1 0.897 | `model/results/` |
+| Ablation | image only 36.5%, text only 68.8%, **joint 89.6%** | `model/results/ablation_summary.json` |
+| Versus rule baseline | **+14.6 points** accuracy, McNemar p = 0.008 | `ab_test/results/comparison.json` |
+| Compression | **75% fewer parameters**, 90/96 correct vs 86/96, 134,045 B vs 529,181 B | `compression/results/final_benchmark.json` |
+| LLM explanations, 32 flagged ads | **25.0% hallucination rate** (95% CI 13.3% to 42.1%) | `eval/results.json` |
+| Prompt injection, 8 cases | **0 of 8** outputs followed the injection | `guardrails/results_*.json` |
+| Agentic auditor, 3 runs of 18 ads | **cross-ad table errors in 2 of 3 runs** | `agent/results/conflation_check.json` |
 
-**Headline finding: Arm A has a hard, structural 0% recall on
-`misleading`.** The rule-based baseline is keyword blocklists plus basic
-image heuristics, such as blur detection. It has no mechanism at all to
-compare what is pictured against what the text claims. Every single one
-of the 24 `misleading` test ads gets predicted as `approved`. This is not
-a tuning gap. It is a category that a text or basic-image rule engine
-cannot structurally address without some form of image understanding,
-which is exactly what the multimodal classifier adds. On the two
-categories the baseline can address, keyword-detectable
-`policy_violation` and heuristically-detectable `low_quality`, it hits
-100% recall. This is a real rule engine, not a strawman built to lose.
+## Data
 
-Two independent statistical tests agree that this difference is real.
-McNemar's test is the statistically correct paired test to use here,
-rather than a plain chi-square test of independence, because both arms
-score the same 96 ads. Their outcomes are not independent samples. That
-test gives a chi-square statistic of 7.04, with p equal to 0.008. A
-bootstrap test, using 10,000 resamples, gives a mean accuracy difference
-of plus 14.6 points in the joint model's favor, with a 95% confidence
-interval of 5.2% to 24.0%. That interval excludes zero.
+| Item | Detail |
+|---|---|
+| Source | 480 Oxford-IIIT Pet photos paired with generated ad copy, 120 per class |
+| Classes | `approved`, `policy_violation` (banned claim in the copy), `misleading` (copy for the wrong species), `low_quality` (blurred image or spammy copy) |
+| Split | 384 train and 96 test (24 per class), stratified and grouped by source photo, seed 42 |
+| Photos | Not stored in git. `python data/build_dataset.py` rebuilds them (about 800 MB download) |
+| Storage | SQLite `db/ads.db` (Postgres via `DATABASE_URL`). `scores` rows carry `model_version`, a tag plus 8 hex of the sha256 of the weights file |
 
-### API
+Every query on `scores` must filter by `model_version`, because the table holds the classifier, the rule baseline and live API calls.
 
-`POST /score` accepts a multipart request with an `image` file and a
-`text` field. It returns the predicted label, a confidence score, the
-model version, and, if the ad was flagged, an LLM explanation. `GET
-/stats` runs the violation-rate-by-category query against whatever has
-actually been scored. Every scored ad is persisted to `db/ads.db`.
+## Models and ablation
 
-### MCP server (optional)
+CLIP (`openai/clip-vit-base-patch32`) is never fine-tuned. A 2-layer MLP head (1024-128-4, dropout 0.3) trains on L2-normalized image and text embeddings.
 
-`mcp_server/server.py` exposes the same scoring and explanation pipeline
-as an MCP tool, `check_ad_compliance(image_path, ad_text)`. This lets an
-MCP-capable agent call it directly, rather than going through HTTP. It is
-a genuinely separate entry point. It does not import `api/main.py`. But
-it reuses the same underlying modules, `model/clip_features.py`,
-`model/classifier_architecture.py`, and `rag/explain.py`, so both entry
-points score identically. Run it with `python -m mcp_server.server`,
-using the stdio transport.
+| Model | Accuracy | approved | policy_violation | misleading | low_quality |
+|---|---|---|---|---|---|
+| Image only | 36.5% | 0.208 | 0.458 | 0.292 | 0.500 |
+| Text only | 68.8% | 0.542 | **1.000** | 0.625 | 0.583 |
+| **Joint** | **89.6%** | **0.875** | 0.917 | **0.792** | **1.000** |
 
-This directory is named `mcp_server/`, not `mcp/`, on purpose. An earlier
-version used `mcp/`, and it silently collided with the installed `mcp`
-PyPI package's own name. This meant `import mcp` resolved ambiguously,
-depending on the exact `sys.path` order, and it was only unambiguous by
+![Confusion matrix](docs/images/confusion_matrix.png)
+![Per-class recall by modality](docs/images/ablation_comparison.png)
 
-We tested this through the SDK's actual tool-dispatch layer, using
-`server.call_tool(...)`, not just by calling the underlying Python
-function directly. This covered a real flagged prediction, with the
-correct label and a real Claude explanation call, and both error paths:
-a missing image file, and empty text. We confirmed each of these returns
-a clean structured error rather than a raised exception. We verified
-empirically that raising an exception instead produces a worse result at
-this layer: a wrapped `UnexpectedToolError` with a full traceback,
-compared to a clean JSON payload.
+## RAG explanations
 
-## RAG plus LLM explanation layer
+| Part | Detail |
+|---|---|
+| Corpus | 7 policy rules and 288 flagged training-split examples in Chroma |
+| Retrieval | `misleading` and `low_quality` map to their rule directly, `policy_violation` uses semantic search |
+| LLM | `claude-sonnet-4-6` sees the image, the ad text and the retrieved rules |
+| Output check | `validate_explanation_output` flags a leaked prompt, a bare approval or off-topic text |
 
-This is supporting infrastructure for the `/score` endpoint's
-explanation feature, separate from the compression study above.
+## A/B comparison (offline, same 96 ads)
 
-There are 7 policy rules, written for this project and not lifted from
-any real platform, plus 288 past flagged examples. These examples come
-only from the training split. The 96 test ads are never in the retrieval
-corpus, for the same reason they are kept out of model training. All of
-this is embedded in a Chroma vector store.
+| Metric | Rule baseline | Joint classifier |
+|---|---|---|
+| Accuracy | 75.0% | **89.6%** |
+| Flagged recall / false positive rate | 0.667 / 0.0% | **0.917** / 12.5% |
+| `misleading` recall | **0%** | 79.2% |
 
-Retrieval here is hybrid, not pure semantic search. We tested pure
-semantic search over the 7 short rule documents first, and found it
-unreliable at this corpus size. A garbled-spam query ranked the correct
-rule, `low_quality_creative`, whose text literally contains the phrase
-"keyword-stuffed spam," in 5th place out of 7. Since the classifier's
-predicted label is already known at request time, the `misleading` and
-`low_quality` labels map one-to-one onto a specific rule. That mapping is
-now guaranteed to be included, rather than left to embedding luck. The
-`policy_violation` label has no one-to-one mapping, since it covers 4
-different sub-rules, so it stays on pure semantic search. That search
-tested correctly for exactly this disambiguation task.
+McNemar statistic 7.04 (p = 0.008), and a bootstrap difference of +14.6 points (95% CI 5.2 to 24.0). The baseline has no way to compare an image with a text claim.
 
-### Known limitation: explanations do not catch classifier errors
+| Baseline rule | Threshold | Train result (384 ads) |
+|---|---|---|
+| Blocklist, 16 regex patterns | any match | 96/96 `policy_violation` caught, 0 false flags |
+| Blur, edge variance | below 400 | 0/96 approved flagged, 49/96 `low_quality` caught |
+| Spam text | repeated n-gram, caps ratio above 0.5, or 3+ `!` | 0 false flags, 43/96 `low_quality` caught |
 
-This was tested explicitly, not assumed. The classifier is 89.6%
-accurate, which raises a real question: what happens on the other 10.4%?
-Since `predicted_label`, not ground truth, drives which policy rule gets
-retrieved, a misclassified ad retrieves the same confident-looking
-grounding context as a genuine violation. The LLM then writes a fluent
-explanation for it regardless.
+## Compression (classifier head only, CLIP frozen)
 
-Here is a concrete example. An ad with an accurate photo of a Birman cat,
-and accurate text reading "A dependable sisal scratching post for cat
-owners, tested with breeds including the Birman," was misclassified by
-the model as `misleading`, with a confidence of 0.73. The explanation
-layer did not hedge or flag any uncertainty. It produced the following
-text, quoted here exactly as the model generated it:
+Pruning masks from a self-written global magnitude pruner match `torch.nn.utils.prune` exactly at 30, 50, 70 and 90% sparsity, with identical accuracy after fine-tuning.
+Latency is the head's forward pass only (batch 1, CPU), not a full `/score` request.
 
-> "This ad was flagged under the **mismatched_creative** policy rule because
-> the image shows only a **Birman cat outdoors on grass** -- no scratching
-> post or any pet product is visible anywhere in the image... giving the
-> buyer no visual representation of what they are actually purchasing."
+| Config | Accuracy | Params | Size (B) | Gzip (B) | Head latency (ms) |
+|---|---|---|---|---|---|
+| Baseline | 0.8958 | 131,716 | 529,181 | 489,351 | 0.0238 |
+| Unstructured, 90% sparse | 0.9167 | 131,716 | 529,181 | 91,689 | 0.0230 |
+| Structured, 50% of neurons | 0.9167 | 65,860 | 265,757 | 245,079 | 0.0197 |
+| **Structured, 75% (recommended)** | **0.9375** | 32,932 | 134,045 | 123,081 | 0.0186 |
+| Structured, 90% | 0.8021 | 13,381 | 55,901 | 50,649 | 0.0180 |
+| Structured 75% + INT8 | 0.9375 | 32,932 | 36,685 | 33,470 | **0.0850** |
 
-This is a specific, confident, and entirely fabricated claim. No such
-"the product must be visible in frame" requirement exists in the actual
-policy rule, and the ad is genuinely accurate. The explanation is more
-convincing than the underlying prediction deserves.
+![Accuracy and F1 vs compression](compression/results/plots/accuracy_f1_vs_compression.png)
+![Head latency vs compression](compression/results/plots/latency_vs_compression.png)
 
-Explanations are grounded in the model's predicted category, and
-therefore inherit its roughly 10% error rate. A misclassified ad receives
-a fluent explanation for the wrong reason, not a signal of uncertainty
-that a downstream reviewer could act on. Full evidence is in
-`rag/results/misclassification_explanation_test.json`. Building an
-independent verification pass, for example asking the LLM to also judge
-whether the retrieved rule actually applies, rather than assuming it
-does, was out of scope for this project. It is the natural next step.
+- Unstructured pruning keeps dense tensors, so its file size stays 529,181 B and only compresses with gzip.
+- INT8 cuts the file by 72.6% but makes the head 4.6x slower at this size, so structured 75% is recommended.
+- Only `structured_pruned_75pct.pt` is committed. The other checkpoints regenerate with the `compression` scripts.
 
-## Database
+## v2: LLM evaluation, guardrails, agentic auditor
 
-There are three tables, `ads`, `scores`, and `policy_categories`, defined
-through SQLAlchemy. The `scores` table accumulates rows from multiple
-sources across this project. Every query against it must filter by
-`model_version`. This has bitten us once already. See `db/README.md` for
-blended two different model arms into one meaningless composite number.
-Both the joint classifier and the rule-based baseline use a
-`model_version` string tied to a content hash of the file that actually
-determines their behavior. See `model/model_version.py` and
-`ab_test/baseline_version.py`. This means a future retrain or retune
-cannot silently collide with the current version.
+| LLM evaluation (32 flagged ads, scored 0 to 2) | Mean | Score-0 rate |
+|---|---|---|
+| Groundedness | 1.656 | 6.2% (2 of 32) |
+| Rule accuracy | 1.656 | 9.4% (3 of 32) |
+| Hallucination | 1.438 | **25.0%** (8 of 32) |
 
-There are 5 reference queries with real, verified output, in
-`db/queries.sql`. The app defaults to SQLite, using `db/ads.db`, with no
-setup required. The models in `db/session.py` are pure SQLAlchemy, so
-`DATABASE_URL` can point at a different database without code changes.
+Hallucination hits 3 of 4 misclassified ads and 5 of 28 correct ones, so explanations follow the predicted label.
+
+| Guardrail check | Result |
+|---|---|
+| 8 injection cases, before and after hardening | 0 of 8 outputs followed the injection |
+| Output validator on those 16 real outputs | 0 flagged |
+| Output validator on 4 synthetic successful injections | 4 of 4 flagged |
+
+| Auditor run (18 ads, 18 MCP tool calls, 2 model turns) | Category-table errors | Confidence-table errors |
+|---|---|---|
+| 1 | 0 | 0 |
+| 2 | 2 | 3 |
+| 3 | 2 | 7 |
+
+The errors swap values between two ads in the agent's own summary, while every tool result was correct.
+
+## How to run
+
+```bash
+pip install -r requirements.txt && cp .env.example .env     # add ANTHROPIC_API_KEY
+python data/build_dataset.py                                # rebuild data/images
+python -m db.load_dataset && python data/make_split.py
+python -m model.extract_embeddings
+python -m model.train_classifier --modality joint           # also: image, text
+python -m db.populate_eval_scores && python -m rag.build_vector_store
+uvicorn api.main:app                                        # POST /score, GET /stats
+python -m ab_test.run_comparison
+python -m compression.baseline_benchmark                    # then manual_magnitude_pruning, torch_prune_pruning,
+                                                            # structured_pruning, select_best_checkpoint, quantize_int8, benchmark_all
+docker compose up --build                                   # baseline :8000, structured 75% head :8001
+```
+
+`CLASSIFIER_CHECKPOINT` picks the head the API serves. `python -m mcp_server.server` exposes the scorer as an MCP tool.
 
 ## Limitations
 
-| Limitation | Detail |
-|---|---|
-| Dataset size | 480 examples total, with 96 per class in the test set. This is enough to detect the modality-comparison findings above, since their confidence intervals do not overlap. But individual per-class recall numbers carry real sampling noise. See the confidence-interval tables before treating any single decimal as precise. |
-| Single train/test split | One fixed 384-to-96 split, using seed 42, reused by every model for comparability. A different split would likely move individual numbers by a few points. The qualitative findings, such as joint beating text beating image, Arm B beating Arm A, and explanations inheriting classifier error, are unlikely to flip, but this was not verified across multiple splits. |
-| Dataset is synthetic and narrowly scoped | Real photos from Oxford-IIIT Pet are paired with generated ad copy, not real advertising platform data. The project is deliberately scoped to pet-product advertising, not a general "any ad" dataset, to keep the policy rules concrete and the labeling logic coherent. |
-| `misleading` is species-level, not breed-level | Mismatches are dog versus cat, not, for example, toy-breed text on a giant-breed photo. Fine-grained breed mismatch would need a stronger visual discriminator than off-the-shelf CLIP embeddings reliably provide. |
-| Explanations do not verify predictions | See the dedicated section above. This is the most important limitation in the project. |
-| The rule-based baseline is intentionally simple | It is a keyword blocklist plus two lightweight image and text heuristics, calibrated only on the training split. It is a fair baseline for what it is designed to catch, not a strawman, but it is also not what a real ad-policy team's production rule engine would look like. It has no learned thresholds, no per-market variation, and no update cadence. |
-| English only, one product vertical | There is no multilingual support, and no evaluation outside pet-product advertising. |
-| No live traffic | The A/B comparison is offline, against a fixed labeled set. It is not real user-facing traffic with real business outcomes, such as click-through rate, appeals, or revenue impact, to measure against. |
-| Confidence is not calibrated | The classifier's softmax output is used as "confidence" throughout, but no calibration step, such as temperature scaling or a reliability diagram, was run to check that it is actually well-calibrated. |
-| Dataset images have their own license, separate from this repo's code | The 480 real photos in `data/images/` come from the Oxford-IIIT Pet Dataset (Parkhi, Vedaldi, Zisserman, and Jawahar, 2012), released by the University of Oxford under a Creative Commons Attribution-ShareAlike license. This repository's MIT license covers the code only, not the images. See the dataset's own page at robots.ox.ac.uk/~vgg/data/pets for its authoritative terms. |
-| No prompt-injection hardening on this branch | `rag/explain.py` here sends the ad's text into the LLM prompt with no delimiter tags and no defensive framing. The `v2-agentic-eval` branch adds both, plus an output validator, after testing 8 adversarial cases against this exact call. Anyone running this branch's `/score` endpoint directly inherits the unhardened version. See `guardrails/README.md` on `v2-agentic-eval` for the test results. |
+- 96 test ads, so one ad is 1.04 points of accuracy and small gaps are noise.
+- One fixed split, not repeated across seeds.
+- Synthetic ad copy on real photos, pet products only, English only.
+- `misleading` means a dog/cat mismatch, not a breed mismatch.
+- The A/B test is offline, and the baseline is a simple keyword and heuristic engine.
+- Explanations follow the predicted label, so a wrong label gets a confident wrong explanation.
+- Explanation scores come from one review pass with no second rater, on 32 ads.
+- The guardrail results cover 8 known attacks on one model and are not red-teaming.
+- Confidence is a raw softmax and is not calibrated.
+- Head latency was measured on one CPU with the qnnpack INT8 backend.
+- The Docker image is large because it bakes in the CLIP and Chroma models.
+- The code is MIT licensed. The photos keep the Oxford-IIIT Pet license (CC BY-SA).

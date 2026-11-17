@@ -1,10 +1,10 @@
 """Traceable model_version string for the scores table.
 
-Ties the version string to the actual weight file's content (via a short
-hash) rather than a hand-maintained label, so it can't drift out of sync
-with what's actually running -- if classifier_head.pt is retrained, the hash
-changes automatically and old scores stay attributable to the exact weights
-retrain would get "joint_v3" or similar plus its own new hash.
+The version string is a tag plus a short hash of the weight file's content,
+so it always identifies the exact weights that produced a score. Retraining
+classifier_head.pt changes the hash automatically and old scores stay
+attributable to the weights that produced them. The tag names the classifier
+family and appears in stored scores, so it is kept stable.
 """
 import hashlib
 from pathlib import Path
@@ -14,12 +14,9 @@ VERSION_TAG = "joint_v2"
 
 
 def get_model_version(weights_path: Path = WEIGHTS_PATH, version_tag: str = VERSION_TAG) -> str:
-    """weights_path/version_tag default to the original joint classifier so
-    every existing caller is unaffected. api/main.py passes its actual
-    CLASSIFIER_CHECKPOINT/tag here when serving a compression-study
-    checkpoint, so model_version keeps tracking the real weights in use --
-    the same discipline db/README.md documents for the rule-baseline arm:
-    a version string must be tied to actual weight content, never assumed.
+    """weights_path and version_tag default to the joint classifier.
+    api/main.py passes its CLASSIFIER_CHECKPOINT and tag here when serving a
+    compressed checkpoint, so model_version always tracks the weights in use.
     """
     if not weights_path.exists():
         raise FileNotFoundError(f"{weights_path} not found -- train the classifier first")

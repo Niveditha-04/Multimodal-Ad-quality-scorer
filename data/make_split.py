@@ -1,15 +1,13 @@
 """Creates the single train/test split every downstream model must reuse:
 text-only ablation, image-only ablation, joint classifier, and the rule-based
-baseline in . If each model split independently, comparisons between
-them would be meaningless -- one could look better purely from an easier
-random test set, not from being an actually better model.
+baseline. If each model split independently, comparisons between them would
+be meaningless, since one could look better purely from an easier test set.
 
-Split is grouped by source_image (the underlying photo, before our per-row
-prefix), not by row, so that if a photo were ever reused across rows, all of
-its rows would land on the same side of the split. check_leakage.py verified
-there's currently no reuse (480 rows -> 480 unique source images by content
-hash), so this reduces to a plain stratified split in practice -- but the
-code path is group-aware regardless, since that's what's actually correct.
+Split is grouped by source_image (the underlying photo, before the per-row
+prefix), not by row, so a photo reused across rows would land entirely on one
+side of the split. The dataset has 480 unique source images (checked by
+content hash with check_leakage.py), so in practice this is a plain
+stratified split, but the code path is group-aware regardless.
 
 Requires the ads table to exist (db/load_dataset.py already run) since we
 split on ad_id, the id every other table joins against.

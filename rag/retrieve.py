@@ -1,18 +1,15 @@
 """Retrieval for the explanation layer: given a flagged ad's text, pull the
 most relevant policy rule(s) and similar past flagged examples.
 
-Policy rule retrieval is hybrid, not pure semantic search. Tested pure
-semantic search first (see rag/verify_retrieval.py) and found it unreliable
-at this corpus size (7 short rule documents): a garbled-spam query ranked
-"low_quality_creative" 5th of 7 even though that rule's text literally
-contains the phrase "keyword-stuffed spam" -- MiniLM's sentence embeddings
-weighted overall register (formal explanatory prose vs. a shouty fragment)
-over the keyword match. Since the classifier's predicted_label is already
-known at /score time, "misleading" and "low_quality" map 1:1 onto a specific
-rule -- that rule is guaranteed-included rather than left to embedding luck.
-"policy_violation" has no 1:1 mapping (it covers 4 different sub-rules --
-health claims, superlatives, fake urgency, prohibited language) and stays on
-pure semantic search, which tested well for exactly this disambiguation.
+Policy rule retrieval is hybrid, not pure semantic search. With only 7 short
+rule documents, semantic search alone can rank the right rule poorly: a
+garbled-spam query ranks "low_quality_creative" 5th of 7 although that rule's
+text contains "keyword-stuffed spam", because the sentence embeddings weight
+overall register (formal prose vs. a shouty fragment) over the keyword match.
+The classifier's predicted_label is known at /score time, and "misleading"
+and "low_quality" map 1:1 onto a specific rule, so that rule is always
+included. "policy_violation" covers 4 sub-rules (health claims, superlatives,
+fake urgency, prohibited language) and uses semantic search to pick among them.
 """
 import chromadb
 

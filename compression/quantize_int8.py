@@ -1,24 +1,15 @@
-"""Step 6: INT8 post-training quantization, applied to whichever checkpoint
-compression/select_best_checkpoint.py picked (structured pruning at 75%
-neuron removal, selected on accuracy -- see that script's output).
+"""INT8 post-training quantization of the checkpoint chosen by
+compression/select_best_checkpoint.py (structured pruning at 75% neuron
+removal, the most accurate pruned checkpoint).
 
-Uses torch.quantization.quantize_dynamic rather than static PTQ. This
-model is two nn.Linear layers with a ReLU in between and no
-convolution/batchnorm to fuse, so the usual reason to reach for static
-quantization (fusing conv+bn+relu, then calibrating activation ranges with
-a representative dataset) doesn't apply here -- there's nothing to fuse,
-and dynamic quantization already gives INT8 weights with no calibration
-data required, which is simpler and just as appropriate at this model
-size. Static quantization would still be a reasonable choice; dynamic is
-not a shortcut taken to avoid work, it is the better-fit tool for a
-Linear-only network this small. This tradeoff is documented, not hidden.
+Uses torch.quantization.quantize_dynamic. The model is two Linear layers and a
+ReLU with nothing to fuse, so the usual advantages of static quantization
+(operator fusion, calibrated activation ranges) do not apply, and dynamic
+quantization needs no calibration data. Weights are quantized once at
+conversion time and activations on every forward call.
 
-Weights are quantized statically (fixed at conversion time, from the
-already-fine-tuned float checkpoint); activations are quantized
-dynamically per forward call. Requires a quantized-engine backend --
-this machine only has qnnpack available (Apple Silicon); fbgemm is
-preferred when present (typical on x86), matching PyTorch's own default
-preference order.
+Needs a quantized-engine backend: fbgemm when available (typical on x86),
+otherwise qnnpack (the only one on Apple Silicon).
 """
 import json
 
@@ -87,14 +78,10 @@ def main():
     size_reduction = 1 - quant_row["raw_size_bytes"] / float_row["raw_size_bytes"]
     print(f"raw size reduction from quantization alone: {size_reduction:.2%}")
 
-    # self-describing checkpoint, same convention as structured_pruning.py's
-    # {"state_dict", "hidden_dim"} format plus "quantized"/"quantization_engine"
-    # -- so anything loading this checkpoint (the API included) can
-    # reconstruct the right module shape and quantize it BEFORE calling
-    # load_state_dict, without needing to be told out-of-band. A plain
-    # state_dict alone can't self-describe "this needs hidden_dim=32 and a
-    # quantize_dynamic() call before loading", and getting that wrong from a
-    # manually-set config value is exactly the kind of silent failure mode
+    # Self-describing checkpoint: structured_pruning.py's {"state_dict",
+    # "hidden_dim"} format plus "quantized" and "quantization_engine". A loader
+    # can rebuild the right module shape and quantize it before load_state_dict
+    # without any extra configuration.
     torch.save(
         {"state_dict": quantized_model.state_dict(), "hidden_dim": float_model.net[0].out_features,
          "quantized": True, "quantization_engine": engine},

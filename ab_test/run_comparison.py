@@ -3,28 +3,23 @@ trained joint classifier (Arm B), both scored on the identical 96 held-out
 test ads. This is NOT a live production A/B test with real traffic -- it's
 an offline comparison of two scoring functions against a fixed labeled set.
 
-Arm B's predictions are NOT recomputed here -- they already exist in
-`scores` from db/populate_eval_scores.py, so this triggers zero
-new model inference and zero LLM calls. Arm A's predictions are computed
-fresh (the rule engine is cheap) and written to `scores` under
-model_version="rule_baseline_v1" for consistency with the DB convention in
-db/README.md.
+Arm B's predictions are not recomputed here. They already exist in `scores`
+from db/populate_eval_scores.py, so this makes no model or LLM calls. Arm A's
+predictions are computed here (the rule engine is cheap) and written to
+`scores` under a model_version of "rule_baseline_v1" plus a hash of
+ab_test/rule_based_baseline.py (see ab_test/baseline_version.py).
 
 Metrics reported two ways:
-  - per-class precision/recall/F1 + confusion matrix (same shape as )
-  - binary flagged-vs-approved precision/recall/FPR/FNR (collapsing the 3
-    violation categories into "flagged") -- this is the natural framing for
-    "how often do we wrongly hold a clean ad" / "how often do we miss a bad
-    one", and what the spec's FPR/FNR request actually maps onto for a
-    4-class problem
+  - per-class precision/recall/F1 and a confusion matrix
+  - binary flagged-vs-approved precision/recall/FPR/FNR, collapsing the 3
+    violation categories into "flagged" ("how often is a clean ad held" and
+    "how often is a bad ad missed")
 
-Statistical test is McNemar's, not a plain independent-samples chi-square.
-Both arms score the SAME 96 ads -- that's paired data, not two independent
-samples, and a naive chi-square-of-independence on marginal correct/incorrect
-counts would misstate significance by ignoring the pairing. McNemar's test
-(itself a chi-square-distributed statistic, just the paired variant) is the
-statistically correct tool here. A bootstrap CI on the accuracy difference is
-also reported as a second, independent line of evidence.
+The significance test is McNemar's, not an independent-samples chi-square.
+Both arms score the same 96 ads, so the outcomes are paired, and a plain
+chi-square on marginal correct/incorrect counts would ignore the pairing.
+McNemar's test is the paired variant. A bootstrap confidence interval on the
+accuracy difference is reported as a second, independent check.
 """
 import json
 import sqlite3
