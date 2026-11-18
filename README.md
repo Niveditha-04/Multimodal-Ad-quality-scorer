@@ -19,10 +19,10 @@ It also covers compressing the head, an offline A/B test against a rule-based ba
 
 | Item | Detail |
 |---|---|
-| Source | 480 Oxford-IIIT Pet photos paired with generated ad copy, 120 per class |
+| Source | 480 photos from the [Oxford-IIIT Pet Dataset](https://www.robots.ox.ac.uk/~vgg/data/pets/) (Parkhi, Vedaldi, Zisserman, Jawahar, "Cats and Dogs", CVPR 2012, CC BY-SA 4.0) paired with generated ad copy, 120 per class |
 | Classes | `approved`, `policy_violation` (banned claim in the copy), `misleading` (copy for the wrong species), `low_quality` (blurred image or spammy copy) |
 | Split | 384 train and 96 test (24 per class), stratified and grouped by source photo, seed 42 |
-| Photos | Not stored in git. `python data/build_dataset.py` rebuilds them (about 800 MB download) |
+| Photos | Not stored in git. Rebuild `data/images/` with `python data/build_dataset.py` (about 800 MB download) |
 | Storage | SQLite `db/ads.db` (Postgres via `DATABASE_URL`). `scores` rows carry `model_version`, a tag plus 8 hex of the sha256 of the weights file |
 
 Every query on `scores` must filter by `model_version`, because the table holds the classifier, the rule baseline and live API calls.
@@ -141,4 +141,4 @@ docker compose up --build                                   # baseline :8000, st
 - Confidence is a raw softmax and is not calibrated.
 - Head latency was measured on one CPU with the qnnpack INT8 backend.
 - The Docker image is large because it bakes in the CLIP and Chroma models.
-- The code is MIT licensed. The photos keep the Oxford-IIIT Pet license (CC BY-SA).
+- The code is MIT licensed. The photos keep their own license (CC BY-SA 4.0, copyright with the original owners).

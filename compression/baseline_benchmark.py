@@ -3,7 +3,7 @@ pruning or quantization: accuracy, macro F1, parameter count, state_dict size
 (raw and gzip-compressed) and single-sample CPU latency. Every compression
 result is compared against these numbers.
 
-The accuracy is cross-checked against model/results/metrics.json, so the
+The accuracy is cross-checked against model/results/joint_results.json, so the
 script is known to load the same split and model as the original training
 run. It raises if the two differ.
 """
@@ -28,15 +28,15 @@ def main():
     print(f"latency (batch=1, CPU): mean={row['latency_mean_ms']:.4f}ms "
           f"median={row['latency_median_ms']:.4f}ms p95={row['latency_p95_ms']:.4f}ms")
 
-    existing = json.loads(Path("model/results/metrics.json").read_text())
-    print(f"\ncross-check against model/results/metrics.json:")
-    print(f"  metrics.json accuracy = {existing['accuracy']:.6f}")
+    existing = json.loads(Path("model/results/joint_results.json").read_text())
+    print(f"\ncross-check against model/results/joint_results.json:")
+    print(f"  joint_results.json accuracy = {existing['accuracy']:.6f}")
     print(f"  this script accuracy  = {row['accuracy']:.6f}")
     match = abs(existing["accuracy"] - row["accuracy"]) < 1e-9
     print(f"  exact match: {match}")
     if not match:
         raise RuntimeError(
-            "Baseline accuracy does not match model/results/metrics.json. "
+            "Baseline accuracy does not match model/results/joint_results.json. "
             "Check the split and checkpoint before comparing compressed models."
         )
 

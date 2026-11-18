@@ -1,6 +1,6 @@
 """Generates docs/images/confusion_matrix.png and
 docs/images/ablation_comparison.png from the saved results files
-(model/results/metrics.json and model/results/ablation_summary.json).
+(model/results/joint_results.json and model/results/ablation_summary.json).
 
 The confusion matrix uses a single-hue sequential blue ramp (magnitude). The
 ablation chart uses three categorical colors for the image, text and joint
@@ -19,7 +19,7 @@ TEXT_SECONDARY = "#52514e"
 
 
 def make_confusion_matrix():
-    metrics = json.load(open("model/results/metrics.json"))
+    metrics = json.load(open("model/results/joint_results.json"))
     cm = np.array(metrics["confusion_matrix"])
     labels = metrics["confusion_matrix_labels"]
 

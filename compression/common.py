@@ -4,7 +4,7 @@ already extracted to model/embeddings.npz by model/extract_embeddings.py. The
 CLIP backbone is not involved.
 
 The train/val/test split logic comes from model/train_classifier.py, so the
-numbers are directly comparable to model/results/metrics.json.
+numbers are directly comparable to model/results/joint_results.json.
 """
 import gzip
 import io
