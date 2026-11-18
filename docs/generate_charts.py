@@ -150,7 +150,7 @@ def make_compression_accuracy():
         (f"Selected: {kind} {chosen['level_pct']}%", rows[selected_label], kind, (14, 4)),
         ("Unstructured 90%", rows["unstructured 90% sparsity"], "unstructured", (14, 16)),
         ("Structured 90%", rows["structured 90% neurons removed"], "structured", (14, -18)),
-        ("INT8 (selected)", quantized, "int8", (14, 24)),
+        ("Structured 75% + INT8", quantized, "int8", (14, 24)),
     ]
     if kind != "structured":
         best_structured = next(c for c in selection["all_candidates_ranked"] if c["method"] == "structured")
@@ -236,6 +236,7 @@ def select_examples(rows: list[dict], explained: set[int]) -> list[dict]:
 def first_sentence(text: str) -> str:
     text = re.sub(r"^#+ .*$", "", text, flags=re.M).replace("**", "")
     text = re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s*\u2014\s*", ", ", text)
     return re.split(r"(?<=[.!?][\"'])\s|(?<=[.!?])\s", text, maxsplit=1)[0]
 
 
@@ -252,8 +253,8 @@ def make_example_predictions():
     explanations = {int(e["ad_id"]): e["explanation"] for e in json.load(open("eval/generated_explanations.json"))}
     examples = select_examples(test_predictions(), set(explanations))
 
-    fig = plt.figure(figsize=(13, 7.8))
-    outer = fig.add_gridspec(2, 3, hspace=0.10, wspace=0.08, left=0.02, right=0.98, top=0.93, bottom=0.05)
+    fig = plt.figure(figsize=(13, 6.9))
+    outer = fig.add_gridspec(2, 3, hspace=0.02, wspace=0.08, left=0.02, right=0.98, top=0.93, bottom=0.05)
     for i, ex in enumerate(examples):
         row = df.iloc[ex["ad_id"] - 1]
         assert row["ground_truth_label"] == ex["true"], f"dataset row does not match ad_id {ex['ad_id']}"
@@ -275,8 +276,7 @@ def make_example_predictions():
         else:
             ax_txt.text(0, 0.54, "Not flagged, so no explanation is generated.", va="top", fontsize=8,
                         color=TEXT_SECONDARY, style="italic", transform=ax_txt.transAxes)
-    fig.suptitle("Example predictions on test ads (baseline classifier, lowest ad_id per case)", fontsize=12,
-                 color=TEXT_PRIMARY, y=0.985)
+    fig.suptitle("Example predictions on test ads (joint CLIP classifier)", fontsize=12, color=TEXT_PRIMARY, y=0.985)
     fig.text(0.5, 0.012, "Photos: Oxford-IIIT Pet Dataset, CC BY-SA 4.0", ha="center", fontsize=9, color=TEXT_SECONDARY)
     plt.savefig("docs/images/example_predictions.png", dpi=130, facecolor="white")
     plt.close()

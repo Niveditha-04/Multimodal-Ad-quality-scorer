@@ -5,6 +5,8 @@ It also covers compressing the head, an offline A/B test against a rule-based ba
 
 ![Example predictions on test ads](docs/images/example_predictions.png)
 
+Bottom right: a wrong label gets a confident but wrong explanation.
+
 ## Results at a glance
 
 | Area | Result | Source |
