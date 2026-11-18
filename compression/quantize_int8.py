@@ -1,6 +1,6 @@
-"""INT8 post-training quantization of the checkpoint chosen by
-compression/select_best_checkpoint.py (structured pruning at 75% neuron
-removal, the most accurate pruned checkpoint).
+"""INT8 post-training quantization of the checkpoint ranked first by
+compression/select_best_checkpoint.py (best validation accuracy among the
+pruned checkpoints, ties broken by gzip size).
 
 Uses torch.quantization.quantize_dynamic. The model is two Linear layers and a
 ReLU with nothing to fuse, so the usual advantages of static quantization

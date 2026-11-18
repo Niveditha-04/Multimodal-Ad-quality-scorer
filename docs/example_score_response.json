@@ -1,0 +1,7 @@
+{
+  "ad_id": 1,
+  "predicted_label": "misleading",
+  "confidence": 0.7766191959381104,
+  "model_version": "joint_v2_97565ac7",
+  "explanation": "## Flag Explanation\n\nThis ad was flagged for a **mismatched creative** violation. The image clearly shows a long-haired Persian **cat** lounging on a cushioned surface, while the ad copy describes a **slow-feed dog bowl** tested with dog breeds including the Shiba Inu — no dog or bowl product appears anywhere in the image.\n\nPer the `mismatched_creative` policy rule, the product and animal depicted must match what the ad copy describes; an ad for a dog product must not show a cat. This mismatch directly misleads buyers about what they are purchasing, as a shopper clicking through would have no visual confirmation they are looking at the correct product category."
+}

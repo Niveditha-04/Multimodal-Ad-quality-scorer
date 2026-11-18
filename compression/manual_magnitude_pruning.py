@@ -85,9 +85,12 @@ def main():
 
         model, curve = fine_tune_with_mask(model, X_train, y_train, X_val, y_val, X_test, y_test, masks=masks)
 
+        val = evaluate(model, X_val, y_val)
+
         row = full_benchmark_row(
             model, X_test, y_test, name=f"self_pruned_{int(sparsity * 100)}pct",
             extra={"target_sparsity": sparsity, "achieved_sparsity_on_prunable_weights": achieved_sparsity,
+                   "val_accuracy": val["accuracy"], "val_macro_f1": val["macro_f1"], "n_val": len(y_val),
                    "pre_finetune_accuracy": pre_ft["accuracy"], "pre_finetune_macro_f1": pre_ft["macro_f1"]},
         )
         print(f"post-fine-tune: accuracy={row['accuracy']:.4f} macro_f1={row['macro_f1']:.4f} "

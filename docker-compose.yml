@@ -1,5 +1,5 @@
 # Runs the baseline classifier head (port 8000) and the compressed head,
-# structured pruning at 75% (port 8001), from the same image. Both need
+# unstructured pruning at 70% (port 8001), from the same image. Both need
 # ANTHROPIC_API_KEY for the explanation call: set it in .env or export it
 # before running `docker compose up`.
 services:
@@ -16,4 +16,4 @@ services:
       - "8001:8000"
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - CLASSIFIER_CHECKPOINT=compression/checkpoints/structured_pruned_75pct.pt
+      - CLASSIFIER_CHECKPOINT=compression/checkpoints/self_pruned_70pct.pt

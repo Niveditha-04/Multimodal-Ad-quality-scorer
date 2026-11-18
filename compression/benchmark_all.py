@@ -1,33 +1,17 @@
 """Combines the baseline, pruning and quantization results into one benchmark
-table (final_benchmark.json) and two plots (results/plots/).
+table (final_benchmark.json). Unstructured pruning keeps the dense [128, 1024]
+and [4, 128] tensor shapes at every sparsity level, so its raw file size equals
+the baseline's, and the gzip columns show the compression achievable once the
+zeros are compressed (see state_dict_gzip_size_bytes in compression/common.py).
 
-The x-axis of both plots is gzip-compressed size reduction relative to the
-baseline checkpoint, not raw size. Unstructured pruning keeps the dense
-[128, 1024] and [4, 128] tensor shapes at every sparsity level, so its raw
-on-disk size is the same (529,181 bytes) from 30% to 90% sparsity, and a
-raw-size axis would put all four points at 0%. Gzip shows the compression
-achievable once the zeros are compressed and gives one consistent axis for
-every method (see state_dict_gzip_size_bytes in compression/common.py).
-
-Self-implemented and torch.nn.utils.prune pruning are plotted as one
-"unstructured pruning" series, since they produce identical masks and
-identical accuracy at every sparsity level.
+Self-implemented and torch.nn.utils.prune pruning give identical masks and
+identical accuracy, so the table lists the self-implemented rows and keeps the
+torch.nn.utils.prune rows separately in the JSON.
 """
 import json
 from pathlib import Path
 
-import matplotlib.pyplot as plt
-
 from compression.common import RESULTS_DIR
-
-PLOTS_DIR = RESULTS_DIR / "plots"
-
-BLUE = "#2a78d6"
-ORANGE = "#eb6834"
-AQUA = "#1baf7a"
-TEXT_PRIMARY = "#0b0b0b"
-TEXT_SECONDARY = "#52514e"
-GRID = "#ececea"
 
 
 def gzip_compression_pct(gzip_bytes: int, baseline_gzip_bytes: int) -> float:
@@ -63,11 +47,12 @@ def load_all_rows():
     for level in structured_d["levels"]:
         add(level["row"], "structured", f"structured {int(level['target_neuron_prune_fraction'] * 100)}% neurons removed")
 
-    add(quant_d["quantized_row"], "quantized",
-        f"structured 75% + INT8 quant ({quant_d['quantization_engine']})")
+    qrow = quant_d["quantized_row"]
+    src = f"{qrow['source_method']} {qrow['source_level_pct']}%"
+    add(qrow, "quantized", f"{src} + INT8 quant ({quant_d['quantization_engine']})")
 
-    # torch.prune rows are kept in the table output but not plotted: they are
-    # identical to the unstructured rows already added
+    # torch.prune rows are kept in the JSON only: they are identical to the
+    # unstructured rows already added
     torch_rows = [level["row"] for level in torch_d["levels"]]
 
     return rows, torch_rows, baseline
@@ -83,84 +68,6 @@ def print_table(rows):
               f"{r['gzip_compression_pct']:>9.2f}%")
 
 
-def make_accuracy_f1_plot(rows):
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
-    baseline = next(r for r in rows if r["group"] == "baseline")
-
-    group_style = {
-        "unstructured": (BLUE, "o", "Unstructured pruning (self-implemented = torch.prune)"),
-        "structured": (AQUA, "o", "Structured (neuron-level) pruning"),
-        "quantized": (ORANGE, "D", "Structured 75% + INT8 quantized"),
-    }
-
-    for ax, metric, title in [(axes[0], "accuracy", "Accuracy"), (axes[1], "macro_f1", "Macro F1")]:
-        ax.axhline(baseline[metric], color=TEXT_SECONDARY, linestyle="--", linewidth=1, zorder=1,
-                   label="baseline (fp32, unpruned)")
-        for group, (color, marker, gt_label) in group_style.items():
-            pts = [r for r in rows if r["group"] == group]
-            xs = [r["gzip_compression_pct"] for r in pts]
-            ys = [r[metric] for r in pts]
-            ax.scatter(xs, ys, color=color, marker=marker, s=60, zorder=3,
-                       edgecolor="white", linewidth=0.6, label=gt_label)
-        ax.set_xlabel("gzip-compressed size reduction vs. baseline (%)", color=TEXT_PRIMARY, fontsize=10)
-        ax.set_ylabel(title, color=TEXT_PRIMARY, fontsize=10)
-        ax.set_title(f"{title} vs. compression", color=TEXT_PRIMARY, fontsize=11)
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_color("#d9d8d3")
-        ax.spines["bottom"].set_color("#d9d8d3")
-        ax.tick_params(colors=TEXT_SECONDARY)
-        ax.yaxis.grid(True, color=GRID, linewidth=0.8)
-        ax.set_axisbelow(True)
-
-    handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.12),
-               labelcolor=TEXT_PRIMARY, fontsize=9)
-    fig.suptitle("Classifier head: accuracy / F1 vs. compression", color=TEXT_PRIMARY, fontsize=13)
-    plt.tight_layout(rect=[0, 0.06, 1, 0.96])
-    PLOTS_DIR.mkdir(parents=True, exist_ok=True)
-    plt.savefig(PLOTS_DIR / "accuracy_f1_vs_compression.png", dpi=150, facecolor="white", bbox_inches="tight")
-    plt.close()
-    print(f"saved {PLOTS_DIR / 'accuracy_f1_vs_compression.png'}")
-
-
-def make_latency_plot(rows):
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-    baseline = next(r for r in rows if r["group"] == "baseline")
-
-    group_style = {
-        "unstructured": (BLUE, "o", "Unstructured pruning (self-implemented = torch.prune)"),
-        "structured": (AQUA, "o", "Structured (neuron-level) pruning"),
-        "quantized": (ORANGE, "D", "Structured 75% + INT8 quantized"),
-    }
-
-    ax.axhline(baseline["latency_mean_ms"], color=TEXT_SECONDARY, linestyle="--", linewidth=1, zorder=1,
-               label="baseline (fp32, unpruned)")
-    for group, (color, marker, gt_label) in group_style.items():
-        pts = [r for r in rows if r["group"] == group]
-        xs = [r["gzip_compression_pct"] for r in pts]
-        ys = [r["latency_mean_ms"] for r in pts]
-        ax.scatter(xs, ys, color=color, marker=marker, s=60, zorder=3,
-                   edgecolor="white", linewidth=0.6, label=gt_label)
-
-    ax.set_xlabel("gzip-compressed size reduction vs. baseline (%)", color=TEXT_PRIMARY, fontsize=10)
-    ax.set_ylabel("Mean single-sample CPU latency (ms)", color=TEXT_PRIMARY, fontsize=10)
-    ax.set_title("Latency vs. compression\n(quantization shrinks size but is slower here -- see README)",
-                 color=TEXT_PRIMARY, fontsize=11)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.spines["left"].set_color("#d9d8d3")
-    ax.spines["bottom"].set_color("#d9d8d3")
-    ax.tick_params(colors=TEXT_SECONDARY)
-    ax.yaxis.grid(True, color=GRID, linewidth=0.8)
-    ax.set_axisbelow(True)
-    ax.legend(frameon=False, loc="upper left", labelcolor=TEXT_PRIMARY, fontsize=8)
-
-    plt.tight_layout()
-    plt.savefig(PLOTS_DIR / "latency_vs_compression.png", dpi=150, facecolor="white")
-    plt.close()
-    print(f"saved {PLOTS_DIR / 'latency_vs_compression.png'}")
-
 
 def main():
     rows, torch_rows, baseline = load_all_rows()
@@ -169,12 +76,10 @@ def main():
     from compression.common import save_json
     save_json(
         {"rows": rows, "torch_prune_rows_identical_to_unstructured": torch_rows,
-         "note": "torch_prune rows are numerically identical to the unstructured rows and are excluded from the plots to avoid overplotting"},
+         "note": "torch_prune rows are numerically identical to the unstructured rows and are listed separately"},
         RESULTS_DIR / "final_benchmark.json",
     )
 
-    make_accuracy_f1_plot(rows)
-    make_latency_plot(rows)
 
 
 if __name__ == "__main__":

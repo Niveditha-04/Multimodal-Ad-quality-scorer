@@ -69,9 +69,12 @@ def main():
 
         model, curve = fine_tune_with_mask(model, X_train, y_train, X_val, y_val, X_test, y_test, masks=None)
 
+        val = evaluate(model, X_val, y_val)
+
         row = full_benchmark_row(
             model, X_test, y_test, name=f"structured_pruned_{int(frac * 100)}pct",
             extra={"target_neuron_prune_fraction": frac, "hidden_dim": target_hidden_dim,
+                   "val_accuracy": val["accuracy"], "val_macro_f1": val["macro_f1"], "n_val": len(y_val),
                    "actual_parameter_reduction_pct": round(100 * actual_param_reduction, 2),
                    "pre_finetune_accuracy": pre_ft["accuracy"], "pre_finetune_macro_f1": pre_ft["macro_f1"]},
         )

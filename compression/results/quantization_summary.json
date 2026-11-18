@@ -1,99 +1,101 @@
 {
   "selected_source": {
-    "method": "structured",
-    "level_pct": 75,
-    "checkpoint_path": "compression/checkpoints/structured_pruned_75pct.pt",
-    "accuracy": 0.9375,
-    "macro_f1": 0.9374728614850195,
-    "total_parameters": 32932,
-    "nonzero_parameters": 32932,
-    "raw_size_bytes": 134045,
-    "gzip_size_bytes": 123081,
-    "latency_mean_ms": 0.01861996145453304,
-    "is_structured": true
+    "method": "self_implemented",
+    "level_pct": 70,
+    "checkpoint_path": "compression/checkpoints/self_pruned_70pct.pt",
+    "val_accuracy": 0.896551724137931,
+    "n_val": 58,
+    "accuracy": 0.90625,
+    "macro_f1": 0.9067734754206052,
+    "total_parameters": 131716,
+    "nonzero_parameters": 39607,
+    "raw_size_bytes": 529181,
+    "gzip_size_bytes": 197067,
+    "latency_mean_ms": 0.021790343336760998,
+    "is_structured": false
   },
   "float_row": {
     "name": "best_pruned_finetuned_fp32",
-    "accuracy": 0.9375,
-    "macro_f1": 0.9374728614850195,
+    "accuracy": 0.90625,
+    "macro_f1": 0.9067734754206052,
     "per_class": {
       "approved": {
-        "precision": 0.88,
+        "precision": 0.7586206896551724,
         "recall": 0.9166666666666666,
-        "f1": 0.8979591836734694,
+        "f1": 0.8301886792452831,
         "support": 24
       },
       "policy_violation": {
-        "precision": 0.96,
-        "recall": 1.0,
-        "f1": 0.9795918367346939,
-        "support": 24
-      },
-      "misleading": {
-        "precision": 0.9130434782608695,
-        "recall": 0.875,
-        "f1": 0.8936170212765957,
-        "support": 24
-      },
-      "low_quality": {
         "precision": 1.0,
         "recall": 0.9583333333333334,
         "f1": 0.9787234042553191,
         "support": 24
+      },
+      "misleading": {
+        "precision": 0.9,
+        "recall": 0.75,
+        "f1": 0.8181818181818182,
+        "support": 24
+      },
+      "low_quality": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 24
       }
     },
-    "total_parameters": 32932,
-    "nonzero_parameters": 32932,
-    "sparsity_pct": 0.0,
-    "raw_size_bytes": 134045,
-    "gzip_size_bytes": 123081,
-    "latency_mean_ms": 0.021365944761782885,
-    "latency_median_ms": 0.018417020328342915,
-    "latency_p95_ms": 0.03801039711106568
+    "total_parameters": 131716,
+    "nonzero_parameters": 39607,
+    "sparsity_pct": 69.93,
+    "raw_size_bytes": 529181,
+    "gzip_size_bytes": 197067,
+    "latency_mean_ms": 0.021875272504985332,
+    "latency_median_ms": 0.022042077034711838,
+    "latency_p95_ms": 0.02249984536319971
   },
   "quantized_row": {
     "name": "best_pruned_finetuned_int8",
-    "accuracy": 0.9375,
-    "macro_f1": 0.9374728614850195,
+    "accuracy": 0.90625,
+    "macro_f1": 0.9067734754206052,
     "per_class": {
       "approved": {
-        "precision": 0.88,
+        "precision": 0.7586206896551724,
         "recall": 0.9166666666666666,
-        "f1": 0.8979591836734694,
+        "f1": 0.8301886792452831,
         "support": 24
       },
       "policy_violation": {
-        "precision": 0.96,
-        "recall": 1.0,
-        "f1": 0.9795918367346939,
-        "support": 24
-      },
-      "misleading": {
-        "precision": 0.9130434782608695,
-        "recall": 0.875,
-        "f1": 0.8936170212765957,
-        "support": 24
-      },
-      "low_quality": {
         "precision": 1.0,
         "recall": 0.9583333333333334,
         "f1": 0.9787234042553191,
         "support": 24
+      },
+      "misleading": {
+        "precision": 0.9,
+        "recall": 0.75,
+        "f1": 0.8181818181818182,
+        "support": 24
+      },
+      "low_quality": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 24
       }
     },
-    "total_parameters": 32932,
-    "nonzero_parameters": 32932,
+    "total_parameters": 131716,
+    "nonzero_parameters": 131716,
     "sparsity_pct": 0.0,
-    "raw_size_bytes": 36685,
-    "gzip_size_bytes": 33470,
-    "latency_mean_ms": 0.08496613334864378,
-    "latency_median_ms": 0.08125000749714673,
-    "latency_p95_ms": 0.10747462802100925,
+    "raw_size_bytes": 135757,
+    "gzip_size_bytes": 59092,
+    "latency_mean_ms": 0.0905147772282362,
+    "latency_median_ms": 0.08870800957083702,
+    "latency_p95_ms": 0.10266918689012527,
     "quantization_engine": "qnnpack",
-    "source_checkpoint": "compression/checkpoints/structured_pruned_75pct.pt",
-    "source_method": "structured",
-    "source_level_pct": 75
+    "source_checkpoint": "compression/checkpoints/self_pruned_70pct.pt",
+    "source_method": "self_implemented",
+    "source_level_pct": 70
   },
   "quantization_engine": "qnnpack",
-  "raw_size_reduction_from_quantization_alone_pct": 72.63
+  "raw_size_reduction_from_quantization_alone_pct": 74.35
 }

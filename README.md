@@ -3,6 +3,8 @@
 Scores pet-product ad creatives (image plus text) for policy violations with frozen CLIP embeddings and a small trained classifier head, and explains flagged ads with retrieved policy rules and an LLM.
 It also covers compressing the head, an offline A/B test against a rule-based baseline, LLM-explanation evaluation, prompt-injection guardrails and an agentic auditor.
 
+![Example predictions on test ads](docs/images/example_predictions.png)
+
 ## Results at a glance
 
 | Area | Result | Source |
@@ -10,7 +12,7 @@ It also covers compressing the head, an offline A/B test against a rule-based ba
 | Classifier, 96 test ads | **89.6% accuracy** (95% CI 81.9% to 94.2%), macro F1 0.897 | `model/results/` |
 | Ablation | image only 36.5%, text only 68.8%, **joint 89.6%** | `model/results/ablation_summary.json` |
 | Versus rule baseline | **+14.6 points** accuracy, McNemar p = 0.008 | `ab_test/results/comparison.json` |
-| Compression | **75% fewer parameters**, 90/96 correct vs 86/96, 134,045 B vs 529,181 B | `compression/results/final_benchmark.json` |
+| Compression | accuracy within noise of the baseline (87/96 vs 86/96, n = 96), **INT8 file 74.3% smaller** (135,757 B vs 529,181 B) | `compression/results/final_benchmark.json` |
 | LLM explanations, 32 flagged ads | **25.0% hallucination rate** (95% CI 13.3% to 42.1%) | `eval/results.json` |
 | Prompt injection, 8 cases | **0 of 8** outputs followed the injection | `guardrails/results_*.json` |
 | Agentic auditor, 3 runs of 18 ads | **cross-ad table errors in 2 of 3 runs** | `agent/results/conflation_check.json` |
@@ -68,23 +70,23 @@ McNemar statistic 7.04 (p = 0.008), and a bootstrap difference of +14.6 points (
 ## Compression (classifier head only, CLIP frozen)
 
 Pruning masks from a self-written global magnitude pruner match `torch.nn.utils.prune` exactly at 30, 50, 70 and 90% sparsity, with identical accuracy after fine-tuning.
-Latency is the head's forward pass only (batch 1, CPU), not a full `/score` request.
+The 12 pruned checkpoints are ranked by validation accuracy (58 ads), ties by gzip size. Eight tie at 0.8966, so the tie-break picks **unstructured 70%**.
 
-| Config | Accuracy | Params | Size (B) | Gzip (B) | Head latency (ms) |
+| Config | Test accuracy | Params | File (B) | Gzip (B) | Head latency (ms) |
 |---|---|---|---|---|---|
-| Baseline | 0.8958 | 131,716 | 529,181 | 489,351 | 0.0238 |
-| Unstructured, 90% sparse | 0.9167 | 131,716 | 529,181 | 91,689 | 0.0230 |
-| Structured, 50% of neurons | 0.9167 | 65,860 | 265,757 | 245,079 | 0.0197 |
-| **Structured, 75% (recommended)** | **0.9375** | 32,932 | 134,045 | 123,081 | 0.0186 |
-| Structured, 90% | 0.8021 | 13,381 | 55,901 | 50,649 | 0.0180 |
-| Structured 75% + INT8 | 0.9375 | 32,932 | 36,685 | 33,470 | **0.0850** |
+| Baseline | 0.8958 (86/96) | 131,716 | 529,181 | 489,351 | 0.0223 |
+| **Selected: unstructured 70%** | 0.9062 (87/96) | 131,716 (39,607 nonzero) | 529,181 | 197,067 | 0.0218 |
+| Unstructured 90% | 0.9167 (88/96) | 131,716 (13,290 nonzero) | 529,181 | 91,689 | 0.0221 |
+| Structured 50% (best structured on validation) | 0.9167 (88/96) | 65,860 | 265,757 | 245,079 | 0.0198 |
+| Structured 90% | 0.8021 (77/96) | 13,381 | 55,901 | 50,649 | 0.0179 |
+| Selected + INT8 | 0.9062 (87/96) | 131,716 | **135,757** | 59,092 | **0.0905** |
 
-![Accuracy and F1 vs compression](compression/results/plots/accuracy_f1_vs_compression.png)
-![Head latency vs compression](compression/results/plots/latency_vs_compression.png)
+![Compression: file size vs test accuracy](docs/images/compression_accuracy.png)
 
-- Unstructured pruning keeps dense tensors, so its file size stays 529,181 B and only compresses with gzip.
-- INT8 cuts the file by 72.6% but makes the head 4.6x slower at this size, so structured 75% is recommended.
-- Only `structured_pruned_75pct.pt` is committed. The other checkpoints regenerate with the `compression` scripts.
+- Compression keeps accuracy within noise of the baseline (n = 96, one ad is 1.04 points, every interval overlaps the baseline's). No row shows a real gain.
+- Unstructured pruning keeps dense tensors, so the file stays 529,181 B and only shrinks with gzip. Structured pruning and INT8 shrink the file.
+- INT8 cuts the file by 74.3% but makes the head 4.2x slower. Latency is the head's forward pass only (batch 1, CPU), not a full `/score` request.
+- Only `self_pruned_70pct.pt` (the selected checkpoint) is committed. The other checkpoints regenerate with the `compression` scripts.
 
 ## v2: LLM evaluation, guardrails, agentic auditor
 
@@ -110,35 +112,44 @@ Hallucination hits 3 of 4 misclassified ads and 5 of 28 correct ones, so explana
 
 The errors swap values between two ads in the agent's own summary, while every tool result was correct.
 
+## API example
+
+```bash
+curl -s -X POST localhost:8000/score -F "image=@data/images/0242_Persian_63.jpg" \
+  -F "text=A dependable slow-feed dog bowl for dog owners, tested with breeds including the shiba inu."
+```
+```json
+{"predicted_label": "misleading", "confidence": 0.7766, "model_version": "joint_v2_97565ac7",
+ "explanation": "## Flag Explanation\n\nThis ad was flagged for a **mismatched creative** violation. The image clearly shows a long-haired Persian **cat** lounging on a cushioned surface ... no dog or bowl product appears anywhere in the image. ..."}
+```
+
+Trimmed (`ad_id` and the rest of the explanation omitted). The full response is saved in `docs/example_score_response.json`.
+
 ## How to run
 
 ```bash
 pip install -r requirements.txt && cp .env.example .env     # add ANTHROPIC_API_KEY
 python data/build_dataset.py                                # rebuild data/images
-python -m db.load_dataset && python data/make_split.py
-python -m model.extract_embeddings
+python -m db.load_dataset && python data/make_split.py && python -m model.extract_embeddings
 python -m model.train_classifier --modality joint           # also: image, text
-python -m db.populate_eval_scores && python -m rag.build_vector_store
+python -m db.populate_eval_scores && python -m rag.build_vector_store && python -m ab_test.run_comparison
 uvicorn api.main:app                                        # POST /score, GET /stats
-python -m ab_test.run_comparison
-python -m compression.baseline_benchmark                    # then manual_magnitude_pruning, torch_prune_pruning,
-                                                            # structured_pruning, select_best_checkpoint, quantize_int8, benchmark_all
-docker compose up --build                                   # baseline :8000, structured 75% head :8001
+python -m compression.baseline_benchmark   # then: manual_magnitude_pruning, torch_prune_pruning, structured_pruning, select_best_checkpoint, quantize_int8, benchmark_all
+docker compose up --build                                   # baseline :8000, 70% pruned head :8001
+python docs/generate_charts.py                              # figures in docs/images/
 ```
 
 `CLASSIFIER_CHECKPOINT` picks the head the API serves. `python -m mcp_server.server` exposes the scorer as an MCP tool.
 
 ## Limitations
 
-- 96 test ads, so one ad is 1.04 points of accuracy and small gaps are noise.
-- One fixed split, not repeated across seeds.
-- Synthetic ad copy on real photos, pet products only, English only.
-- `misleading` means a dog/cat mismatch, not a breed mismatch.
+- 96 test ads (one ad is 1.04 points) and one fixed split, so small gaps are noise.
+- Synthetic ad copy on real photos, pet products only, English only. `misleading` means a dog/cat mismatch, not a breed mismatch.
 - The A/B test is offline, and the baseline is a simple keyword and heuristic engine.
 - Explanations follow the predicted label, so a wrong label gets a confident wrong explanation.
-- Explanation scores come from one review pass with no second rater, on 32 ads.
-- The guardrail results cover 8 known attacks on one model and are not red-teaming.
+- Explanation scores come from one review pass on 32 ads, and the guardrail results cover 8 known attacks on one model (not red-teaming).
 - Confidence is a raw softmax and is not calibrated.
+- The compressed checkpoint is chosen on 58 validation ads where 8 of 12 candidates tie, so the gzip tie-break decides.
 - Head latency was measured on one CPU with the qnnpack INT8 backend.
 - The Docker image is large because it bakes in the CLIP and Chroma models.
 - The code is MIT licensed. The photos keep their own license (CC BY-SA 4.0, copyright with the original owners).
