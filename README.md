@@ -12,7 +12,7 @@ It also covers compressing the head, an offline A/B test against a rule-based ba
 | Classifier, 96 test ads | **89.6% accuracy** (95% CI 81.9% to 94.2%), macro F1 0.897 | `model/results/` |
 | Ablation | image only 36.5%, text only 68.8%, **joint 89.6%** | `model/results/ablation_summary.json` |
 | Versus rule baseline | **+14.6 points** accuracy, McNemar p = 0.008 | `ab_test/results/comparison.json` |
-| Compression | accuracy within noise of the baseline (87/96 vs 86/96, n = 96), **INT8 file 74.3% smaller** (135,757 B vs 529,181 B) | `compression/results/final_benchmark.json` |
+| Compression | accuracy within noise of the baseline (90/96 vs 86/96, n = 96), **75% fewer parameters**, file 134,045 B vs 529,181 B | `compression/results/final_benchmark.json` |
 | LLM explanations, 32 flagged ads | **25.0% hallucination rate** (95% CI 13.3% to 42.1%) | `eval/results.json` |
 | Prompt injection, 8 cases | **0 of 8** outputs followed the injection | `guardrails/results_*.json` |
 | Agentic auditor, 3 runs of 18 ads | **cross-ad table errors in 2 of 3 runs** | `agent/results/conflation_check.json` |
@@ -70,23 +70,23 @@ McNemar statistic 7.04 (p = 0.008), and a bootstrap difference of +14.6 points (
 ## Compression (classifier head only, CLIP frozen)
 
 Pruning masks from a self-written global magnitude pruner match `torch.nn.utils.prune` exactly at 30, 50, 70 and 90% sparsity, with identical accuracy after fine-tuning.
-The 12 pruned checkpoints are ranked by validation accuracy (58 ads), ties by gzip size. Eight tie at 0.8966, so the tie-break picks **unstructured 70%**.
+A pruned checkpoint is eligible if its validation accuracy (58 ads) is at least the baseline's (0.8793). 9 of 12 are eligible and 8 of 12 tie at the best (0.8966), so validation cannot separate them.
+The choice is the smallest model that matches baseline validation accuracy: **structured 75%**.
 
 | Config | Test accuracy | Params | File (B) | Gzip (B) | Head latency (ms) |
 |---|---|---|---|---|---|
-| Baseline | 0.8958 (86/96) | 131,716 | 529,181 | 489,351 | 0.0223 |
-| **Selected: unstructured 70%** | 0.9062 (87/96) | 131,716 (39,607 nonzero) | 529,181 | 197,067 | 0.0218 |
+| Baseline | 0.8958 (86/96) | 131,716 | 529,181 | 489,351 | 0.0225 |
+| **Selected: structured 75%** | 0.9375 (90/96) | 32,932 | 134,045 | 123,081 | 0.0187 |
 | Unstructured 90% | 0.9167 (88/96) | 131,716 (13,290 nonzero) | 529,181 | 91,689 | 0.0221 |
-| Structured 50% (best structured on validation) | 0.9167 (88/96) | 65,860 | 265,757 | 245,079 | 0.0198 |
-| Structured 90% | 0.8021 (77/96) | 13,381 | 55,901 | 50,649 | 0.0179 |
-| Selected + INT8 | 0.9062 (87/96) | 131,716 | **135,757** | 59,092 | **0.0905** |
+| Structured 90% | 0.8021 (77/96) | 13,381 | 55,901 | 50,649 | 0.0174 |
+| Selected + INT8 | 0.9375 (90/96) | 32,932 | **36,685** | 33,470 | **0.0846** |
 
 ![Compression: file size vs test accuracy](docs/images/compression_accuracy.png)
 
-- Compression keeps accuracy within noise of the baseline (n = 96, one ad is 1.04 points, every interval overlaps the baseline's). No row shows a real gain.
+- Compression keeps accuracy within noise of the baseline (n = 96, one ad is 1.04 points, every interval overlaps the baseline's). No row shows a real gain, and test accuracy did not pick the checkpoint.
 - Unstructured pruning keeps dense tensors, so the file stays 529,181 B and only shrinks with gzip. Structured pruning and INT8 shrink the file.
-- INT8 cuts the file by 74.3% but makes the head 4.2x slower. Latency is the head's forward pass only (batch 1, CPU), not a full `/score` request.
-- Only `self_pruned_70pct.pt` (the selected checkpoint) is committed. The other checkpoints regenerate with the `compression` scripts.
+- INT8 cuts the file by 72.6% but makes the head 4.5x slower. Latency is the head's forward pass only (batch 1, CPU), not a full `/score` request.
+- Only `structured_pruned_75pct.pt` (the selected checkpoint) is committed. The other checkpoints regenerate with the `compression` scripts.
 
 ## v2: LLM evaluation, guardrails, agentic auditor
 
@@ -135,7 +135,7 @@ python -m model.train_classifier --modality joint           # also: image, text
 python -m db.populate_eval_scores && python -m rag.build_vector_store && python -m ab_test.run_comparison
 uvicorn api.main:app                                        # POST /score, GET /stats
 python -m compression.baseline_benchmark   # then: manual_magnitude_pruning, torch_prune_pruning, structured_pruning, select_best_checkpoint, quantize_int8, benchmark_all
-docker compose up --build                                   # baseline :8000, 70% pruned head :8001
+docker compose up --build                                   # baseline :8000, structured 75% head :8001
 python docs/generate_charts.py                              # figures in docs/images/
 ```
 
@@ -149,7 +149,7 @@ python docs/generate_charts.py                              # figures in docs/im
 - Explanations follow the predicted label, so a wrong label gets a confident wrong explanation.
 - Explanation scores come from one review pass on 32 ads, and the guardrail results cover 8 known attacks on one model (not red-teaming).
 - Confidence is a raw softmax and is not calibrated.
-- The compressed checkpoint is chosen on 58 validation ads where 8 of 12 candidates tie, so the gzip tie-break decides.
+- The compressed checkpoint is chosen on 58 validation ads where 8 of 12 candidates tie, so the pick is the smallest eligible model, not the most accurate one.
 - Head latency was measured on one CPU with the qnnpack INT8 backend.
 - The Docker image is large because it bakes in the CLIP and Chroma models.
 - The code is MIT licensed. The photos keep their own license (CC BY-SA 4.0, copyright with the original owners).

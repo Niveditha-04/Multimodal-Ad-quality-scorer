@@ -1,6 +1,6 @@
 """INT8 post-training quantization of the checkpoint ranked first by
-compression/select_best_checkpoint.py (best validation accuracy among the
-pruned checkpoints, ties broken by gzip size).
+compression/select_best_checkpoint.py (the smallest raw file among the pruned
+checkpoints whose validation accuracy reaches the baseline's).
 
 Uses torch.quantization.quantize_dynamic. The model is two Linear layers and a
 ReLU with nothing to fuse, so the usual advantages of static quantization

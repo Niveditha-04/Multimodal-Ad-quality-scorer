@@ -8,4 +8,4 @@ rag/chroma_db/
 .env
 data/images/
 compression/checkpoints/*.pt
-!compression/checkpoints/self_pruned_70pct.pt
+!compression/checkpoints/structured_pruned_75pct.pt

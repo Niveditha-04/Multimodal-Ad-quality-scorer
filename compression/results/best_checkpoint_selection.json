@@ -1,34 +1,26 @@
 {
+  "rule": "smallest raw file among candidates with validation accuracy >= baseline's; ties by validation accuracy, then gzip size",
+  "baseline_val_accuracy": 0.8793103448275862,
+  "n_val": 58,
+  "n_eligible": 9,
+  "n_tied_at_best_val_accuracy": 8,
+  "best_val_accuracy": 0.896551724137931,
   "all_candidates_ranked": [
     {
-      "method": "self_implemented",
-      "level_pct": 70,
-      "checkpoint_path": "compression/checkpoints/self_pruned_70pct.pt",
-      "val_accuracy": 0.896551724137931,
+      "method": "structured",
+      "level_pct": 75,
+      "checkpoint_path": "compression/checkpoints/structured_pruned_75pct.pt",
+      "val_accuracy": 0.8793103448275862,
       "n_val": 58,
-      "accuracy": 0.90625,
-      "macro_f1": 0.9067734754206052,
-      "total_parameters": 131716,
-      "nonzero_parameters": 39607,
-      "raw_size_bytes": 529181,
-      "gzip_size_bytes": 197067,
-      "latency_mean_ms": 0.021790343336760998,
-      "is_structured": false
-    },
-    {
-      "method": "torch_prune",
-      "level_pct": 70,
-      "checkpoint_path": "compression/checkpoints/torch_prune_70pct.pt",
-      "val_accuracy": 0.896551724137931,
-      "n_val": 58,
-      "accuracy": 0.90625,
-      "macro_f1": 0.9067734754206052,
-      "total_parameters": 131716,
-      "nonzero_parameters": 39607,
-      "raw_size_bytes": 529245,
-      "gzip_size_bytes": 197101,
-      "latency_mean_ms": 0.022427869029343128,
-      "is_structured": false
+      "accuracy": 0.9375,
+      "macro_f1": 0.9374728614850195,
+      "total_parameters": 32932,
+      "nonzero_parameters": 32932,
+      "raw_size_bytes": 134045,
+      "gzip_size_bytes": 123081,
+      "latency_mean_ms": 0.018666017800569534,
+      "is_structured": true,
+      "meets_baseline_val": true
     },
     {
       "method": "structured",
@@ -42,38 +34,9 @@
       "nonzero_parameters": 65860,
       "raw_size_bytes": 265757,
       "gzip_size_bytes": 245079,
-      "latency_mean_ms": 0.019780085422098637,
-      "is_structured": true
-    },
-    {
-      "method": "self_implemented",
-      "level_pct": 50,
-      "checkpoint_path": "compression/checkpoints/self_pruned_50pct.pt",
-      "val_accuracy": 0.896551724137931,
-      "n_val": 58,
-      "accuracy": 0.90625,
-      "macro_f1": 0.9067734754206052,
-      "total_parameters": 131716,
-      "nonzero_parameters": 65924,
-      "raw_size_bytes": 529181,
-      "gzip_size_bytes": 290743,
-      "latency_mean_ms": 0.022199698723852634,
-      "is_structured": false
-    },
-    {
-      "method": "torch_prune",
-      "level_pct": 50,
-      "checkpoint_path": "compression/checkpoints/torch_prune_50pct.pt",
-      "val_accuracy": 0.896551724137931,
-      "n_val": 58,
-      "accuracy": 0.90625,
-      "macro_f1": 0.9067734754206052,
-      "total_parameters": 131716,
-      "nonzero_parameters": 65924,
-      "raw_size_bytes": 529245,
-      "gzip_size_bytes": 290791,
-      "latency_mean_ms": 0.022188778966665268,
-      "is_structured": false
+      "latency_mean_ms": 0.01997620426118374,
+      "is_structured": true,
+      "meets_baseline_val": true
     },
     {
       "method": "structured",
@@ -87,8 +50,41 @@
       "nonzero_parameters": 98788,
       "raw_size_bytes": 397469,
       "gzip_size_bytes": 366909,
-      "latency_mean_ms": 0.02137701492756605,
-      "is_structured": true
+      "latency_mean_ms": 0.021015827544033527,
+      "is_structured": true,
+      "meets_baseline_val": true
+    },
+    {
+      "method": "self_implemented",
+      "level_pct": 70,
+      "checkpoint_path": "compression/checkpoints/self_pruned_70pct.pt",
+      "val_accuracy": 0.896551724137931,
+      "n_val": 58,
+      "accuracy": 0.90625,
+      "macro_f1": 0.9067734754206052,
+      "total_parameters": 131716,
+      "nonzero_parameters": 39607,
+      "raw_size_bytes": 529181,
+      "gzip_size_bytes": 197067,
+      "latency_mean_ms": 0.022136375308036804,
+      "is_structured": false,
+      "meets_baseline_val": true
+    },
+    {
+      "method": "self_implemented",
+      "level_pct": 50,
+      "checkpoint_path": "compression/checkpoints/self_pruned_50pct.pt",
+      "val_accuracy": 0.896551724137931,
+      "n_val": 58,
+      "accuracy": 0.90625,
+      "macro_f1": 0.9067734754206052,
+      "total_parameters": 131716,
+      "nonzero_parameters": 65924,
+      "raw_size_bytes": 529181,
+      "gzip_size_bytes": 290743,
+      "latency_mean_ms": 0.022599917836487293,
+      "is_structured": false,
+      "meets_baseline_val": true
     },
     {
       "method": "self_implemented",
@@ -102,8 +98,41 @@
       "nonzero_parameters": 92241,
       "raw_size_bytes": 529181,
       "gzip_size_bytes": 376517,
-      "latency_mean_ms": 0.02219485677778721,
-      "is_structured": false
+      "latency_mean_ms": 0.02175237610936165,
+      "is_structured": false,
+      "meets_baseline_val": true
+    },
+    {
+      "method": "torch_prune",
+      "level_pct": 70,
+      "checkpoint_path": "compression/checkpoints/torch_prune_70pct.pt",
+      "val_accuracy": 0.896551724137931,
+      "n_val": 58,
+      "accuracy": 0.90625,
+      "macro_f1": 0.9067734754206052,
+      "total_parameters": 131716,
+      "nonzero_parameters": 39607,
+      "raw_size_bytes": 529245,
+      "gzip_size_bytes": 197101,
+      "latency_mean_ms": 0.022059942595660686,
+      "is_structured": false,
+      "meets_baseline_val": true
+    },
+    {
+      "method": "torch_prune",
+      "level_pct": 50,
+      "checkpoint_path": "compression/checkpoints/torch_prune_50pct.pt",
+      "val_accuracy": 0.896551724137931,
+      "n_val": 58,
+      "accuracy": 0.90625,
+      "macro_f1": 0.9067734754206052,
+      "total_parameters": 131716,
+      "nonzero_parameters": 65924,
+      "raw_size_bytes": 529245,
+      "gzip_size_bytes": 290791,
+      "latency_mean_ms": 0.022412192076444626,
+      "is_structured": false,
+      "meets_baseline_val": true
     },
     {
       "method": "torch_prune",
@@ -117,23 +146,9 @@
       "nonzero_parameters": 92241,
       "raw_size_bytes": 529245,
       "gzip_size_bytes": 376522,
-      "latency_mean_ms": 0.02259217854589224,
-      "is_structured": false
-    },
-    {
-      "method": "structured",
-      "level_pct": 75,
-      "checkpoint_path": "compression/checkpoints/structured_pruned_75pct.pt",
-      "val_accuracy": 0.8793103448275862,
-      "n_val": 58,
-      "accuracy": 0.9375,
-      "macro_f1": 0.9374728614850195,
-      "total_parameters": 32932,
-      "nonzero_parameters": 32932,
-      "raw_size_bytes": 134045,
-      "gzip_size_bytes": 123081,
-      "latency_mean_ms": 0.018658624961972237,
-      "is_structured": true
+      "latency_mean_ms": 0.02231243997812271,
+      "is_structured": false,
+      "meets_baseline_val": true
     },
     {
       "method": "structured",
@@ -147,8 +162,9 @@
       "nonzero_parameters": 13381,
       "raw_size_bytes": 55901,
       "gzip_size_bytes": 50649,
-      "latency_mean_ms": 0.01789502054452896,
-      "is_structured": true
+      "latency_mean_ms": 0.017364145256578922,
+      "is_structured": true,
+      "meets_baseline_val": false
     },
     {
       "method": "self_implemented",
@@ -162,8 +178,9 @@
       "nonzero_parameters": 13290,
       "raw_size_bytes": 529181,
       "gzip_size_bytes": 91689,
-      "latency_mean_ms": 0.02214948646724224,
-      "is_structured": false
+      "latency_mean_ms": 0.022050688043236732,
+      "is_structured": false,
+      "meets_baseline_val": false
     },
     {
       "method": "torch_prune",
@@ -177,23 +194,25 @@
       "nonzero_parameters": 13290,
       "raw_size_bytes": 529245,
       "gzip_size_bytes": 91702,
-      "latency_mean_ms": 0.021910706534981728,
-      "is_structured": false
+      "latency_mean_ms": 0.022239813581109047,
+      "is_structured": false,
+      "meets_baseline_val": false
     }
   ],
   "selected": {
-    "method": "self_implemented",
-    "level_pct": 70,
-    "checkpoint_path": "compression/checkpoints/self_pruned_70pct.pt",
-    "val_accuracy": 0.896551724137931,
+    "method": "structured",
+    "level_pct": 75,
+    "checkpoint_path": "compression/checkpoints/structured_pruned_75pct.pt",
+    "val_accuracy": 0.8793103448275862,
     "n_val": 58,
-    "accuracy": 0.90625,
-    "macro_f1": 0.9067734754206052,
-    "total_parameters": 131716,
-    "nonzero_parameters": 39607,
-    "raw_size_bytes": 529181,
-    "gzip_size_bytes": 197067,
-    "latency_mean_ms": 0.021790343336760998,
-    "is_structured": false
+    "accuracy": 0.9375,
+    "macro_f1": 0.9374728614850195,
+    "total_parameters": 32932,
+    "nonzero_parameters": 32932,
+    "raw_size_bytes": 134045,
+    "gzip_size_bytes": 123081,
+    "latency_mean_ms": 0.018666017800569534,
+    "is_structured": true,
+    "meets_baseline_val": true
   }
 }

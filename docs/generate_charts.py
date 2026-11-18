@@ -142,29 +142,35 @@ def make_compression_accuracy():
             return f"structured {pct}% neurons removed"
         return f"unstructured {pct}% sparsity"
 
-    best_structured = next(c for c in selection["all_candidates_ranked"] if c["method"] == "structured")
     quantized = next(r for r in rows.values() if r["group"] == "quantized")
+    kind = "structured" if chosen["method"] == "structured" else "unstructured"
+    selected_label = label_of(chosen["method"], chosen["level_pct"])
     points = [
-        ("Baseline", rows["baseline (fp32, unpruned)"], GRAY, "s", "Baseline", (14, -26)),
-        ("Selected: unstructured 70%", rows[label_of(chosen["method"], chosen["level_pct"])], BLUE, "o",
-         "Unstructured pruning", (14, -4)),
-        ("Unstructured 90%", rows["unstructured 90% sparsity"], BLUE, "o", None, (14, 16)),
-        (f"Best structured on validation: {best_structured['level_pct']}%",
-         rows[label_of("structured", best_structured["level_pct"])], AQUA, "o", "Structured pruning", (14, 10)),
-        ("Structured 90%", rows["structured 90% neurons removed"], AQUA, "o", None, (14, -18)),
-        ("INT8 of selected", quantized, ORANGE, "D", "INT8 quantized", (14, 10)),
+        ("Baseline", rows["baseline (fp32, unpruned)"], "baseline", (14, -26)),
+        (f"Selected: {kind} {chosen['level_pct']}%", rows[selected_label], kind, (14, 4)),
+        ("Unstructured 90%", rows["unstructured 90% sparsity"], "unstructured", (14, 16)),
+        ("Structured 90%", rows["structured 90% neurons removed"], "structured", (14, -18)),
+        ("INT8 (selected)", quantized, "int8", (14, 24)),
     ]
+    if kind != "structured":
+        best_structured = next(c for c in selection["all_candidates_ranked"] if c["method"] == "structured")
+        points.append((f"Best structured on validation: {best_structured['level_pct']}%",
+                       rows[label_of("structured", best_structured["level_pct"])], "structured", (14, 10)))
+    points = [pt for i, pt in enumerate(points) if not any(q[1] is pt[1] for q in points[:i])]
+    families = {"baseline": (GRAY, "s", "Baseline"), "unstructured": (BLUE, "o", "Unstructured pruning"),
+                "structured": (AQUA, "o", "Structured pruning"), "int8": (ORANGE, "D", "INT8 quantized")}
 
     fig, ax = plt.subplots(figsize=(9, 5.2))
     ax.axhline(rows["baseline (fp32, unpruned)"]["accuracy"], color="#d9d8d3", linewidth=1, zorder=1)
     seen = set()
-    for name, r, color, marker, legend_label, offset in points:
+    for name, r, family, offset in points:
+        color, marker, legend_label = families[family]
         k = round(r["accuracy"] * N_TEST)
         lo, hi = wilson_interval(k, N_TEST)
         x = r["raw_size_bytes"] / 1000
         ax.errorbar(x, r["accuracy"], yerr=[[r["accuracy"] - lo], [hi - r["accuracy"]]], fmt=marker, color=color,
                     markersize=8, capsize=4, linewidth=1.6, markeredgecolor="white", zorder=3,
-                    label=legend_label if legend_label and legend_label not in seen else None)
+                    label=legend_label if legend_label not in seen else None)
         seen.add(legend_label)
         ax.annotate(f"{name}\n{k}/{N_TEST} correct", (x, r["accuracy"]), textcoords="offset points", xytext=offset,
                     fontsize=8, color=TEXT_PRIMARY, va="center")

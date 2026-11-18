@@ -1,9 +1,11 @@
-"""Picks the best pruned and fine-tuned checkpoint across the three pruning
-experiments, to pass to compression/quantize_int8.py. All 12 candidates are
-ranked by accuracy on the validation split (descending), ties are broken by
-gzip state_dict size (ascending), and the top row wins. Test accuracy is
-reported next to each candidate but never used for ranking. Every candidate is
-written to best_checkpoint_selection.json so the choice can be audited.
+"""Picks the pruned and fine-tuned checkpoint to deploy, to pass to
+compression/quantize_int8.py. A candidate is eligible if its validation
+accuracy is at least the baseline's (baseline_metrics.json). Among the
+eligible candidates the smallest raw file size wins (the size that is actually
+deployed), ties are broken by higher validation accuracy, then smaller gzip
+size. Test accuracy is reported next to each candidate but never used for
+selection. Every candidate is written to best_checkpoint_selection.json so the
+choice can be audited.
 """
 import json
 from pathlib import Path
@@ -49,21 +51,41 @@ def load_candidates():
 
 
 def main():
+    baseline = json.loads((RESULTS_DIR / "baseline_metrics.json").read_text())
+    bar = baseline["val_accuracy"]
     candidates = load_candidates()
-    candidates.sort(key=lambda c: (-c["val_accuracy"], c["gzip_size_bytes"]))
-
-    print(f"{'method':>16} | {'level':>6} | {'val_acc':>7} | {'test_acc':>8} | {'gzip_bytes':>10} | {'params':>8}")
     for c in candidates:
-        print(f"{c['method']:>16} | {c['level_pct']:>5}% | {c['val_accuracy']:>7.4f} | {c['accuracy']:>8.4f} | "
-              f"{c['gzip_size_bytes']:>10,} | {c['total_parameters']:>8,}")
+        c["meets_baseline_val"] = c["val_accuracy"] >= bar
 
-    best = candidates[0]
+    eligible = [c for c in candidates if c["meets_baseline_val"]]
+    if not eligible:
+        raise RuntimeError(f"no candidate reaches the baseline's validation accuracy ({bar:.4f})")
+    eligible.sort(key=lambda c: (c["raw_size_bytes"], -c["val_accuracy"], c["gzip_size_bytes"], c["method"]))
+    rest = sorted((c for c in candidates if not c["meets_baseline_val"]), key=lambda c: -c["val_accuracy"])
+    ranked = eligible + rest
+
+    best_val = max(c["val_accuracy"] for c in candidates)
+    n_tied = sum(1 for c in candidates if c["val_accuracy"] == best_val)
+    print(f"baseline validation accuracy: {bar:.4f} (n={baseline['n_val']})")
+    print(f"{'method':>16} | {'level':>6} | {'val_acc':>7} | {'eligible':>8} | {'raw_bytes':>9} | {'test_acc':>8} | {'params':>8}")
+    for c in ranked:
+        print(f"{c['method']:>16} | {c['level_pct']:>5}% | {c['val_accuracy']:>7.4f} | {str(c['meets_baseline_val']):>8} | "
+              f"{c['raw_size_bytes']:>9,} | {c['accuracy']:>8.4f} | {c['total_parameters']:>8,}")
+
+    best = ranked[0]
     print(f"\nselected: {best['method']} @ {best['level_pct']}% -> {best['checkpoint_path']}")
-    print(f"reason: highest validation accuracy ({best['val_accuracy']:.4f}, n={best['n_val']}) among all 12 "
-          f"pruned+fine-tuned checkpoints, tie-broken by smaller gzip size. "
-          f"Its test accuracy is {best['accuracy']:.4f}.")
+    print(f"reason: smallest raw file ({best['raw_size_bytes']:,} B) among the {len(eligible)} candidates whose validation "
+          f"accuracy is at least the baseline's ({bar:.4f}). {n_tied} of {len(candidates)} candidates tie at the best "
+          f"validation accuracy ({best_val:.4f}). Its validation accuracy is {best['val_accuracy']:.4f}.")
 
-    save_json({"all_candidates_ranked": candidates, "selected": best}, RESULTS_DIR / "best_checkpoint_selection.json")
+    save_json(
+        {"rule": "smallest raw file among candidates with validation accuracy >= baseline's; "
+                 "ties by validation accuracy, then gzip size",
+         "baseline_val_accuracy": bar, "n_val": baseline["n_val"],
+         "n_eligible": len(eligible), "n_tied_at_best_val_accuracy": n_tied, "best_val_accuracy": best_val,
+         "all_candidates_ranked": ranked, "selected": best},
+        RESULTS_DIR / "best_checkpoint_selection.json",
+    )
     return best
 
 

@@ -1,7 +1,8 @@
 """Measures the trained classifier head (model/classifier_head.pt) before any
 pruning or quantization: accuracy, macro F1, parameter count, state_dict size
-(raw and gzip-compressed) and single-sample CPU latency. Every compression
-result is compared against these numbers.
+(raw and gzip-compressed), single-sample CPU latency, and validation accuracy.
+Every compression result is compared against these numbers, and the validation
+accuracy is the bar a pruned checkpoint must reach to be selected.
 
 The accuracy is cross-checked against model/results/joint_results.json, so the
 script is known to load the same split and model as the original training
@@ -10,7 +11,7 @@ run. It raises if the two differ.
 import json
 from pathlib import Path
 
-from compression.common import RESULTS_DIR, full_benchmark_row, load_baseline_head, load_split_data, save_json
+from compression.common import RESULTS_DIR, evaluate, full_benchmark_row, load_baseline_head, load_split_data, save_json
 
 
 def main():
@@ -18,10 +19,15 @@ def main():
     print(f"train={len(X_train)} val={len(X_val)} test={len(X_test)}")
 
     model = load_baseline_head()
-    row = full_benchmark_row(model, X_test, y_test, name="baseline_fp32")
+    val = evaluate(model, X_val, y_val)
+    row = full_benchmark_row(
+        model, X_test, y_test, name="baseline_fp32",
+        extra={"val_accuracy": val["accuracy"], "val_macro_f1": val["macro_f1"], "n_val": len(y_val)},
+    )
 
     print(f"\nbaseline accuracy: {row['accuracy']:.4f}")
     print(f"baseline macro F1: {row['macro_f1']:.4f}")
+    print(f"baseline validation accuracy: {row['val_accuracy']:.4f} (n={row['n_val']})")
     print(f"total parameters:  {row['total_parameters']:,}")
     print(f"raw state_dict size:  {row['raw_size_bytes']:,} bytes")
     print(f"gzip state_dict size: {row['gzip_size_bytes']:,} bytes")
