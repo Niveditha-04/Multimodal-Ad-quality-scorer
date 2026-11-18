@@ -3,6 +3,8 @@
 Scores pet-product ad creatives (image plus text) for policy violations with frozen CLIP embeddings and a small trained classifier head, and explains flagged ads with retrieved policy rules and an LLM.
 It also covers compressing the head, an offline A/B test against a rule-based baseline, LLM-explanation evaluation, prompt-injection guardrails and an agentic auditor.
 
+Tech stack: CLIP (ViT-B/32), PyTorch, FastAPI, ChromaDB, Claude API, MCP, SQLite/Postgres, Docker.
+
 ![Example predictions on test ads](docs/images/example_predictions.png)
 
 Bottom right: a wrong label gets a confident but wrong explanation.
@@ -27,9 +29,7 @@ Bottom right: a wrong label gets a confident but wrong explanation.
 | Classes | `approved`, `policy_violation` (banned claim in the copy), `misleading` (copy for the wrong species), `low_quality` (blurred image or spammy copy) |
 | Split | 384 train and 96 test (24 per class), stratified and grouped by source photo, seed 42 |
 | Photos | Not stored in git. Rebuild `data/images/` with `python data/build_dataset.py` (about 800 MB download) |
-| Storage | SQLite `db/ads.db` (Postgres via `DATABASE_URL`). `scores` rows carry `model_version`, a tag plus 8 hex of the sha256 of the weights file |
-
-Every query on `scores` must filter by `model_version`, because the table holds the classifier, the rule baseline and live API calls.
+| Storage | SQLite (Postgres via `DATABASE_URL`) |
 
 ## Models and ablation
 
@@ -90,7 +90,7 @@ The choice is the smallest model that matches baseline validation accuracy: **st
 - INT8 cuts the file by 72.6% but makes the head 4.5x slower. Latency is the head's forward pass only (batch 1, CPU), not a full `/score` request.
 - Only `structured_pruned_75pct.pt` (the selected checkpoint) is committed. The other checkpoints regenerate with the `compression` scripts.
 
-## v2: LLM evaluation, guardrails, agentic auditor
+## LLM evaluation, guardrails and agentic auditor
 
 | LLM evaluation (32 flagged ads, scored 0 to 2) | Mean | Score-0 rate |
 |---|---|---|
@@ -146,12 +146,12 @@ python docs/generate_charts.py                              # figures in docs/im
 ## Limitations
 
 - 96 test ads (one ad is 1.04 points) and one fixed split, so small gaps are noise.
-- Synthetic ad copy on real photos, pet products only, English only. `misleading` means a dog/cat mismatch, not a breed mismatch.
-- The A/B test is offline, and the baseline is a simple keyword and heuristic engine.
-- Explanations follow the predicted label, so a wrong label gets a confident wrong explanation.
-- Explanation scores come from one review pass on 32 ads, and the guardrail results cover 8 known attacks on one model (not red-teaming).
+- Synthetic ad copy on real photos, pet products and English only; `misleading` means a dog/cat mismatch, not a breed mismatch.
+- The A/B test is offline, against a simple keyword and heuristic baseline.
+- Explanations follow the predicted label, so a wrong label gets a confident wrong explanation; scores come from one review pass on 32 ads.
+- Guardrail results cover 8 known attacks on one model, not red-teaming.
 - Confidence is a raw softmax and is not calibrated.
-- The compressed checkpoint is chosen on 58 validation ads where 8 of 12 candidates tie, so the pick is the smallest eligible model, not the most accurate one.
-- Head latency was measured on one CPU with the qnnpack INT8 backend.
-- The Docker image is large because it bakes in the CLIP and Chroma models.
-- The code is MIT licensed. The photos keep their own license (CC BY-SA 4.0, copyright with the original owners).
+
+## License
+
+Code: MIT. Photos: Oxford-IIIT Pet Dataset, CC BY-SA 4.0 (copyright with the original owners).
